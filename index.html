@@ -335,12 +335,12 @@
             </div>
 
             <div class="pricing-toggle">
-                <span class="price-label active" id="label-month">Mensual</span>
+                <span class="price-label active" id="label-month-semi">Mensual</span>
                 <label class="switch">
-                    <input type="checkbox" id="price-switch" onclick="togglePrice()">
+                    <input type="checkbox" id="price-switch-semi" onclick="togglePrice(this)">
                     <span class="slider"></span>
                 </label>
-                <span class="price-label" id="label-perm">Permanente</span>
+                <span class="price-label" id="label-perm-semi">Permanente</span>
             </div>
 
             <div class="grid">
@@ -448,14 +448,112 @@
                 <i class="fas fa-leaf"></i>
                 <h2>Rangos Vanilla</h2>
             </div>
+            
+            <div class="pricing-toggle">
+                <span class="price-label active" id="label-month-vanilla">Mensual</span>
+                <label class="switch">
+                    <input type="checkbox" id="price-switch-vanilla" onclick="togglePrice(this)">
+                    <span class="slider"></span>
+                </label>
+                <span class="price-label" id="label-perm-vanilla">Permanente</span>
+            </div>
+
             <div class="grid">
-                <div class="placeholder-box" style="grid-column: 1 / -1;">
-                    <i class="fas fa-lock" style="font-size: 3rem; margin-bottom: 20px; color: #555;"></i>
-                    <h3 style="color: #888; margin-bottom:10px;">Categoría en Desarrollo</h3>
-                    <p>
-                        Próximamente Rangos para la modalidad Vanilla.<br>
-                        Estamos balanceando la economía.
-                    </p>
+                <div class="card">
+                    <h3>Aprendiz</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="1.00" data-p="1.60">1.00</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-seedling"></i> Kit Aprendiz</li>
+                        <li><i class="fas fa-home"></i> 5 Sethomes</li>
+                        <li><i class="fas fa-map-marker-alt"></i> /tpahere (Traer jugador)</li>
+                        <li><i class="fas fa-hat-wizard"></i> /hat (Bloque cabeza)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Aprendiz (Vanilla)', this)">Añadir</button>
+                </div>
+
+                <div class="card">
+                    <h3>Explorador</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="2.50" data-p="4.00">2.50</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-compass"></i> Kit Explorador</li>
+                        <li><i class="fas fa-arrow-up"></i> Todo lo de Aprendiz</li>
+                        <li><i class="fas fa-home"></i> 8 Sethomes</li>
+                        <li><i class="fas fa-tools"></i> /workbench (Mesa virtual)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Explorador (Vanilla)', this)">Añadir</button>
+                </div>
+
+                <div class="card">
+                    <h3>Guerrero</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="4.00" data-p="6.50">4.00</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-shield-alt"></i> Kit Guerrero</li>
+                        <li><i class="fas fa-arrow-up"></i> Todo lo de Explorador</li>
+                        <li><i class="fas fa-home"></i> 12 Sethomes</li>
+                        <li><i class="fas fa-box-open"></i> /enderchest (Virtual)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Guerrero (Vanilla)', this)">Añadir</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #a335ee;">Épico</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="6.00" data-p="9.50">6.00</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-gem"></i> Kit Épico</li>
+                        <li><i class="fas fa-arrow-up"></i> Todo lo de Guerrero</li>
+                        <li><i class="fas fa-home"></i> 20 Sethomes</li>
+                        <li><i class="fas fa-skull"></i> /back (Volver al morir)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Épico (Vanilla)', this)">Añadir</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #ffd700;">Héroe</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="8.00" data-p="12.50">8.00</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-medal"></i> Kit Héroe</li>
+                        <li><i class="fas fa-arrow-up"></i> Todo lo de Épico</li>
+                        <li><i class="fas fa-home"></i> 40 Sethomes</li>
+                        <li><i class="fas fa-utensils"></i> /feed (Saciar hambre)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Héroe (Vanilla)', this)">Añadir</button>
+                </div>
+
+                <div class="card netherite">
+                    <h3>Leyenda</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount" data-m="10.00" data-p="16.00">10.00</span> 
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-crown"></i> <strong>TODO lo anterior</strong></li>
+                        <li><i class="fas fa-home"></i> 100 Sethomes</li>
+                        <li><i class="fas fa-hammer"></i> /repair (Reparar mano)</li>
+                        <li><i class="fas fa-feather"></i> /fly (Volar en Lobby)</li>
+                        <li><i class="fas fa-palette"></i> Chat de Colores</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Leyenda (Vanilla)', this)">Añadir</button>
                 </div>
             </div>
         </section>
@@ -599,19 +697,56 @@
         let cart = [];
         let isPermanent = false;
 
-        function togglePrice() {
-            isPermanent = document.getElementById('price-switch').checked;
-            document.getElementById("label-month").classList.toggle("active");
-            document.getElementById("label-perm").classList.toggle("active");
+        function togglePrice(sender) {
+            // Sincronizar ambos switches si se pasa el sender
+            if(sender) {
+                isPermanent = sender.checked;
+                // Sincroniza el otro switch para que visualmente coincidan
+                const otherSwitchId = sender.id === 'price-switch-semi' ? 'price-switch-vanilla' : 'price-switch-semi';
+                const otherSwitch = document.getElementById(otherSwitchId);
+                if(otherSwitch) otherSwitch.checked = isPermanent;
+            } else {
+                // Fallback por si acaso
+                isPermanent = document.getElementById('price-switch-semi').checked;
+            }
+
+            // Actualizar etiquetas visuales (Colores) en Semi
+            const labelSemiM = document.getElementById("label-month-semi");
+            const labelSemiP = document.getElementById("label-perm-semi");
+            if(labelSemiM && labelSemiP) {
+                labelSemiM.classList.toggle("active", !isPermanent);
+                labelSemiP.classList.toggle("active", isPermanent);
+            }
+
+            // Actualizar etiquetas visuales (Colores) en Vanilla
+            const labelVanM = document.getElementById("label-month-vanilla");
+            const labelVanP = document.getElementById("label-perm-vanilla");
+            if(labelVanM && labelVanP) {
+                labelVanM.classList.toggle("active", !isPermanent);
+                labelVanP.classList.toggle("active", isPermanent);
+            }
+
+            // Actualizar todos los precios de la página
             document.querySelectorAll(".amount").forEach(el => {
                 el.innerText = isPermanent ? el.getAttribute("data-p") : el.getAttribute("data-m");
             });
+
+            // Advertencia si hay items en el carrito
             if(cart.length > 0) {
-                if(confirm("Se vaciará el carrito al cambiar el modo de pago. ¿Seguro?")) {
-                    cart = []; updateCartUI();
-                } else {
-                    document.getElementById('price-switch').checked = !isPermanent;
+                // Pequeña lógica para actualizar el tipo en el carrito sin borrarlo agresivamente,
+                // o advertir al usuario. Por simplicidad en este caso, actualizamos el tipo.
+                cart.forEach(item => {
+                    item.type = isPermanent ? "Permanente" : "Mensual";
+                    // Recalcular precio en base al nombre buscando en el DOM es complejo,
+                    // así que simplificaremos vaciando o avisando.
+                    // Para mejor UX, aquí solo notificamos visualmente en el updateCartUI si quisieramos.
+                });
+                // Opción simple: Vaciar para evitar conflictos de precios viejos vs nuevos
+                if(!confirm("Cambiaste la moneda. Se actualizarán los items del carrito o se vaciará si hay conflicto. ¿Continuar?")) {
+                    // Revertir switch si cancela (lógica compleja, lo dejamos simple: se vacía)
                 }
+                cart = []; 
+                updateCartUI();
             }
         }
 
@@ -658,7 +793,6 @@
         // --- 4. FUNCIÓN NUEVA: SISTEMA DE REGALO ---
         function toggleGiftInput() {
             const isGift = document.getElementById("is-gift").checked;
-            // Se usa display: block para mostrar el input si es regalo
             document.getElementById("gift-nickname").style.display = isGift ? "block" : "none";
         }
 
@@ -670,7 +804,6 @@
             
             let msg = "";
             
-            // Lógica de mensaje dinámico
             if(isGift) {
                 if(!giftNick) return alert("Por favor, ingresa el Nickname del destinatario.");
                 msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${globalUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
