@@ -10,7 +10,7 @@
     
     <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
     
-    <style>
+<style>
         /* --- CONFIGURACIÓN BASE --- */
         :root {
             --primary: #9d00ff;
@@ -24,6 +24,34 @@
         }
 
         * { box-sizing: border-box; }
+
+        /* --- PERSONALIZACIÓN DE LAS BARRAS DE DESPLAZAMIENTO (SCROLLBAR) --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 10px;
+            border: 2px solid var(--bg-dark);
+            transition: 0.3s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Soporte para Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #2a2a2a var(--bg-dark);
+        }
 
         body {
             margin: 0;
