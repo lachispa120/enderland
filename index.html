@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enderland | Tienda Oficial</title>
     <link rel="icon" type="image/jpeg" href="https://i.postimg.cc/pTZRVs1F/93db69b6-6f32-44ef-9e5a-ae199feadaa0.jpg">
-
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -95,6 +94,7 @@
             border-right: 1px solid #2a2a2a;
             padding: 20px;
             overflow-y: auto; flex-shrink: 0;
+            transition: width 0.3s;
         }
 
         .sidebar-profile {
@@ -102,17 +102,27 @@
             background: rgba(255,255,255,0.05);
             padding: 15px; border-radius: 10px; margin-bottom: 30px;
             border: 1px solid #333;
+            cursor: pointer; transition: 0.3s;
         }
+        .sidebar-profile:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
+        
         .mini-avatar {
             width: 40px; height: 40px; border-radius: 8px;
             background-size: cover; border: 1px solid var(--primary);
+            flex-shrink: 0;
         }
         .user-info div { font-weight: bold; font-size: 0.95rem; }
         .user-info span { font-size: 0.75rem; color: var(--success); }
 
-        .brand { text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s; }
-        .brand:hover { transform: scale(1.05); }
-        .brand h1 { font-size: 1.8rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--primary); }
+        .brand { text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s; padding: 10px;}
+        .brand:hover { transform: scale(1.02); }
+        /* Ajuste para el nuevo logo (503x130) */
+        .brand img { 
+            width: 100%; 
+            height: auto; 
+            max-width: 240px; /* Tamaño controlado en PC */
+            filter: drop-shadow(0 0 5px var(--primary)); 
+        }
 
         .nav-category-title {
             color: var(--category-title); font-weight: 800; font-size: 0.85rem;
@@ -128,7 +138,6 @@
         .nav-item.active { background: var(--primary); color: #fff; }
         .nav-item i { width: 20px; text-align: center; }
         
-        /* ESTILO PARA EL EMAIL DE SOPORTE */
         .support-email {
             font-size: 0.8rem; color: #888; padding-left: 45px; margin-top: -5px; margin-bottom: 10px; display: block;
         }
@@ -153,6 +162,24 @@
         .section-header h2 { margin: 0; font-size: 2rem; text-transform: uppercase; }
         .section-header i { color: var(--primary); font-size: 1.8rem; }
 
+        /* ESTILOS DE LOS BOTONES DE INICIO */
+        .welcome-buttons {
+            display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;
+        }
+        .welcome-btn {
+            background: rgba(157,0,255,0.1); 
+            padding: 12px 25px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            border: 1px solid var(--primary);
+            color: #fff;
+            font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .welcome-btn:hover { background: var(--primary); transform: translateY(-2px); }
+
         /* SWITCH PRECIOS */
         .pricing-toggle {
             background: #111; padding: 10px 20px; border-radius: 50px; border: 1px solid #333;
@@ -167,7 +194,8 @@
         .price-label.active { color: var(--primary); font-weight: bold; }
 
         /* CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        /* Ajuste Responsive Grid: columnas más pequeñas para móvil */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
         
         .card {
             background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 25px;
@@ -189,7 +217,6 @@
         li { padding: 8px 0; border-bottom: 1px solid #2a2a2a; color: #ccc; font-size: 0.9rem; display: flex; align-items: center; }
         li i.icon-list { color: var(--primary); width: 25px; text-align: center; margin-right: 10px; }
 
-        /* Botón VER CONTENIDO */
         .view-kit-btn {
             background: #333; color: #fff; border: none; border-radius: 4px;
             padding: 2px 8px; font-size: 0.75rem; margin-left: auto; cursor: pointer;
@@ -203,12 +230,12 @@
         }
         .btn-add:hover { background: var(--primary); }
 
-        /* IMAGEN PARA KITS EN CARDS Y MODAL */
-        /* Configuración para que la imagen de 338x136 se vea bien */
+        /* IMAGEN PARA KITS - AJUSTADO PARA RESOLUCIÓN COMPLETA */
         .kit-image-container {
             width: 100%;
-            height: 150px;
-            background: #0c0c0c; /* Fondo oscuro para rellenar */
+            /* Eliminada altura fija para que la imagen defina el tamaño */
+            min-height: 100px; 
+            background: #0c0c0c;
             border: 1px solid #333;
             border-radius: 8px;
             margin-bottom: 15px;
@@ -216,15 +243,17 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            padding: 5px; /* Pequeño padding interno */
         }
         
         .kit-image {
             width: 100%;
-            height: 100%;
-            object-fit: contain; /* CRÍTICO: Mantiene la proporción 338x136 sin cortar */
+            height: auto;
+            /* Usamos contain para ver todo el inventario sin recortes */
+            object-fit: contain; 
+            display: block;
         }
         
-        /* Imagen dentro del modal */
         .modal-kit-image {
             width: 100%;
             max-width: 400px;
@@ -261,7 +290,6 @@
         .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #888; }
         .close-modal:hover { color: #fff; }
 
-        /* Estilos Lista Detalle Kit */
         .kit-detail-list li {
             border-bottom: 1px solid #333; padding: 8px 0; font-size: 0.95rem; display: block;
         }
@@ -275,10 +303,29 @@
         .gift-input-field { display: none; width: 100%; padding: 12px; margin-top: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #fff; outline: none; transition: 0.3s; }
         .gift-input-field:focus { border-color: var(--primary); background: #222; }
 
+        /* OPTIMIZACIÓN PARA MÓVIL */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { height: auto; padding: 20px; overflow: visible; }
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 15px; /* Menos padding */
+                border-bottom: 1px solid #333;
+                border-right: none;
+            }
+            .brand img {
+                max-width: 180px; /* Logo un poco más chico en móvil */
+            }
+            .sidebar-profile {
+                margin-bottom: 15px;
+                padding: 10px;
+            }
+            .main-content { height: auto; padding: 20px 15px; overflow: visible; }
+            section { margin-bottom: 60px; }
+            .section-header h2 { font-size: 1.5rem; }
+            .welcome-buttons { width: 100%; }
+            .welcome-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -322,10 +369,10 @@
 
     <nav class="sidebar">
         <div class="brand" onclick="resetNavigation()">
-            <h1>Enderland</h1>
+            <img src="https://i.postimg.cc/6p55m2zb/texto-enderland.png" alt="Enderland">
         </div>
 
-        <div class="sidebar-profile">
+        <div class="sidebar-profile" onclick="showFullSkin()">
             <div class="mini-avatar" id="sidebar-avatar" style="background-image: url('https://minotar.net/helm/Steve/40.png');"></div>
             <div class="user-info">
                 <div id="sidebar-username">Jugador</div>
@@ -337,7 +384,7 @@
         <a href="#inicio" class="nav-item active" id="btn-inicio">
             <i class="fas fa-home"></i> Inicio
         </a>
-
+        
         <div class="nav-category-title">TIENDA</div>
         
         <div class="nav-item submenu-toggle" id="toggle-rangos" onclick="toggleSubmenu('rangos')">
@@ -346,7 +393,7 @@
             </div>
             <i class="fas fa-chevron-down arrow"></i>
         </div>
-        <div class="submenu show" id="submenu-rangos">
+        <div class="submenu" id="submenu-rangos">
             <a href="#semi-anarquico" class="nav-item">Semi-Anárquico</a>
             <a href="#vanilla-rangos" class="nav-item">Vanilla</a>
         </div>
@@ -385,8 +432,14 @@
                     Seleccioná una categoría del menú de la izquierda para ver los paquetes.
                     <br>Tus compras ayudan a mantener el servidor online y sin lag.
                 </p>
-                <div style="background: rgba(157,0,255,0.1); display: inline-block; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer; border: 1px solid var(--primary);" onclick="copyIP()">
-                    IP: <strong>play.enderland.org</strong> <i class="far fa-copy" style="margin-left: 10px;"></i>
+                
+                <div class="welcome-buttons">
+                    <div class="welcome-btn" onclick="copyIP()">
+                        <i class="far fa-copy"></i> IP: <strong>play.enderland.org</strong>
+                    </div>
+                    <a href="https://discord.gg/fUZWkDYs9u" target="_blank" class="welcome-btn">
+                        <i class="fab fa-discord"></i> Entrar a Discord
+                    </a>
                 </div>
             </div>
         </section>
@@ -640,7 +693,7 @@
                     </div>
                     <h3>Kit Pociones</h3>
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="3.00" data-p="3.00">3.00</span><span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.00">1.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
                         <li><i class="fas fa-flask icon-list"></i> 10x Curación Instantánea II</li>
@@ -657,7 +710,7 @@
                     </div>
                     <h3>Kit Comida</h3>
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="4.00" data-p="4.00">4.00</span><span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="1.50" data-p="1.50">1.50</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
                         <li><i class="fas fa-apple-alt icon-list"></i> 6 Stacks Manzanas Doradas</li>
@@ -684,10 +737,9 @@
                     
                     <h3 style="color: #ff3333;">Kit Intoxicado</h3>
                     
-                    
                     <div class="price-tag">
                         <span class="currency-symbol">$</span>
-                        <span class="amount" data-m="15.00" data-p="15.00">15.00</span> 
+                        <span class="amount" data-m="20.00" data-p="20.00">20.00</span> 
                         <span class="currency-code">USD</span>
                     </div>
                     
@@ -709,7 +761,7 @@
                     </div>
                     <h3>Kit Pociones</h3>
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="3.00" data-p="3.00">3.00</span><span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.00">1.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
                         <li><i class="fas fa-flask icon-list"></i> 10x Curación Instantánea II</li>
@@ -726,7 +778,7 @@
                     </div>
                     <h3>Kit Comida</h3>
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="4.00" data-p="4.00">4.00</span><span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="1.50" data-p="1.50">1.50</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
                         <li><i class="fas fa-apple-alt icon-list"></i> 6 Stacks Manzanas Doradas</li>
@@ -787,6 +839,15 @@
             
             <ul class="kit-detail-list" id="kit-modal-list">
                 </ul>
+        </div>
+    </div>
+
+    <div class="modal" id="skin-modal">
+        <div class="modal-content" style="text-align: center;">
+            <i class="fas fa-times close-modal" onclick="closeModal('skin-modal')"></i>
+            <h3 style="margin:0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 10px; color: var(--primary);">TU SKIN</h3>
+            <img id="my-full-skin" src="" style="width: 200px; height: auto;" alt="Tu Skin">
+            <h3 id="skin-username-display" style="margin-top: 10px;"></h3>
         </div>
     </div>
 
@@ -1028,6 +1089,17 @@
                 img.style.display = "none";
             }
             
+            modal.style.display = "flex";
+        }
+        
+        function showFullSkin() {
+            if(globalUser === "Invitado") return;
+            const modal = document.getElementById("skin-modal");
+            const img = document.getElementById("my-full-skin");
+            const nameDisplay = document.getElementById("skin-username-display");
+            
+            img.src = `https://minotar.net/armor/body/${globalUser}/200.png`;
+            nameDisplay.innerText = globalUser;
             modal.style.display = "flex";
         }
 
