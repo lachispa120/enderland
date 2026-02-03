@@ -8,6 +8,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
+    
     <style>
         /* --- CONFIGURACIÓN BASE --- */
         :root {
@@ -33,7 +35,20 @@
             overflow: hidden;
         }
 
-        /* --- PANTALLA DE LOGIN Y TERMINOS --- */
+        /* --- LOGO FLOTANTE DERECHA --- */
+        .fixed-logo-right {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            z-index: 100;
+            filter: drop-shadow(0 0 10px rgba(157,0,255,0.5));
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        /* --- PANTALLAS OVERLAY --- */
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 9999;
@@ -95,6 +110,7 @@
             padding: 20px;
             overflow-y: auto; flex-shrink: 0;
             transition: width 0.3s;
+            z-index: 50;
         }
 
         .sidebar-profile {
@@ -116,11 +132,10 @@
 
         .brand { text-align: center; margin-bottom: 20px; cursor: pointer; transition: 0.3s; padding: 10px;}
         .brand:hover { transform: scale(1.02); }
-        /* Ajuste para el nuevo logo (503x130) */
         .brand img { 
             width: 100%; 
             height: auto; 
-            max-width: 240px; /* Tamaño controlado en PC */
+            max-width: 240px; 
             filter: drop-shadow(0 0 5px var(--primary)); 
         }
 
@@ -150,8 +165,8 @@
         .submenu.show { display: block; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from {opacity:0; transform:translateY(-10px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- CONTENIDO --- */
-        .main-content { flex-grow: 1; height: 100vh; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
+        /* --- CONTENIDO PRINCIPAL --- */
+        .main-content { flex-grow: 1; height: 100vh; overflow-y: auto; padding: 40px; scroll-behavior: smooth; display: flex; flex-direction: column;}
 
         section { margin-bottom: 100px; scroll-margin-top: 40px; }
         
@@ -162,21 +177,11 @@
         .section-header h2 { margin: 0; font-size: 2rem; text-transform: uppercase; }
         .section-header i { color: var(--primary); font-size: 1.8rem; }
 
-        /* ESTILOS DE LOS BOTONES DE INICIO */
-        .welcome-buttons {
-            display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;
-        }
+        .welcome-buttons { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
         .welcome-btn {
-            background: rgba(157,0,255,0.1); 
-            padding: 12px 25px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            border: 1px solid var(--primary);
-            color: #fff;
-            font-size: 1rem;
-            display: flex; align-items: center; gap: 10px;
-            transition: 0.3s;
-            text-decoration: none;
+            background: rgba(157,0,255,0.1); padding: 12px 25px; border-radius: 6px; 
+            cursor: pointer; border: 1px solid var(--primary); color: #fff; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px; transition: 0.3s; text-decoration: none;
         }
         .welcome-btn:hover { background: var(--primary); transform: translateY(-2px); }
 
@@ -194,7 +199,6 @@
         .price-label.active { color: var(--primary); font-weight: bold; }
 
         /* CARDS */
-        /* Ajuste Responsive Grid: columnas más pequeñas para móvil */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
         
         .card {
@@ -230,40 +234,41 @@
         }
         .btn-add:hover { background: var(--primary); }
 
-        /* IMAGEN PARA KITS - AJUSTADO PARA RESOLUCIÓN COMPLETA */
         .kit-image-container {
-            width: 100%;
-            /* Eliminada altura fija para que la imagen defina el tamaño */
-            min-height: 100px; 
-            background: #0c0c0c;
-            border: 1px solid #333;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            padding: 5px; /* Pequeño padding interno */
+            width: 100%; min-height: 100px; background: #0c0c0c;
+            border: 1px solid #333; border-radius: 8px; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 5px;
         }
-        
-        .kit-image {
-            width: 100%;
-            height: auto;
-            /* Usamos contain para ver todo el inventario sin recortes */
-            object-fit: contain; 
-            display: block;
-        }
+        .kit-image { width: 100%; height: auto; object-fit: contain; display: block; }
         
         .modal-kit-image {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid var(--primary);
-            margin: 0 auto 20px auto;
-            display: block;
-            background: #000;
+            width: 100%; max-width: 400px; height: auto;
+            border-radius: 8px; border: 1px solid var(--primary);
+            margin: 0 auto 20px auto; display: block; background: #000;
         }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            margin-top: auto;
+            border-top: 1px solid #333;
+            background: #111;
+            padding: 40px 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-col h4 { color: #fff; margin-bottom: 15px; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px; }
+        .footer-col p, .footer-col li { margin-bottom: 10px; line-height: 1.5; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col a { color: var(--primary); text-decoration: none; cursor: pointer; transition: 0.2s;}
+        .footer-col a:hover { text-decoration: underline; color: #fff; }
+        .footer-bottom { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; font-size: 0.8rem; }
 
         /* CARRITO FLOTANTE */
         .cart-float {
@@ -290,56 +295,55 @@
         .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #888; }
         .close-modal:hover { color: #fff; }
 
-        .kit-detail-list li {
-            border-bottom: 1px solid #333; padding: 8px 0; font-size: 0.95rem; display: block;
+        /* ESTILO PARA VIEWER 3D */
+        #skin-viewer-container {
+            width: 100%;
+            height: 300px;
+            background: #222;
+            border-radius: 10px;
+            border: 1px solid #444;
+            margin-bottom: 10px;
+            position: relative;
         }
+
+        /* ESTILO PARA RESPUESTAS DE FAQ */
+        .faq-answer {
+            color: #ccc; line-height: 1.6; font-size: 1rem;
+        }
+
+        .kit-detail-list li { border-bottom: 1px solid #333; padding: 8px 0; font-size: 0.95rem; display: block; }
         .kit-detail-list strong { color: var(--primary); }
         .kit-detail-list span { color: #aaa; font-size: 0.85rem; display: block; margin-top: 2px; }
-
         .cart-item { display: flex; justify-content: space-between; padding: 10px; background: #222; margin-bottom: 5px; border-radius: 5px; }
-
         .gift-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
         .gift-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; color: #ccc; font-size: 0.95rem; user-select: none; }
         .gift-input-field { display: none; width: 100%; padding: 12px; margin-top: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #fff; outline: none; transition: 0.3s; }
         .gift-input-field:focus { border-color: var(--primary); background: #222; }
 
-        /* OPTIMIZACIÓN PARA MÓVIL */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
-            .sidebar { 
-                width: 100%; 
-                height: auto; 
-                position: relative; 
-                padding: 15px; /* Menos padding */
-                border-bottom: 1px solid #333;
-                border-right: none;
-            }
-            .brand img {
-                max-width: 180px; /* Logo un poco más chico en móvil */
-            }
-            .sidebar-profile {
-                margin-bottom: 15px;
-                padding: 10px;
-            }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 15px; border-bottom: 1px solid #333; border-right: none; }
+            .brand img { max-width: 180px; }
+            .sidebar-profile { margin-bottom: 15px; padding: 10px; }
             .main-content { height: auto; padding: 20px 15px; overflow: visible; }
             section { margin-bottom: 60px; }
             .section-header h2 { font-size: 1.5rem; }
             .welcome-buttons { width: 100%; }
             .welcome-btn { width: 100%; justify-content: center; }
+            .fixed-logo-right { width: 50px; height: 50px; top: 10px; right: 10px; }
         }
     </style>
 </head>
 <body>
 
+    <img src="https://i.postimg.cc/rw89skN2/logo-enderland-png.png" alt="Logo Enderland" class="fixed-logo-right">
+
     <div class="overlay-screen" id="login-overlay">
         <div class="login-box">
             <h2 style="margin-top:0; color:var(--primary);">IDENTIFÍCATE</h2>
             <p style="color:#ccc;">Ingresa tu Nick de Minecraft para continuar</p>
-            
             <div class="login-avatar-preview" id="avatar-preview"></div>
-            
             <input type="text" class="login-input" id="nick-input" placeholder="Ej: Steve" maxlength="16" oninput="updateSkin()">
-            
             <button class="btn-enter" onclick="submitLogin()">CONTINUAR</button>
         </div>
     </div>
@@ -348,21 +352,16 @@
         <div class="terms-box">
             <h2 style="margin-top:0; color:var(--primary); text-align: center;"><i class="fas fa-file-contract"></i> TÉRMINOS DEL SERVICIO</h2>
             <p style="text-align:center; color:#999; margin-top:-10px;">Por favor, lee y acepta para continuar.</p>
-            
             <div class="terms-content">
                 <p><strong>1. POLÍTICA DE REEMBOLSOS Y PAGOS</strong><br>
                 Todas las ventas son finales. Usted comprende y acepta que no tiene el derecho de reembolsar, cancelar o demandar al servidor por cualquier medio con el fin de recuperar los fondos ya pagados. Al realizar una compra, usted renuncia a cualquier derecho de devolución.</p>
-
                 <p><strong>2. CONSECUENCIAS DE DISPUTAS</strong><br>
                 Si usted inicia un contracargo o disputa de pago sin autorización previa, nos reservamos el derecho de prohibirle el acceso a todos nuestros servicios de forma permanente (Ban de usuario e IP). Nos reservamos el derecho de iniciar acciones legales para recuperar daños por devoluciones forzadas.</p>
-
                 <p><strong>3. CAMBIOS EN LOS SERVICIOS</strong><br>
                 Nos reservamos el derecho de cambiar, con o sin previo aviso, cualquier precio en la tienda. También nos reservamos el derecho de modificar el contenido de un paquete específico. Los beneficios de un rango o kit pueden cambiar por razones de balance del servidor y usted no tendrá derecho a reclamar los beneficios antiguos.</p>
-
                 <p><strong>4. RESPONSABILIDAD</strong><br>
                 Enderland no se hace responsable por la pérdida de ítems dentro del juego debido a muertes, lag, reinicios o errores del usuario. Al comprar, usted apoya el mantenimiento del servidor.</p>
             </div>
-            
             <button class="btn-accept" onclick="enterShop()">HE LEÍDO Y ACEPTO</button>
         </div>
     </div>
@@ -384,7 +383,7 @@
         <a href="#inicio" class="nav-item active" id="btn-inicio">
             <i class="fas fa-home"></i> Inicio
         </a>
-        
+
         <div class="nav-category-title">TIENDA</div>
         
         <div class="nav-item submenu-toggle" id="toggle-rangos" onclick="toggleSubmenu('rangos')">
@@ -432,13 +431,12 @@
                     Seleccioná una categoría del menú de la izquierda para ver los paquetes.
                     <br>Tus compras ayudan a mantener el servidor online y sin lag.
                 </p>
-                
                 <div class="welcome-buttons">
                     <div class="welcome-btn" onclick="copyIP()">
-                        <i class="far fa-copy"></i> IP: <strong>play.enderland.org</strong>
+                        IP: <strong>play.enderland.org</strong> <i class="far fa-copy" style="margin-left: 10px;"></i>
                     </div>
-                    <a href="https://discord.gg/fUZWkDYs9u" target="_blank" class="welcome-btn">
-                        <i class="fab fa-discord"></i> Entrar a Discord
+                    <a href="https://discord.gg/fUZWkDYs9u" target="_blank" class="welcome-btn" style="background: #5865F2; border-color: #5865F2;">
+                        <i class="fab fa-discord"></i> Unirse a Discord
                     </a>
                 </div>
             </div>
@@ -464,10 +462,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.60">1.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-box icon-list"></i> Kit Cobre
-                            <button class="view-kit-btn" onclick="showKitDetails('cobre')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-box icon-list"></i> Kit Cobre <button class="view-kit-btn" onclick="showKitDetails('cobre')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-check icon-list"></i> Prefijo [COBRE]</li>
                         <li><i class="fas fa-home icon-list"></i> 5 Sethomes</li>
                         <li><i class="fas fa-hat-wizard icon-list"></i> /hat</li>
@@ -480,10 +475,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="2.50" data-p="4.00">2.50</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-box icon-list"></i> Kit Hierro
-                            <button class="view-kit-btn" onclick="showKitDetails('hierro')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-box icon-list"></i> Kit Hierro <button class="view-kit-btn" onclick="showKitDetails('hierro')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Cobre</li>
                         <li><i class="fas fa-home icon-list"></i> 8 Sethomes</li>
                         <li><i class="fas fa-tools icon-list"></i> /workbench</li>
@@ -496,10 +488,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="4.00" data-p="6.50">4.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-box icon-list"></i> Kit Oro
-                            <button class="view-kit-btn" onclick="showKitDetails('oro')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-box icon-list"></i> Kit Oro <button class="view-kit-btn" onclick="showKitDetails('oro')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Hierro</li>
                         <li><i class="fas fa-home icon-list"></i> 12 Sethomes</li>
                         <li><i class="fas fa-box-open icon-list"></i> /enderchest</li>
@@ -512,10 +501,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="6.00" data-p="9.50">6.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-box icon-list"></i> Kit Diamante
-                            <button class="view-kit-btn" onclick="showKitDetails('diamante')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-box icon-list"></i> Kit Diamante <button class="view-kit-btn" onclick="showKitDetails('diamante')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Oro</li>
                         <li><i class="fas fa-skull icon-list"></i> /back al morir</li>
                         <li><i class="fas fa-bolt icon-list"></i> Tp instantáneo</li>
@@ -528,10 +514,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="8.00" data-p="12.50">8.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-box icon-list"></i> Kit Esmeralda
-                            <button class="view-kit-btn" onclick="showKitDetails('esmeralda')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-box icon-list"></i> Kit Esmeralda <button class="view-kit-btn" onclick="showKitDetails('esmeralda')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Diamante</li>
                         <li><i class="fas fa-utensils icon-list"></i> /feed y /near</li>
                         <li><i class="fas fa-home icon-list"></i> 40 Sethomes</li>
@@ -544,10 +527,7 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="10.00" data-p="16.00">10.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-crown icon-list"></i> <strong>Kit Netherite</strong>
-                            <button class="view-kit-btn" onclick="showKitDetails('netherite')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-crown icon-list"></i> <strong>Kit Netherite</strong> <button class="view-kit-btn" onclick="showKitDetails('netherite')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo anterior</li>
                         <li><i class="fas fa-home icon-list"></i> 100 Sethomes</li>
                         <li><i class="fas fa-hammer icon-list"></i> /repair</li>
@@ -564,7 +544,6 @@
                 <i class="fas fa-leaf"></i>
                 <h2>Rangos Vanilla</h2>
             </div>
-            
             <div class="pricing-toggle">
                 <span class="price-label active" id="label-month-vanilla">Mensual</span>
                 <label class="switch">
@@ -573,7 +552,6 @@
                 </label>
                 <span class="price-label" id="label-perm-vanilla">Permanente</span>
             </div>
-
             <div class="grid">
                 <div class="card">
                     <h3>Aprendiz</h3>
@@ -581,95 +559,72 @@
                         <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.60">1.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-seedling icon-list"></i> Kit Aprendiz
-                            <button class="view-kit-btn" onclick="showKitDetails('aprendiz')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-seedling icon-list"></i> Kit Aprendiz <button class="view-kit-btn" onclick="showKitDetails('aprendiz')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-home icon-list"></i> 5 Sethomes</li>
                         <li><i class="fas fa-map-marker-alt icon-list"></i> /tpahere (Traer jugador)</li>
                         <li><i class="fas fa-hat-wizard icon-list"></i> /hat (Bloque cabeza)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Aprendiz (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <h3>Explorador</h3>
                     <div class="price-tag">
                         <span class="currency-symbol">$</span><span class="amount" data-m="2.50" data-p="4.00">2.50</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-compass icon-list"></i> Kit Explorador
-                            <button class="view-kit-btn" onclick="showKitDetails('explorador')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-compass icon-list"></i> Kit Explorador <button class="view-kit-btn" onclick="showKitDetails('explorador')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Aprendiz</li>
                         <li><i class="fas fa-home icon-list"></i> 8 Sethomes</li>
                         <li><i class="fas fa-tools icon-list"></i> /workbench (Mesa virtual)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Explorador (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <h3>Guerrero</h3>
                     <div class="price-tag">
                         <span class="currency-symbol">$</span><span class="amount" data-m="4.00" data-p="6.50">4.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-shield-alt icon-list"></i> Kit Guerrero
-                            <button class="view-kit-btn" onclick="showKitDetails('guerrero')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-shield-alt icon-list"></i> Kit Guerrero <button class="view-kit-btn" onclick="showKitDetails('guerrero')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Explorador</li>
                         <li><i class="fas fa-home icon-list"></i> 12 Sethomes</li>
                         <li><i class="fas fa-box-open icon-list"></i> /enderchest (Virtual)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Guerrero (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <h3 style="color: #a335ee;">Épico</h3>
                     <div class="price-tag">
                         <span class="currency-symbol">$</span><span class="amount" data-m="6.00" data-p="9.50">6.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-gem icon-list"></i> Kit Épico
-                            <button class="view-kit-btn" onclick="showKitDetails('epico')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-gem icon-list"></i> Kit Épico <button class="view-kit-btn" onclick="showKitDetails('epico')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Guerrero</li>
                         <li><i class="fas fa-home icon-list"></i> 20 Sethomes</li>
                         <li><i class="fas fa-skull icon-list"></i> /back (Volver al morir)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Épico (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <h3 style="color: #ffd700;">Héroe</h3>
                     <div class="price-tag">
                         <span class="currency-symbol">$</span><span class="amount" data-m="8.00" data-p="12.50">8.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-medal icon-list"></i> Kit Héroe
-                            <button class="view-kit-btn" onclick="showKitDetails('heroe')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-medal icon-list"></i> Kit Héroe <button class="view-kit-btn" onclick="showKitDetails('heroe')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Épico</li>
                         <li><i class="fas fa-home icon-list"></i> 40 Sethomes</li>
                         <li><i class="fas fa-utensils icon-list"></i> /feed (Saciar hambre)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Héroe (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card netherite">
                     <h3>Leyenda</h3>
                     <div class="price-tag">
                         <span class="currency-symbol">$</span><span class="amount" data-m="10.00" data-p="16.00">10.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li>
-                            <i class="fas fa-crown icon-list"></i> <strong>Kit Leyenda</strong>
-                            <button class="view-kit-btn" onclick="showKitDetails('leyenda')"><i class="fas fa-eye"></i> Ver</button>
-                        </li>
+                        <li><i class="fas fa-crown icon-list"></i> <strong>Kit Leyenda</strong> <button class="view-kit-btn" onclick="showKitDetails('leyenda')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo anterior</li>
                         <li><i class="fas fa-home icon-list"></i> 100 Sethomes</li>
                         <li><i class="fas fa-hammer icon-list"></i> /repair (Reparar mano)</li>
@@ -703,7 +658,6 @@
                     </ul>
                     <button class="btn-add" onclick="addToCart('Kit Pociones (Semi)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <div class="kit-image-container">
                         <img src="https://i.postimg.cc/7ZFxKG2C/1b63c615-8ef0-4ebe-a96b-8b8226f666ba.jpg" alt="Kit Comida" class="kit-image">
@@ -729,20 +683,14 @@
                 <h2>Kits Vanilla</h2>
             </div>
             <div class="grid">
-                
                 <div class="card netherite">
                     <div class="kit-image-container">
                          <img src="https://i.postimg.cc/mkBk8cKS/Captura-de-pantalla-2026-02-02-203219.png" alt="Kit Intoxicado" class="kit-image">
                     </div>
-                    
                     <h3 style="color: #ff3333;">Kit Intoxicado</h3>
-                    
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span>
-                        <span class="amount" data-m="20.00" data-p="20.00">20.00</span> 
-                        <span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="20.00" data-p="20.00">20.00</span><span class="currency-code">USD</span>
                     </div>
-                    
                     <ul>
                         <li><i class="fas fa-tshirt icon-list"></i> <strong>Full Netherite</strong></li>
                         <li><i class="fas fa-magic icon-list"></i> Encantamientos TOP</li>
@@ -754,7 +702,6 @@
                     </ul>
                     <button class="btn-add" onclick="addToCart('Kit Intoxicado (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <div class="kit-image-container">
                         <img src="https://i.postimg.cc/d1mtksDL/8370afda-5426-43f0-b420-7353385b51c2.jpg" alt="Kit Pociones" class="kit-image">
@@ -771,7 +718,6 @@
                     </ul>
                     <button class="btn-add" onclick="addToCart('Kit Pociones (Vanilla)', this)">Añadir</button>
                 </div>
-
                 <div class="card">
                     <div class="kit-image-container">
                         <img src="https://i.postimg.cc/7ZFxKG2C/1b63c615-8ef0-4ebe-a96b-8b8226f666ba.jpg" alt="Kit Comida" class="kit-image">
@@ -788,9 +734,37 @@
                     </ul>
                     <button class="btn-add" onclick="addToCart('Kit Comida (Vanilla)', this)">Añadir</button>
                 </div>
-
             </div>
         </section>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4>Preguntas Frecuentes</h4>
+                    <ul>
+                        <li><a onclick="openFAQ('buy')">¿Cómo comprar?</a></li>
+                        <li><a onclick="openFAQ('discord')">¿Cómo unirme al Discord?</a></li>
+                        <li><a onclick="openFAQ('payment')">¿Métodos de pago?</a></li>
+                        <li><a onclick="openFAQ('security')">¿Es seguro?</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Ubicación</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Estados Unidos</p>
+                    <p>Servidores alojados en USA para mejor conectividad global.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Contáctanos</h4>
+                    <p>Ante cualquier duda o problema con tu compra:</p>
+                    <a href="mailto:Soporte@enderland.org"><i class="fas fa-envelope"></i> Soporte@enderland.org</a>
+                    <br>
+                    <a href="https://discord.gg/fUZWkDYs9u" target="_blank"><i class="fab fa-discord"></i> Ticket en Discord</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Enderland. Todos los derechos reservados. No afiliado con Mojang AB.
+            </div>
+        </footer>
 
     </main>
 
@@ -803,15 +777,12 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModal('cart-modal')"></i>
             <h3 style="margin:0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 10px;">Tu Carrito</h3>
-            
             <div style="background: #222; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9rem; color: #ccc;">
                 Comprando como: <strong id="cart-username" style="color: var(--primary);">...</strong>
             </div>
-            
             <div id="cart-items-container" style="max-height: 250px; overflow-y: auto;">
                 <p style="text-align: center; color: #666;">Vacío</p>
             </div>
-
             <div class="gift-section">
                 <label class="gift-toggle">
                     <input type="checkbox" id="is-gift" onchange="toggleGiftInput()">
@@ -819,11 +790,9 @@
                 </label>
                 <input type="text" id="gift-nickname" class="gift-input-field" placeholder="Ingresa el Nick exacto del destinatario...">
             </div>
-
             <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
                 Total: $<span id="cart-total-price">0.00</span>
             </div>
-            
             <button onclick="checkout()" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                 <i class="fab fa-discord"></i> GENERAR PEDIDO
             </button>
@@ -834,26 +803,33 @@
         <div class="modal-content">
             <i class="fas fa-times close-modal" onclick="closeModal('kit-modal')"></i>
             <h3 id="kit-modal-title" style="margin:0 0 15px 0; color: var(--primary); text-transform: uppercase;">CONTENIDO DEL KIT</h3>
-            
             <img src="" id="kit-modal-img" class="modal-kit-image" style="display:none;" alt="Contenido del Kit">
-            
-            <ul class="kit-detail-list" id="kit-modal-list">
-                </ul>
+            <ul class="kit-detail-list" id="kit-modal-list"></ul>
+        </div>
+    </div>
+
+    <div class="modal" id="faq-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModal('faq-modal')"></i>
+            <h3 id="faq-title" style="margin:0 0 15px 0; color: var(--primary); text-transform: uppercase;">PREGUNTA FRECUENTE</h3>
+            <div id="faq-body" class="faq-answer">
+                </div>
         </div>
     </div>
 
     <div class="modal" id="skin-modal">
         <div class="modal-content" style="text-align: center;">
             <i class="fas fa-times close-modal" onclick="closeModal('skin-modal')"></i>
-            <h3 style="margin:0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 10px; color: var(--primary);">TU SKIN</h3>
-            <img id="my-full-skin" src="" style="width: 200px; height: auto;" alt="Tu Skin">
+            <h3 style="margin:0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 10px; color: var(--primary);">TU SKIN EN VIVO</h3>
+            <div id="skin-viewer-container">
+                <canvas id="skin_container"></canvas>
+            </div>
             <h3 id="skin-username-display" style="margin-top: 10px;"></h3>
+            <p style="color: #666; font-size: 0.8rem;">Arrastra para girar • Rueda para zoom</p>
         </div>
     </div>
 
     <script>
-        // --- IMÁGENES DE LOS KITS (RANGOS) ---
-        // Pega aquí los enlaces de tus fotos de Shulkers para que salgan en el popup
         const kitImages = {
             'cobre': 'https://i.postimg.cc/PxFZp50K/cobre.png',
             'hierro': 'https://i.postimg.cc/HkCM7KPJ/hierro.png',
@@ -870,157 +846,44 @@
             'intoxicado': 'https://i.postimg.cc/mkBk8cKS/Captura-de-pantalla-2026-02-02-203219.png'
         };
 
-        // --- DATA DE KITS ---
         const kitData = {
-            // --- SEMI ANARQUICO ---
-            'cobre': `
-                <li><strong>Casco de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Hierro</strong><span>Filo I, Irrompibilidad II</span></li>
-                <li><strong>Pico de Hierro</strong><span>Eficiencia I, Irrompibilidad II</span></li>
-                <li><strong>Hacha de Hierro</strong><span>Eficiencia III, Irrompibilidad II</span></li>
-                <li><strong>Pala de Hierro</strong><span>Eficiencia II, Irrompibilidad II</span></li>
-            `,
-            'hierro': `
-                <li><strong>Casco de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Hierro</strong><span>Filo III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pico de Hierro</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Hierro</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Hierro</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder II, Irrompibilidad III</span></li>
-            `,
-            'oro': `
-                <li><strong>Casco de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo IV, Irrompibilidad III</span></li>
-                <li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia V</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia IV</span></li>
-                <li><strong>Arco</strong><span>Poder III</span></li>
-            `,
-            'diamante': `
-                <li><strong>Casco de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Elytras</strong><span>Irrompibilidad III</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo V, Aspecto ígneo II, Irrompibilidad III</span></li>
-                <li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III</span></li>
-                <li><strong>Arco</strong><span>Poder III, Llama</span></li>
-            `,
-            'esmeralda': `
-                <li><strong>Casco de Diamante</strong><span>Prot IV, Respiración III, Afinidad Acuática, Irromp III, Reparación</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Prot IV, Caída de Pluma IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Elytras</strong><span>Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo V, Aspecto ígneo II, Empuje II, Irromp III, Reparación</span></li>
-                <li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia V, Irromp III, Reparación</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder III, Llama, Reparación</span></li>
-            `,
-            'netherite': `
-                <li><strong>Casco de Netherite</strong><span>Prot III, Respiración III, Afinidad Acuática, Irromp III, Reparación</span></li>
-                <li><strong>Pechera de Netherite</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Netherite</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Netherite</strong><span>Prot III, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li>
-                <li><strong>Elytras</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Netherite</strong><span>Filo IV, Empuje II, Botín III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pico de Netherite</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Netherite</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Netherite</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder III, Llama, Empuje II, Reparación</span></li>
-            `,
-
-            // --- VANILLA ---
-            'aprendiz': `
-                <li><strong>Casco de Hierro</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Pechera de Hierro</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Pantalones de Hierro</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Espada de Hierro</strong><span>Filo I, Irrompibilidad III</span></li>
-                <li><strong>Pico de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li>
-                <li><strong>Pala de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li>
-                <li><strong>Hacha de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li>
-                <li><strong>Arco</strong><span>Poder I, Irrompibilidad III</span></li>
-            `,
-            'explorador': `
-                <li><strong>Casco de Hierro</strong><span>Protección III, Irrompibilidad III</span></li>
-                <li><strong>Pechera de Hierro</strong><span>Protección III, Irrompibilidad III</span></li>
-                <li><strong>Pantalones de Hierro</strong><span>Protección III, Irrompibilidad III</span></li>
-                <li><strong>Botas de Hierro</strong><span>Protección III, Irrompibilidad III</span></li>
-                <li><strong>Espada de Hierro</strong><span>Filo III, Irrompibilidad III</span></li>
-                <li><strong>Pico de Hierro</strong><span>Fortuna II, Eficiencia III, Irrompibilidad III</span></li>
-                <li><strong>Hacha de Hierro</strong><span>Eficiencia III, Irrompibilidad III</span></li>
-                <li><strong>Arco</strong><span>Poder II</span></li>
-            `,
-            'guerrero': `
-                <li><strong>Casco de Diamante</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Botas de Diamante</strong><span>Protección I, Irrompibilidad III</span></li>
-                <li><strong>Espada de Hierro</strong><span>Filo V, Irrompibilidad III</span></li>
-                <li><strong>Pico de Hierro</strong><span>Eficiencia V, Irrompibilidad III</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia III, Irrompibilidad III</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia III, Irrompibilidad III</span></li>
-                <li><strong>Arco</strong><span>Poder II, Irrompibilidad III</span></li>
-            `,
-            'epico': `
-                <li><strong>Casco de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pico de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder II, Irrompibilidad III, Reparación</span></li>
-            `,
-            'heroe': `
-                <li><strong>Casco de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo IV, Aspecto Ígneo I, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder IV, Fuego, Irrompibilidad III</span></li>
-            `,
-            'leyenda': `
-                <li><strong>Casco de Diamante</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li>
-                <li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Diamante</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li>
-                <li><strong>Espada de Diamante</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li>
-                <li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Arco</strong><span>Poder V, Fuego, Irrompibilidad III</span></li>
-            `,
-            'intoxicado': `
-                <li><strong>Casco de Netherite</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li>
-                <li><strong>Pechera de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pantalones de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Botas de Netherite</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li>
-                <li><strong>Espada de Netherite</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li>
-                <li><strong>Pico de Netherite</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Pala de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-                <li><strong>Hacha de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>
-            `
+            'cobre': `<li><strong>Casco de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Hierro</strong><span>Protección I, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Hierro</strong><span>Filo I, Irrompibilidad II</span></li><li><strong>Pico de Hierro</strong><span>Eficiencia I, Irrompibilidad II</span></li><li><strong>Hacha de Hierro</strong><span>Eficiencia III, Irrompibilidad II</span></li><li><strong>Pala de Hierro</strong><span>Eficiencia II, Irrompibilidad II</span></li>`,
+            'hierro': `<li><strong>Casco de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Hierro</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Hierro</strong><span>Filo III, Irrompibilidad III, Reparación</span></li><li><strong>Pico de Hierro</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Hierro</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Hierro</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder II, Irrompibilidad III</span></li>`,
+            'oro': `<li><strong>Casco de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Irrompibilidad III</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia V</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia IV</span></li><li><strong>Arco</strong><span>Poder III</span></li>`,
+            'diamante': `<li><strong>Casco de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Elytras</strong><span>Irrompibilidad III</span></li><li><strong>Espada de Diamante</strong><span>Filo V, Aspecto ígneo II, Irrompibilidad III</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III</span></li><li><strong>Arco</strong><span>Poder III, Llama</span></li>`,
+            'esmeralda': `<li><strong>Casco de Diamante</strong><span>Prot IV, Respiración III, Afinidad Acuática, Irromp III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Prot IV, Caída de Pluma IV, Irrompibilidad III, Reparación</span></li><li><strong>Elytras</strong><span>Irrompibilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo V, Aspecto ígneo II, Empuje II, Irromp III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia V, Irromp III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder III, Llama, Reparación</span></li>`,
+            'netherite': `<li><strong>Casco de Netherite</strong><span>Prot III, Respiración III, Afinidad Acuática, Irromp III, Reparación</span></li><li><strong>Pechera de Netherite</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Netherite</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Netherite</strong><span>Prot III, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li><li><strong>Elytras</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Netherite</strong><span>Filo IV, Empuje II, Botín III, Irrompibilidad III, Reparación</span></li><li><strong>Pico de Netherite</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Netherite</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Netherite</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder III, Llama, Empuje II, Reparación</span></li>`,
+            'aprendiz': `<li><strong>Casco de Hierro</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Pechera de Hierro</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Pantalones de Hierro</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Espada de Hierro</strong><span>Filo I, Irrompibilidad III</span></li><li><strong>Pico de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li><li><strong>Pala de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li><li><strong>Hacha de Hierro</strong><span>Eficiencia I, Irrompibilidad III</span></li><li><strong>Arco</strong><span>Poder I, Irrompibilidad III</span></li>`,
+            'explorador': `<li><strong>Casco de Hierro</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Pechera de Hierro</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Pantalones de Hierro</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Botas de Hierro</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Espada de Hierro</strong><span>Filo III, Irrompibilidad III</span></li><li><strong>Pico de Hierro</strong><span>Fortuna II, Eficiencia III, Irrompibilidad III</span></li><li><strong>Hacha de Hierro</strong><span>Eficiencia III, Irrompibilidad III</span></li><li><strong>Arco</strong><span>Poder II</span></li>`,
+            'guerrero': `<li><strong>Casco de Diamante</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Pechera de Diamante</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Botas de Diamante</strong><span>Protección I, Irrompibilidad III</span></li><li><strong>Espada de Hierro</strong><span>Filo V, Irrompibilidad III</span></li><li><strong>Pico de Hierro</strong><span>Eficiencia V, Irrompibilidad III</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia III, Irrompibilidad III</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia III, Irrompibilidad III</span></li><li><strong>Arco</strong><span>Poder II, Irrompibilidad III</span></li>`,
+            'epico': `<li><strong>Casco de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Protección II, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo III, Irrompibilidad III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia III, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder II, Irrompibilidad III, Reparación</span></li>`,
+            'heroe': `<li><strong>Casco de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Aspecto Ígneo I, Irrompibilidad III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder IV, Fuego, Irrompibilidad III</span></li>`,
+            'leyenda': `<li><strong>Casco de Diamante</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder V, Fuego, Irrompibilidad III</span></li>`,
+            'intoxicado': `<li><strong>Casco de Netherite</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li><li><strong>Pechera de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Netherite</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li><li><strong>Espada de Netherite</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li><li><strong>Pico de Netherite</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>`
         };
 
-        // --- 1. LOGIN Y TÉRMINOS ---
+        // --- PREGUNTAS FRECUENTES DATA ---
+        const faqData = {
+            'buy': {
+                title: "¿Cómo comprar?",
+                text: "Selecciona el paquete que desees y añádelo al carrito. Al finalizar, haz clic en 'Generar Pedido'. Se copiará un texto en tu portapapeles. Ve a nuestro Discord, abre un ticket de compra y pega ese mensaje para que un administrador procese tu pago."
+            },
+            'discord': {
+                title: "¿Cómo unirme al Discord?",
+                text: "Puedes unirte haciendo clic en el botón 'Discord' en el menú lateral o en el botón azul 'Entrar a Discord' en la sección de bienvenida."
+            },
+            'payment': {
+                title: "¿Métodos de pago?",
+                text: "Aceptamos diversos métodos de pago dependiendo de tu país (PayPal, Criptomonedas, Transferencia Bancaria, etc.). Todos los detalles se coordinan directamente en el ticket de soporte."
+            },
+            'security': {
+                title: "¿Es seguro?",
+                text: "Totalmente. Todas las compras son gestionadas manualmente por los dueños del servidor (Polagodd y Chimii) para garantizar que recibas tus ítems sin problemas."
+            }
+        };
+
         let globalUser = "Invitado";
+        let skinViewer = null;
 
         function updateSkin() {
             const nick = document.getElementById("nick-input").value;
@@ -1041,9 +904,8 @@
             document.getElementById("login-overlay").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("login-overlay").style.display = "none";
-                const termsOverlay = document.getElementById("terms-overlay");
-                termsOverlay.style.display = "flex";
-                setTimeout(() => termsOverlay.style.opacity = "1", 50);
+                document.getElementById("terms-overlay").style.display = "flex";
+                setTimeout(() => document.getElementById("terms-overlay").style.opacity = "1", 50);
             }, 500);
         }
 
@@ -1051,21 +913,14 @@
             document.getElementById("sidebar-username").innerText = globalUser;
             document.getElementById("sidebar-avatar").style.backgroundImage = `url('https://minotar.net/helm/${globalUser}/40.png')`;
             document.getElementById("cart-username").innerText = globalUser;
-            const termsOverlay = document.getElementById("terms-overlay");
-            termsOverlay.style.opacity = "0";
-            setTimeout(() => termsOverlay.style.display = "none", 500);
+            document.getElementById("terms-overlay").style.opacity = "0";
+            setTimeout(() => document.getElementById("terms-overlay").style.display = "none", 500);
         }
 
-        // --- 2. MODALES Y NAVEGACIÓN ---
         function resetNavigation() {
-            // Scroll arriba
             document.getElementById('scroll-container').scrollTop = 0;
-            
-            // Cerrar submenús
             document.querySelectorAll('.submenu').forEach(el => el.classList.remove('show'));
             document.querySelectorAll('.submenu-toggle').forEach(el => el.classList.remove('open'));
-            
-            // Set active home
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('btn-inicio').classList.add('active');
         }
@@ -1081,31 +936,61 @@
             title.innerText = "CONTENIDO: KIT " + kitKey.toUpperCase();
             listContainer.innerHTML = kitData[kitKey] || "<li>Información no disponible</li>";
             
-            // Mostrar imagen si existe en la configuración
             if(kitImages[kitKey]) {
                 img.src = kitImages[kitKey];
                 img.style.display = "block";
             } else {
                 img.style.display = "none";
             }
-            
             modal.style.display = "flex";
         }
         
+        // --- FUNCIÓN FAQ ---
+        function openFAQ(id) {
+            const modal = document.getElementById("faq-modal");
+            const title = document.getElementById("faq-title");
+            const body = document.getElementById("faq-body");
+            const data = faqData[id];
+
+            if(data) {
+                title.innerText = data.title;
+                body.innerText = data.text;
+                modal.style.display = "flex";
+            }
+        }
+
+        // --- FUNCIÓN SKIN 3D ---
         function showFullSkin() {
             if(globalUser === "Invitado") return;
             const modal = document.getElementById("skin-modal");
-            const img = document.getElementById("my-full-skin");
-            const nameDisplay = document.getElementById("skin-username-display");
-            
-            img.src = `https://minotar.net/armor/body/${globalUser}/200.png`;
-            nameDisplay.innerText = globalUser;
+            document.getElementById("skin-username-display").innerText = globalUser;
             modal.style.display = "flex";
+
+            if(skinViewer) {
+                skinViewer.loadSkin(`https://minotar.net/skin/${globalUser}`);
+            } else {
+                skinViewer = new skinview3d.SkinViewer({
+                    canvas: document.getElementById("skin_container"),
+                    width: 300,
+                    height: 300,
+                    skin: `https://minotar.net/skin/${globalUser}`
+                });
+                
+                skinViewer.width = document.getElementById("skin-viewer-container").clientWidth;
+                skinViewer.height = 300;
+                skinViewer.loadCape(null);
+                
+                skinViewer.animation = new skinview3d.WalkingAnimation();
+                skinViewer.animation.speed = 1.0;
+                
+                let control = skinview3d.createOrbitControls(skinViewer);
+                control.enableRotate = true;
+                control.enableZoom = true;
+            }
         }
 
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-        // --- 3. SCROLL ---
         const mainContent = document.getElementById('scroll-container');
         const sections = document.querySelectorAll('section');
         const navItems = document.querySelectorAll('.sidebar a.nav-item');
@@ -1117,7 +1002,6 @@
                     current = section.getAttribute('id');
                 }
             });
-
             navItems.forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('href') === '#' + current) {
@@ -1136,7 +1020,6 @@
             document.getElementById('toggle-' + id).classList.toggle('open');
         }
 
-        // --- 4. CARRITO Y PRECIOS ---
         let cart = [];
         let isPermanent = false;
 
@@ -1149,7 +1032,6 @@
             } else {
                 isPermanent = document.getElementById('price-switch-semi').checked;
             }
-
             const labelSemiM = document.getElementById("label-month-semi");
             const labelSemiP = document.getElementById("label-perm-semi");
             if(labelSemiM && labelSemiP) {
@@ -1162,35 +1044,24 @@
                 labelVanM.classList.toggle("active", !isPermanent);
                 labelVanP.classList.toggle("active", isPermanent);
             }
-
             document.querySelectorAll(".amount").forEach(el => {
                 el.innerText = isPermanent ? el.getAttribute("data-p") : el.getAttribute("data-m");
             });
-
             if(cart.length > 0) { cart = []; updateCartUI(); }
         }
 
         function addToCart(name, btn) {
             const card = btn.closest('.card');
             const price = parseFloat(card.querySelector('.amount').innerText);
-            
             let type = "Único";
-            if(name.includes("Rango")) {
-                type = isPermanent ? "Permanente" : "Mensual";
-            } else {
-                type = "Paquete"; 
-            }
-
+            if(name.includes("Rango")) type = isPermanent ? "Permanente" : "Mensual";
+            else type = "Paquete"; 
             cart.push({ name, price, type });
             updateCartUI();
-            
             const originalText = btn.innerText;
             btn.innerText = "¡Listo!";
             btn.style.borderColor = "var(--success)";
-            setTimeout(() => { 
-                btn.innerText = originalText; 
-                btn.style.borderColor = "var(--primary)";
-            }, 1000);
+            setTimeout(() => { btn.innerText = originalText; btn.style.borderColor = "var(--primary)"; }, 1000);
         }
 
         function updateCartUI() {
@@ -1198,9 +1069,7 @@
             const container = document.getElementById("cart-items-container");
             container.innerHTML = "";
             let total = 0;
-
             if(cart.length === 0) container.innerHTML = '<p style="text-align: center; color: #666;">Vacío</p>';
-            
             cart.forEach((item, index) => {
                 total += item.price;
                 container.innerHTML += `
@@ -1212,11 +1081,7 @@
             document.getElementById("cart-total-price").innerText = total.toFixed(2);
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
         function toggleGiftInput() {
             const isGift = document.getElementById("is-gift").checked;
             document.getElementById("gift-nickname").style.display = isGift ? "block" : "none";
@@ -1224,22 +1089,17 @@
 
         function checkout() {
             if(cart.length === 0) return alert("Carrito vacío");
-            
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
-            
             let msg = "";
-            
             if(isGift) {
                 if(!giftNick) return alert("Por favor, ingresa el Nickname del destinatario.");
                 msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${globalUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
             } else {
                 msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${globalUser}\n--------------------------------\n`;
             }
-            
             cart.forEach(i => msg += `• ${i.name} [${i.type}] - $${i.price}\n`);
             msg += `--------------------------------\n💰 TOTAL: $${document.getElementById("cart-total-price").innerText} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
-            
             navigator.clipboard.writeText(msg);
             alert("Pedido copiado con éxito. ¡Pégalo en el ticket!");
             window.open("https://discord.gg/PMYA2K3YWy", "_blank");
