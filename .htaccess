@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^$ https://discord.gg/StKcGsxMGp [L,R=301]
