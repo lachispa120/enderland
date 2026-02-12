@@ -235,26 +235,6 @@
             display: flex; flex-direction: column; position: relative; transition: 0.3s;
         }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .flash-offer-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #ff4747;
-            color: #fff;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 0 10px rgba(255,71,71,0.6);
-            z-index: 5;
-        }
-        .flash-offer-price {
-            color: #00ff88;
-            font-weight: 800;
-            margin-left: 6px;
-        }
         .card.netherite { border: 1px solid #5a0b0b; background: linear-gradient(145deg, #1e1e1e 0%, #290a0a 100%); }
         .card.netherite h3 { color: #ff5555; }
         .card h3 { font-size: 1.5rem; margin: 0 0 5px 0; color: var(--primary); text-transform: uppercase; }
@@ -634,7 +614,7 @@
         </div>
 
         <div class="nav-category-title">SOPORTE</div>
-        <a href="https://discord.gg/eUDuwfjJaT" class="nav-item">
+        <a href="https://discord.gg/PJ3JfM2BbJ" target="_blank" class="nav-item">
             <i class="fab fa-discord"></i> Discord
         </a>
         <div class="nav-item" style="cursor: default;">
@@ -681,7 +661,7 @@
                         <div class="welcome-btn" onclick="copyIP()">
                             IP: <strong>play.enderland.org</strong> <i class="far fa-copy" style="margin-left: 10px;"></i>
                         </div>
-                        <a href="https://discord.gg/eUDuwfjJaT" class="welcome-btn" style="background: #5865F2; border-color: #5865F2;">
+                        <a href="https://discord.gg/PJ3JfM2BbJ" target="_blank" class="welcome-btn" style="background: #5865F2; border-color: #5865F2;">
                             <i class="fab fa-discord"></i> Unirse a Discord
                         </a>
                     </div>
@@ -1009,14 +989,6 @@
             </div>
         </section>
 
-        <section id="ofertas-especiales">
-            <div class="section-header">
-                <i class="fas fa-bolt"></i>
-                <h2>Ofertas Relámpago</h2>
-            </div>
-            <div id="ofertas-grid" class="grid"></div>
-            <p id="ofertas-empty" style="color:#777; font-size:0.9rem;">No hay ofertas activas en este momento.</p>
-        </section>
 
         <section id="admin-panel">
             <div class="section-header">
@@ -1054,18 +1026,6 @@
                         <button class="admin-btn" onclick="saveNewKit()">Guardar kit en catálogo</button>
                         <div id="admin-kit-status" style="font-size:0.8rem; color:#888; margin-top:5px;"></div>
                         <div id="admin-catalog-list" style="margin-top:10px; font-size:0.8rem; color:#ccc;"></div>
-                    </div>
-                    <div class="admin-card">
-                        <h4>Ofertas Relámpago</h4>
-                        <select id="admin-offer-product" class="admin-select">
-                            <option value="">Selecciona un producto…</option>
-                        </select>
-                        <input type="number" step="0.01" id="admin-offer-price" class="admin-input" placeholder="Precio relámpago USD">
-                        <label style="font-size:0.85rem; color:#ccc; display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                            <input type="checkbox" id="admin-offer-active"> Activar oferta
-                        </label>
-                        <button class="admin-btn" onclick="saveFlashOffer()">Guardar oferta</button>
-                        <div id="admin-offer-status" style="font-size:0.8rem; color:#888; margin-top:5px;"></div>
                     </div>
                     <div class="admin-card">
                         <h4>Cupones</h4>
@@ -1107,7 +1067,7 @@
                     <p>Ante cualquier duda o problema con tu compra:</p>
                     <a href="mailto:Soporte@enderland.org"><i class="fas fa-envelope"></i> Soporte@enderland.org</a>
                     <br>
-                    <a href="https://discord.gg/eUDuwfjJaT"><i class="fab fa-discord"></i> Ticket en Discord</a>
+                    <a href="https://discord.gg/PJ3JfM2BbJ" target="_blank"><i class="fab fa-discord"></i> Ticket en Discord</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -1150,7 +1110,7 @@
             <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
                 Total: $<span id="cart-total-price">0.00</span>
             </div>
-            <button onclick="checkout(this)" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            <button onclick="checkout()" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                 <i class="fab fa-discord"></i> GENERAR PEDIDO
             </button>
         </div>
@@ -1218,19 +1178,58 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <script>
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOkYiVzU0wrALPeTBcGNIqK-NhV7QBIVs",
-            authDomain: "enderland-7c875.firebaseapp.com",
-            databaseURL: "https://enderland-7c875-default-rtdb.firebaseio.com",
-            projectId: "enderland-7c875",
-            storageBucket: "enderland-7c875.firebasestorage.app",
-            messagingSenderId: "90498636412",
-            appId: "1:90498636412:web:41081a7ff3693104bb87f9",
-            measurementId: "G-HT5SQYX3KQ"
-        }; // <-- ESTA LLAVE Y PUNTO Y COMA SON CLAVE
+        // --- PROTECCIÓN DE SEGURIDAD Y OFUSCACIÓN ---
+        (function() {
+            // Bloqueo de Clic Derecho
+            document.addEventListener('contextmenu', e => e.preventDefault());
 
-        firebase.initializeApp(firebaseConfig);
+            // Anti-Debugger / Detección de Consola
+            let devtoolsOpen = false;
+            const threshold = 160;
+            setInterval(() => {
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                    if (!devtoolsOpen) {
+                        devtoolsOpen = true;
+                        console.clear();
+                        const user = typeof globalUser !== 'undefined' ? globalUser : 'Invitado';
+                        if (typeof logSystem === 'function') {
+                            logSystem('security_alert', 'POSIBLE INTENTO DE INSPECCIÓN - Usuario: ' + user);
+                        }
+                    }
+                } else {
+                    devtoolsOpen = false;
+                }
+            }, 1000);
+
+            // Generación de Token de Sesión (Session Key)
+            window._sK = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        })();
+
+        // --- FIREBASE CONFIG (OFUSCADA) ---
+        const _cA = {
+            aK: "AIzaSyCOkYiVzU0wrALPeTBcGNIqK-NhV7QBIVs",
+            aD: "enderland-7c875.firebaseapp.com",
+            dU: "https://enderland-7c875-default-rtdb.firebaseio.com",
+            pI: "enderland-7c875",
+            sB: "enderland-7c875.firebasestorage.app",
+            mS: "90498636412",
+            aI: "1:90498636412:web:41081a7ff3693104bb87f9",
+            mI: "G-HT5SQYX3KQ"
+        };
+
+        firebase.initializeApp({
+            apiKey: _cA.aK,
+            authDomain: _cA.aD,
+            databaseURL: _cA.dU,
+            projectId: _cA.pI,
+            storageBucket: _cA.sB,
+            messagingSenderId: _cA.mS,
+            appId: _cA.aI,
+            measurementId: _cA.mI
+        });
+        
         const db = firebase.database();
         const dbRefs = {
             catalog: db.ref('catalog'),
@@ -1241,10 +1240,30 @@
             systemLogs: db.ref('system_logs')
         };
 
-        const ADMIN_HASH = "6ea2d849adfc88c9eec262b87bb10d76c6e87033d55443d3a9d0db2d3c190b31cca208a2657956f63b36f7154934dbfc406fbeded79ff07d9069caf49139f40c";
+        const ADMIN_HASH = "3aaf91d308b920d133f0792fc4a36649fb28af614082520f786768c6f35eb5bbf7f2557c6f42c82a44504583806e981f1d5f0fbf2e3747928cd5962961f1e0f2";
 
-        let activeOffers = {}; // { productName: { price, active } }
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
+
+        // Precios oficiales para validación de seguridad (Cybersecurity Expert mode)
+        const OFFICIAL_PRICES = {
+            "Rango Cobre (Semi)": { "Mensual": 1.50, "Permanente": 2.50 },
+            "Rango Hierro (Semi)": { "Mensual": 2.50, "Permanente": 4.00 },
+            "Rango Oro (Semi)": { "Mensual": 4.00, "Permanente": 6.50 },
+            "Rango Diamante (Semi)": { "Mensual": 6.00, "Permanente": 9.50 },
+            "Rango Esmeralda (Semi)": { "Mensual": 8.00, "Permanente": 12.50 },
+            "Rango Netherite (Semi)": { "Mensual": 10.00, "Permanente": 16.00 },
+            "Rango Aprendiz (Vanilla)": { "Mensual": 1.00, "Permanente": 1.60 },
+            "Rango Explorador (Vanilla)": { "Mensual": 2.50, "Permanente": 4.00 },
+            "Rango Guerrero (Vanilla)": { "Mensual": 4.00, "Permanente": 6.50 },
+            "Rango Épico (Vanilla)": { "Mensual": 6.00, "Permanente": 9.50 },
+            "Rango Héroe (Vanilla)": { "Mensual": 8.00, "Permanente": 12.50 },
+            "Rango Leyenda (Vanilla)": { "Mensual": 10.00, "Permanente": 16.00 },
+            "Kit Pociones (Semi)": 1.00,
+            "Kit Comida (Semi)": 1.50,
+            "Kit Intoxicado (Vanilla)": 20.00,
+            "Kit Pociones (Vanilla)": 1.00,
+            "Kit Comida (Vanilla)": 1.50
+        };
 
         const STATIC_PRODUCT_NAMES = [
             "Rango Cobre (Semi)", "Rango Hierro (Semi)", "Rango Oro (Semi)", "Rango Diamante (Semi)",
@@ -1264,14 +1283,6 @@
         }
 
         function initFirebaseRealtime() {
-            // Ofertas activas
-            dbRefs.offers.on('value', snapshot => {
-                activeOffers = snapshot.val() || {};
-                renderFlashOffers();
-                applyOffersToOriginalCards();
-                populateOfferSelector();
-            });
-
             // Social proof: toasts en tiempo real
             dbRefs.recentPurchases.limitToLast(5).on('child_added', snap => {
                 const order = snap.val();
@@ -1294,7 +1305,6 @@
                 const catalog = snapshot.val() || {};
                 currentCatalogSnapshot = catalog || {};
                 renderDynamicCatalog(catalog);
-                populateOfferSelector(catalog);
                 renderAdminCatalogList(catalog);
                 updateDynamicSidebar(catalog);
             });
@@ -1302,133 +1312,7 @@
             subscribeSystemLogs();
         }
 
-        function renderFlashOffers() {
-            const grid = document.getElementById("ofertas-grid");
-            const emptyText = document.getElementById("ofertas-empty");
-            if (!grid || !emptyText) return;
-            grid.innerHTML = "";
 
-            const entries = Object.values(activeOffers || {}).filter(o => o && o.active);
-            if (entries.length === 0) {
-                emptyText.style.display = "block";
-                return;
-            }
-            emptyText.style.display = "none";
-
-            entries.forEach(offer => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <h3>${offer.productName || "Producto"}</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span>
-                        <span class="amount">${parseFloat(offer.flashPrice || 0).toFixed(2)}</span>
-                        <span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-bolt icon-list"></i> Oferta relámpago activa</li>
-                    </ul>
-                    <button class="btn-add" onclick="addOfferItemToCart('${offer.productName || ""}', ${parseFloat(offer.flashPrice || 0)})">Añadir</button>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function applyOffersToOriginalCards() {
-            // Aplica visualmente las ofertas sobre las cards originales
-            const offersByName = {};
-            Object.values(activeOffers || {}).forEach(o => {
-                if (o && o.active && o.productName) {
-                    offersByName[o.productName] = o;
-                }
-            });
-
-            const cards = document.querySelectorAll(".card");
-            cards.forEach(card => {
-                const addBtn = card.querySelector(".btn-add");
-                const amountEl = card.querySelector(".price-tag .amount");
-                if (!addBtn || !amountEl) return;
-
-                const onclickVal = addBtn.getAttribute("onclick") || "";
-                const match = onclickVal.match(/addToCart\('([^']+)'/);
-                const productName = match ? match[1] : null;
-                if (!productName) return;
-
-                const offer = offersByName[productName];
-                const badge = card.querySelector(".flash-offer-badge");
-                const currencySymbol = card.querySelector(".price-tag .currency-symbol");
-
-                if (offer) {
-                    const basePrice = amountEl.dataset.originalPrice || amountEl.textContent.trim();
-                    amountEl.dataset.originalPrice = basePrice;
-                    amountEl.style.textDecoration = "line-through";
-                    amountEl.style.color = "#ff5555";
-
-                    let offerSpan = card.querySelector(".flash-offer-price");
-                    if (!offerSpan) {
-                        offerSpan = document.createElement("span");
-                        offerSpan.className = "flash-offer-price";
-                        if (currencySymbol && currencySymbol.nextSibling) {
-                            currencySymbol.parentNode.insertBefore(offerSpan, currencySymbol.nextSibling.nextSibling || null);
-                        } else {
-                            amountEl.parentNode.appendChild(offerSpan);
-                        }
-                    }
-                    const flashPrice = parseFloat(offer.flashPrice || 0);
-                    offerSpan.textContent = flashPrice.toFixed(2);
-
-                    if (!badge) {
-                        const newBadge = document.createElement("div");
-                        newBadge.className = "flash-offer-badge";
-                        newBadge.textContent = "¡OFERTA RELÁMPAGO!";
-                        card.appendChild(newBadge);
-                    }
-                } else {
-                    // Restaurar estado original sin oferta
-                    if (amountEl.dataset.originalPrice) {
-                        amountEl.textContent = amountEl.dataset.originalPrice;
-                    }
-                    amountEl.style.textDecoration = "none";
-                    amountEl.style.color = "#fff";
-
-                    const offerSpan = card.querySelector(".flash-offer-price");
-                    if (offerSpan) {
-                        offerSpan.remove();
-                    }
-                    if (badge) {
-                        badge.remove();
-                    }
-                }
-            });
-        }
-
-        function populateOfferSelector(dynamicCatalog) {
-            const select = document.getElementById("admin-offer-product");
-            if (!select) return;
-
-            const dynamicNames = [];
-            if (dynamicCatalog) {
-                Object.values(dynamicCatalog).forEach(cat => {
-                    if (cat && cat.kits) {
-                        Object.values(cat.kits).forEach(kit => {
-                            if (kit && kit.displayName) dynamicNames.push(kit.displayName);
-                        });
-                    }
-                });
-            }
-
-            const allNames = Array.from(new Set([...STATIC_PRODUCT_NAMES, ...dynamicNames])).sort();
-
-            const current = select.value;
-            select.innerHTML = '<option value="">Selecciona un producto…</option>';
-            allNames.forEach(name => {
-                const opt = document.createElement("option");
-                opt.value = name;
-                opt.textContent = name;
-                select.appendChild(opt);
-            });
-            if (current) select.value = current;
-        }
 
         const CATEGORY_GRID_MAP = {
             "semi-rangos": "#semi-anarquico .grid",
@@ -1614,7 +1498,7 @@
             try {
                 const normalizedUser = (globalUser || "").toLowerCase();
                 if (normalizedUser !== "lachispa1122") {
-                    errorBox.textContent = "Solo el usuario noteimporta puede acceder al panel.";
+                    errorBox.textContent = "Solo el usuario lachispa1122 puede acceder al panel.";
                     return;
                 }
                 const hash = await hashStringSHA512(pwd);
@@ -1698,40 +1582,6 @@
             }
         }
 
-        function saveFlashOffer() {
-            const productSel = document.getElementById("admin-offer-product");
-            const priceEl = document.getElementById("admin-offer-price");
-            const activeEl = document.getElementById("admin-offer-active");
-            const statusEl = document.getElementById("admin-offer-status");
-            if (!productSel || !priceEl || !activeEl || !statusEl) return;
-
-            const productName = productSel.value;
-            const price = parseFloat(priceEl.value || "0");
-            const active = !!activeEl.checked;
-
-            if (!productName || !price) {
-                statusEl.style.color = "#ff5555";
-                statusEl.textContent = "Selecciona producto y precio.";
-                return;
-            }
-
-            const key = productName.replace(/[^\w]/g, "_");
-            const data = {
-                productName,
-                flashPrice: price,
-                active,
-                updatedAt: Date.now()
-            };
-            dbRefs.offers.child(key).set(data, err => {
-                if (err) {
-                    statusEl.style.color = "#ff5555";
-                    statusEl.textContent = "Error al guardar oferta.";
-                } else {
-                    statusEl.style.color = "#00ff88";
-                    statusEl.textContent = "Oferta actualizada.";
-                }
-            });
-        }
 
         function saveCoupon() {
             const codeEl = document.getElementById("admin-coupon-code");
@@ -1984,17 +1834,10 @@
 
         // --- CARRITO ---
         function openCart() { document.getElementById("cart-modal").style.display = "flex"; }
-        function closeModal(id) { document.getElementById(id).style.display = "none"; }
-
         function addToCart(name, btn) {
             console.log("DEBUG: addToCart called for:", name);
             const card = btn.closest('.card');
             let price = parseFloat(card.querySelector('.amount').innerText);
-            // Prioridad de precio: si hay oferta activa en Firebase, usar flashPrice
-            const offer = Object.values(activeOffers || {}).find(o => o && o.active && o.productName === name);
-            if (offer && offer.flashPrice) {
-                price = parseFloat(offer.flashPrice);
-            }
             let type = "Único";
             if(name.includes("Rango")) type = isPermanent ? "Permanente" : "Mensual";
             else type = "Paquete"; 
@@ -2010,7 +1853,6 @@
         function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
         function updateCartUI() {
-            console.log("DEBUG: updateCartUI, cart size:", cart.length);
             document.getElementById("cart-count").innerText = cart.length;
             const container = document.getElementById("cart-items-container");
             let subtotal = 0;
@@ -2045,7 +1887,10 @@
             const input = document.getElementById("cart-coupon-input");
             const statusEl = document.getElementById("cart-coupon-status");
             if (!input || !statusEl) return;
-            const rawCode = (input.value || "").trim();
+            // Sanitización del cupón: solo alfanumérico
+            const rawCode = (input.value || "").trim().replace(/[^a-zA-Z0-9]/g, '');
+            input.value = rawCode; // Reflejar sanitización en el input
+
             if (!rawCode) {
                 appliedCouponCode = null;
                 appliedDiscountPercent = 0;
@@ -2070,207 +1915,199 @@
             updateCartUI();
         }
 
-        async function checkout(btnElement) {
-            console.log("DEBUG: checkout() call started", { cartLength: cart.length });
-            try {
-                if (cart.length === 0) { 
-                    alert("⚠️ Tu carrito está vacío."); 
-                    return; 
-                }
-
-                // Feedback visual inmediato en el botón
-                const btn = btnElement || document.querySelector('button[onclick*="checkout"]');
-                const originalContent = btn ? btn.innerHTML : "GENERAR PEDIDO";
-                if (btn) {
-                    console.log("DEBUG: Setting button to processing state");
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO...';
-                    btn.disabled = true;
-                    btn.style.opacity = "0.7";
-                }
-
-                const isGift = document.getElementById("is-gift")?.checked || false;
-                const giftNick = document.getElementById("gift-nickname")?.value.trim() || "";
-                const currentUser = typeof globalUser !== 'undefined' ? globalUser : "Invitado";
-
-                console.log("DEBUG: Order info", { isGift, giftNick, currentUser });
-
-                if (isGift && !giftNick) {
-                    alert("⚠️ Por favor, ingresa el Nickname del destinatario.");
-                    if (btn) {
-                        btn.innerHTML = originalContent;
-                        btn.disabled = false;
-                        btn.style.opacity = "1";
-                    }
-                    return;
-                }
-
-                // --- 1. IP ---
-                console.log("DEBUG: Fetching IP...");
-                let resolvedIP = "0.0.0.0";
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 4000);
-                    const ipResp = await fetch("https://api.ipify.org?format=json", { signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    const ipData = await ipResp.json();
-                    if (ipData && ipData.ip) resolvedIP = ipData.ip;
-                } catch (e) {
-                    console.warn("IP fetch error, using 0.0.0.0", e);
-                }
-                currentClientIP = resolvedIP || "0.0.0.0";
-                console.log("DEBUG: Resolved IP:", currentClientIP);
-
-                // --- 2. AntiSpam ---
-                try {
-                    console.log("DEBUG: Checking AntiSpam...");
-                    const canOrder = await checkAntiSpam(currentClientIP);
-                    if (!canOrder) {
-                        alert("❌ Has realizado demasiados pedidos recientemente. Intenta en 5 minutos.");
-                        if (btn) {
-                            btn.innerHTML = originalContent;
-                            btn.disabled = false;
-                            btn.style.opacity = "1";
-                        }
-                        return;
-                    }
-                } catch (e) {
-                    console.error("AntiSpam error:", e);
-                }
-
-                // --- 3. Calcular Totales con Ofertas ---
-                console.log("DEBUG: Calculating totals...");
-                const items = [];
-                let totalFinal = 0;
-
-                cart.forEach(i => {
-                    const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
-                    const price = offer ? parseFloat(offer.flashPrice) : parseFloat(i.price);
-                    totalFinal += price;
-                    items.push({
-                        name: i.name,
-                        type: i.type,
-                        finalPrice: price
-                    });
-                });
-
-                if (appliedDiscountPercent > 0 && appliedCouponCode) {
-                    totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
-                }
-
-                const order = {
-                    user: currentUser,
-                    isGift,
-                    giftNick: isGift ? giftNick : null,
-                    items,
-                    totalFinal,
-                    couponCode: appliedCouponCode || null,
-                    couponPercent: appliedDiscountPercent || 0,
-                    ip: currentClientIP,
-                    createdAt: Date.now()
-                };
-                console.log("DEBUG: Order object ready", order);
-
-                // --- 4. Persistencia en Firebase ---
-                try {
-                    console.log("DEBUG: Saving to Firebase...");
-                    if (dbRefs && dbRefs.recentPurchases) {
-                        await dbRefs.recentPurchases.push().set(order);
-                        const ipKey = (currentClientIP || "0_0_0_0").replace(/\./g, '_');
-                        await dbRefs.ipOrders.child(ipKey).push().set({ createdAt: order.createdAt });
-                        console.log("DEBUG: Firebase save success");
-                    } else {
-                        console.warn("DEBUG: dbRefs or recentPurchases missing");
-                    }
-                } catch (e) {
-                    console.error("Firebase error:", e);
-                }
-
-                // --- 5. Webhook Discord ---
-                try {
-                    console.log("DEBUG: Sending Webhook...");
-                    await sendDiscordWebhook(order);
-                    console.log("DEBUG: Webhook success");
-                } catch (e) {
-                    console.error("Webhook error:", e);
-                }
-
-                // --- 6. Portapapeles ---
-                console.log("DEBUG: Copying to clipboard...");
-                let msg = isGift ? 
-                    `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n` :
-                    `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n`;
-                
-                msg += "--------------------------------\n";
-                items.forEach(i => {
-                    msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
-                });
-                
-                if (appliedDiscountPercent > 0 && appliedCouponCode) {
-                    msg += `Descuento: ${appliedCouponCode} (-${appliedDiscountPercent}%)\n`;
-                }
-                
-                msg += "--------------------------------\n";
-                msg += `💰 TOTAL: $${totalFinal.toFixed(2)} USD\n`;
-                msg += "He leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.";
-
-                let clipboardOk = false;
-                try {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        await navigator.clipboard.writeText(msg);
-                        clipboardOk = true;
-                    } else {
-                        const textArea = document.createElement("textarea");
-                        textArea.value = msg;
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        clipboardOk = document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                    }
-                    console.log("DEBUG: Clipboard result:", clipboardOk);
-                } catch (e) {
-                    console.error("Clipboard error:", e);
-                }
-
-                // --- 7. Finalizar ---
-                if (btn) {
-                    btn.innerHTML = originalContent;
-                    btn.disabled = false;
-                    btn.style.opacity = "1";
-                }
-
-                try {
-                    new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3").play().catch(() => {});
-                } catch (e) {}
-
-                alert("✅ ¡Pedido generado con éxito! El detalle ha sido copiado al portapapeles. Ahora te redireccionaremos a Discord.");
-                startDiscordRedirectCountdown(5, clipboardOk);
-
-            } catch (err) {
-                console.error("FATAL ERROR in checkout:", err);
-                alert("❌ Error crítico: " + err.message);
-                const btn = btnElement || document.querySelector('button[onclick*="checkout"]');
-                if (btn) {
-                    btn.innerHTML = '<i class="fab fa-discord"></i> GENERAR PEDIDO';
-                    btn.disabled = false;
-                    btn.style.opacity = "1";
-                }
+        async function checkout() {
+            // Verificación de Integridad de Sesión (Session Key)
+            if (!window._sK) {
+                logSystem('security_alert', 'INTENTO DE ACCESO DIRECTO A CHECKOUT - Usuario: ' + (globalUser || 'Invitado'));
+                alert("Error de seguridad: Sesión inválida.");
+                return;
             }
+
+            if (cart.length === 0) { alert("Carrito vacío"); return; }
+
+            const isGift = document.getElementById("is-gift").checked;
+            const giftNick = (document.getElementById("gift-nickname").value || "").trim().replace(/[^a-zA-Z0-9_]/g, '');
+            const currentUser = globalUser || "Invitado";
+
+            if (isGift && !giftNick) {
+                alert("Por favor, ingresa el Nickname del destinatario (solo alfanumérico).");
+                return;
+            }
+
+            // --- Obtener IP con checkout blindado (fallback 0.0.0.0) ---
+            let resolvedIP = "0.0.0.0";
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const ipResp = await fetch("https://api.ipify.org?format=json", { signal: controller.signal });
+                clearTimeout(timeoutId);
+                const ipData = await ipResp.json();
+                if (ipData && ipData.ip) resolvedIP = ipData.ip;
+            } catch (e) {
+                console.warn("No se pudo obtener IP pública, usando 0.0.0.0", e);
+                try {
+                    await logSystem("error", "Fallo obteniendo IP pública; usando 0.0.0.0", { error: (e && e.message) || String(e) });
+                } catch (_) {}
+            }
+            currentClientIP = resolvedIP;
+
+            const canOrder = await checkAntiSpam(currentClientIP);
+            if (!canOrder) {
+                alert("Has realizado demasiados pedidos recientemente. Intenta nuevamente en unos minutos.");
+                return;
+            }
+
+            // --- Construir información de carrito (CON VALIDACIÓN DE SEGURIDAD) ---
+            const items = [];
+            let totalBase = 0;
+            let totalFinal = 0;
+
+            cart.forEach(i => {
+                let officialPrice = 0;
+
+                // 1. Intentar buscar en precios estáticos
+                if (OFFICIAL_PRICES[i.name]) {
+                    const priceData = OFFICIAL_PRICES[i.name];
+                    if (typeof priceData === 'object') {
+                        // Es un rango (Mensual/Permanente)
+                        officialPrice = priceData[i.type] || 0;
+                    } else {
+                        // Es un kit estático
+                        officialPrice = priceData;
+                    }
+                } 
+                // 2. Si no es estático, buscar en el catálogo dinámico de Firebase
+                else if (currentCatalogSnapshot) {
+                    const kits = Object.values(currentCatalogSnapshot);
+                    const dbKit = kits.find(k => k && k.displayName === i.name);
+                    if (dbKit) {
+                        officialPrice = parseFloat(dbKit.price) || 0;
+                    }
+                }
+
+                // VALIDACIÓN DE FRAUDE: Comparar precio detectado en HTML (i.price) con el oficial
+                const detectedPrice = parseFloat(i.price);
+                if (Math.abs(detectedPrice - officialPrice) > 0.01) {
+                    console.error("ALERTA DE SEGURIDAD: Discrepancia de precio detectada.", {
+                        producto: i.name,
+                        detectado: detectedPrice,
+                        oficial: officialPrice
+                    });
+                    logSystem("security_alert", 'POSIBLE INTENTO DE MANIPULACIÓN DE PRECIOS - Usuario: ' + currentUser, {
+                        producto: i.name,
+                        precioHTML: detectedPrice,
+                        precioOficial: officialPrice,
+                        ip: currentClientIP
+                    });
+                }
+
+                // USAR SIEMPRE EL PRECIO OFICIAL PARA EL CÁLCULO
+                totalBase += officialPrice;
+                totalFinal += officialPrice;
+                items.push({
+                    name: i.name,
+                    type: i.type,
+                    basePrice: officialPrice,
+                    finalPrice: officialPrice,
+                    hasOffer: false
+                });
+            });
+
+            // --- Aplicar cupón al total final (si hay) ANTES de enviar a Discord ---
+            if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
+            }
+
+            const order = {
+                user: currentUser,
+                isGift,
+                giftNick: isGift ? giftNick : null,
+                items,
+                totalBase,
+                totalFinal,
+                couponCode: appliedCouponCode || null,
+                couponPercent: appliedDiscountPercent || 0,
+                ip: currentClientIP,
+                createdAt: Date.now()
+            };
+
+            // --- Persistencia en Firebase (obligatoria) ---
+            let savedToFirebase = false;
+            try {
+                const newRef = dbRefs.recentPurchases.push();
+                await newRef.set(order);
+
+                const ipKey = (order.ip || "0.0.0.0").replace(/\./g, '_');
+                const ipRef = dbRefs.ipOrders.child(ipKey).push();
+                await ipRef.set({ createdAt: order.createdAt });
+                savedToFirebase = true;
+            } catch (e) {
+                console.error("Error guardando pedido en Firebase:", e);
+                try {
+                    await logSystem("error", "Fallo guardando pedido en Firebase", { error: (e && e.message) || String(e) });
+                } catch (_) {}
+            }
+
+            // --- Webhook de Discord en try/catch independiente ---
+            try {
+                await sendDiscordWebhook(order);
+            } catch (e) {
+                console.error("Error en webhook (ignorando para no romper checkout):", e);
+                try {
+                    await logSystem("error", "Fallo enviando webhook de Discord", { error: (e && e.message) || String(e) });
+                } catch (_) {}
+            }
+
+            // --- Mensaje para el jugador + portapapeles (SIEMPRE se intenta) ---
+            let msg = "";
+            if (isGift) {
+                msg = `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n--------------------------------\n`;
+            } else {
+                msg = `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n--------------------------------\n`;
+            }
+            items.forEach(i => {
+                msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
+            });
+            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n`;
+            if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                msg += `Descuento: ${appliedCouponCode} - ${appliedDiscountPercent}% desc.\n`;
+            }
+            msg += `He leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+
+            let clipboardOk = true;
+            try {
+                await navigator.clipboard.writeText(msg);
+            } catch (e) {
+                clipboardOk = false;
+                console.error("No se pudo copiar al portapapeles:", e);
+            }
+
+            // --- Feedback final al jugador ---
+            if (!savedToFirebase) {
+                alert("Tu pedido se generó, pero hubo un problema al registrarlo en el sistema. El detalle fue copiado (si es posible), pégalo en tu ticket y avisa al staff.");
+                return;
+            }
+
+            // Reproducir sonido justo antes del alert de éxito
+            try {
+                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3.");
+                successSound.play().catch(() => {});
+            } catch (e) {
+                console.warn("No se pudo reproducir el sonido de éxito:", e);
+            }
+
+            startDiscordRedirectCountdown(5, clipboardOk);
         }
 
         async function checkAntiSpam(ip) {
             if (!ip) return true;
-            try {
-                const ipKey = ip.replace(/\./g, '_');
-                const snap = await dbRefs.ipOrders.child(ipKey).once("value");
-                const data = snap.val() || {};
-                const now = Date.now();
-                const FIVE_MIN = 5 * 60 * 1000;
-                const recent = Object.values(data).filter(o => o && (now - o.createdAt) <= FIVE_MIN);
-                return recent.length < 3;
-            } catch (e) {
-                console.error("AntiSpam check error:", e);
-                return true;
-            }
+            const ipKey = ip.replace(/\./g, '_');
+            const snap = await dbRefs.ipOrders.child(ipKey).once("value");
+            const data = snap.val() || {};
+            const now = Date.now();
+            const FIVE_MIN = 5 * 60 * 1000;
+            const recent = Object.values(data).filter(o => o && (now - o.createdAt) <= FIVE_MIN);
+            return recent.length < 3;
         }
 
         async function sendDiscordWebhook(order) {
@@ -2378,18 +2215,12 @@
                 if (s <= 0) {
                     clearInterval(iv);
                     setTimeout(() => toast.remove(), 1000);
-                    window.location.href = "https://discord.gg/eUDuwfjJaT";
+                    window.open("https://discord.gg/wmS4Ztg8Af", "_blank");
+                    window.open("https://discord.gg/wmS4Ztg8Af", "_blank");
                 }
             }, 1000);
         }
 
-        function addOfferItemToCart(name, flashPrice) {
-            if (!name) return;
-            const type = "Oferta relámpago";
-            const price = parseFloat(flashPrice || 0);
-            cart.push({ name, price, type });
-            updateCartUI();
-        }
 
         // --- PRECIOS ---
         function togglePrice(sender) {
