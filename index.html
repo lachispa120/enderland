@@ -2091,6 +2091,9 @@
                 if (ipData && ipData.ip) resolvedIP = ipData.ip;
             } catch (e) {
                 console.warn("No se pudo obtener IP pública, usando 0.0.0.0", e);
+                try {
+                    await logSystem("error", "Fallo obteniendo IP pública; usando 0.0.0.0", { error: (e && e.message) || String(e) });
+                } catch (_) {}
             }
             currentClientIP = resolvedIP;
 
@@ -2150,6 +2153,9 @@
                 savedToFirebase = true;
             } catch (e) {
                 console.error("Error guardando pedido en Firebase:", e);
+                try {
+                    await logSystem("error", "Fallo guardando pedido en Firebase", { error: (e && e.message) || String(e) });
+                } catch (_) {}
             }
 
             // --- Webhook de Discord en try/catch independiente ---
@@ -2157,19 +2163,22 @@
                 await sendDiscordWebhook(order);
             } catch (e) {
                 console.error("Error en webhook (ignorando para no romper checkout):", e);
+                try {
+                    await logSystem("error", "Fallo enviando webhook de Discord", { error: (e && e.message) || String(e) });
+                } catch (_) {}
             }
 
             // --- Mensaje para el jugador + portapapeles (SIEMPRE se intenta) ---
             let msg = "";
             if (isGift) {
-                msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
+                msg = `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n--------------------------------\n`;
             } else {
-                msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
+                msg = `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n--------------------------------\n`;
             }
             items.forEach(i => {
-                msg += `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}\n`;
+                msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
             });
-            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD.\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
 
             let clipboardOk = true;
             try {
@@ -2187,7 +2196,7 @@
 
             // Reproducir sonido justo antes del alert de éxito
             try {
-                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3");
+                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3.");
                 successSound.play().catch(() => {});
             } catch (e) {
                 console.warn("No se pudo reproducir el sonido de éxito:", e);
@@ -2214,7 +2223,7 @@
             const url = WEBHOOK_URL;
             if (!url) return;
             try {
-                const lines = order.items.map(i => `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}`).join("\\n");
+                const lines = order.items.map(i => `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}`).join("\\n");
                 const body = {
                     content: null,
                     embeds: [
@@ -2226,8 +2235,9 @@
                                 { name: "Es regalo", value: order.isGift ? `Sí → ${order.giftNick || "-"}` : "No", inline: true },
                                 { name: "Total", value: `$${(order.totalFinal || 0).toFixed(2)} USD`, inline: true },
                                 { name: "Paquetes", value: lines || "-", inline: false },
-                                { name: "IP Cliente", value: order.ip || "N/D", inline: false }
+                                { name: "IP Cliente", value: order.ip || "0.0.0.0", inline: false }
                             ],
+                            footer: { text: new Date(order.createdAt).toLocaleString() },
                             timestamp: new Date(order.createdAt).toISOString()
                         }
                     ]
@@ -2239,6 +2249,9 @@
                 });
             } catch (e) {
                 console.error("Error enviando webhook:", e);
+                try {
+                    await logSystem("error", "Fallo enviando webhook de Discord", { error: (e && e.message) || String(e) });
+                } catch (_) {}
             }
         }
 
@@ -2268,6 +2281,24 @@
                 box.removeChild(box.firstChild);
             }
             box.scrollTop = box.scrollHeight;
+        }
+
+        async function logSystem(level, message, context) {
+            try {
+                const payload = {
+                    level: level || "info",
+                    message: message || "",
+                    context: context || null,
+                    timestamp: Date.now()
+                };
+                console[level === "error" ? "error" : "log"](`#admin-console-log ${payload.message}`, payload.context || "");
+                if (dbRefs && dbRefs.systemLogs) {
+                    const ref = dbRefs.systemLogs.push();
+                    await ref.set(payload);
+                }
+            } catch (e) {
+                console.error("#admin-console-log No se pudo registrar en system_logs:", e);
+            }
         }
 
         function addOfferItemToCart(name, flashPrice) {
