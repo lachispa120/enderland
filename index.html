@@ -10,6 +10,10 @@
     
     <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
 <style>
         /* --- CONFIGURACIÓN BASE --- */
         :root {
@@ -329,7 +333,7 @@
         .coupon-remove:hover { background: #ff5555; color: #fff; }
         .coupon-error { margin-top: 8px; padding: 8px; background: rgba(255,71,71,0.1); border: 1px solid rgba(255,71,71,0.3); border-radius: 6px; color: #ff4747; font-size: 0.85rem; }
 
-        /* --- PANEL ADMIN CUPONES (solo lachispa1122) --- */
+        /* --- PANEL ADMIN CUPONES (solo admin autorizado) --- */
         .admin-coupons-panel { display: none; }
         .admin-coupons-panel.visible { display: block; }
         .admin-coupon-card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
@@ -1096,23 +1100,105 @@
             'security': { title: "¿Es seguro?", text: "Totalmente. Todas las compras son gestionadas manualmente por los dueños del servidor (Polagodd y Chimii) para garantizar que recibas tus ítems sin problemas." }
         };
 
+        // ============================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================
+        // Pega aquí tus credenciales de Firebase:
+        const firebaseConfig = {
+  apiKey: "AIzaSyCOkYiVzU0wrALPeTBcGNIqK-NhV7QBIVs",
+  authDomain: "enderland-7c875.firebaseapp.com",
+  projectId: "enderland-7c875",
+  storageBucket: "enderland-7c875.firebasestorage.app",
+  messagingSenderId: "90498636412",
+  appId: "1:90498636412:web:41081a7ff3693104bb87f9",
+  measurementId: "G-HT5SQYX3KQ"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const COUPONS_DB_PATH = "coupons"; // Ruta en Firebase Realtime Database
+
+        // ============================================
+        // FIN CONFIGURACIÓN DE FIREBASE
+        // ============================================
+
         // --- GLOBAL VARS ---
-        const COUPONS_STORAGE_KEY = "enderland_coupons";
-        const ADMIN_NICKNAME = "lachispa1122";
+        const ADMIN_HASH = "617300407a23330686997d98341103c81e816a7516d203666b6941542f618683"; // Hash SHA-256 del admin (tutulilipan)
         let globalUser = "Invitado"; // Inicializada por defecto
         let skinViewer = null;
         let cart = [];
         let appliedCoupon = null; // { code, type, value }
         let isPermanent = false;
+        let isAdminUser = false; // Flag para verificar si el usuario actual es admin
+        let couponsListener = null; // Listener de Firebase para cupones
 
-        function getCoupons() {
-            try {
-                const raw = localStorage.getItem(COUPONS_STORAGE_KEY);
-                return raw ? JSON.parse(raw) : [];
-            } catch (e) { return []; }
+        // Función para calcular hash SHA-256 de un string
+        async function calculateSHA256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text.toLowerCase().trim());
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-        function saveCoupons(list) {
-            localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(list));
+
+        // Obtener cupones desde Firebase (async)
+        async function getCoupons() {
+            try {
+                const snapshot = await database.ref(COUPONS_DB_PATH).once('value');
+                const data = snapshot.val();
+                if (!data) return [];
+                // Convertir objeto de Firebase a array
+                return Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            } catch (e) {
+                console.error("Error al obtener cupones:", e);
+                return [];
+            }
+        }
+
+        // Guardar cupones en Firebase (solo admin)
+        async function saveCoupons(list) {
+            if (!isAdminUser) {
+                alert("No tienes permisos para modificar cupones.");
+                return false;
+            }
+            try {
+                // Convertir array a objeto para Firebase
+                const couponsObj = {};
+                list.forEach((coupon, index) => {
+                    const id = coupon.id || `coupon_${Date.now()}_${index}`;
+                    couponsObj[id] = { code: coupon.code, type: coupon.type, value: coupon.value };
+                });
+                await database.ref(COUPONS_DB_PATH).set(couponsObj);
+                return true;
+            } catch (e) {
+                console.error("Error al guardar cupones:", e);
+                alert("Error al guardar cupones: " + e.message);
+                return false;
+            }
+        }
+
+        // Escuchar cambios en tiempo real de cupones (solo para admin)
+        function setupCouponsListener() {
+            if (couponsListener) {
+                couponsListener.off(); // Remover listener anterior si existe
+            }
+            couponsListener = database.ref(COUPONS_DB_PATH).on('value', (snapshot) => {
+                const data = snapshot.val();
+                const list = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+                // Actualizar UI si el modal de admin está abierto
+                if (document.getElementById("admin-coupons-modal").style.display === "flex") {
+                    renderAdminCouponsListFromData(list);
+                }
+            });
+        }
+
+        // Remover listener de cupones
+        function removeCouponsListener() {
+            if (couponsListener) {
+                database.ref(COUPONS_DB_PATH).off('value', couponsListener);
+                couponsListener = null;
+            }
         }
 
         // --- FUNCIONES SISTEMA ---
@@ -1140,18 +1226,26 @@
             }, 500);
         }
 
-        function enterShop() {
+        async function enterShop() {
             document.getElementById("sidebar-username").innerText = globalUser;
             document.getElementById("sidebar-avatar").style.backgroundImage = `url('https://minotar.net/helm/${globalUser}/40.png')`;
             document.getElementById("cart-username").innerText = globalUser;
             document.getElementById("terms-overlay").style.opacity = "0";
             setTimeout(() => document.getElementById("terms-overlay").style.display = "none", 500);
             
-            // Panel admin cupones solo para lachispa1122
-            const isAdmin = (globalUser || "").toLowerCase() === ADMIN_NICKNAME.toLowerCase();
-            document.querySelectorAll(".admin-coupons-panel").forEach(el => el.style.display = isAdmin ? "" : "none");
-            document.getElementById("nav-admin-cupones").style.display = isAdmin ? "flex" : "none";
-            document.getElementById("nav-admin-cupones-title").style.display = isAdmin ? "block" : "none";
+            // Panel admin cupones: comparar hash SHA-256 del usuario con el hash del admin
+            const userHash = await calculateSHA256(globalUser || "");
+            isAdminUser = userHash === ADMIN_HASH;
+            document.querySelectorAll(".admin-coupons-panel").forEach(el => el.style.display = isAdminUser ? "" : "none");
+            document.getElementById("nav-admin-cupones").style.display = isAdminUser ? "flex" : "none";
+            document.getElementById("nav-admin-cupones-title").style.display = isAdminUser ? "block" : "none";
+            
+            // Configurar listener de Firebase solo si es admin
+            if (isAdminUser) {
+                setupCouponsListener();
+            } else {
+                removeCouponsListener();
+            }
             
             fetchServerStatus();
             setInterval(fetchServerStatus, 60000); 
@@ -1169,14 +1263,14 @@
         function openCart() { document.getElementById("cart-modal").style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-        function addToCart(name, btn) {
+        async function addToCart(name, btn) {
             const card = btn.closest('.card');
             const price = parseFloat(card.querySelector('.amount').innerText);
             let type = "Único";
             if(name.includes("Rango")) type = isPermanent ? "Permanente" : "Mensual";
             else type = "Paquete"; 
             cart.push({ name, price, type });
-            updateCartUI();
+            await updateCartUI();
             
             const originalText = btn.innerText;
             btn.innerText = "¡Listo!";
@@ -1184,14 +1278,14 @@
             setTimeout(() => { btn.innerText = originalText; btn.style.borderColor = "var(--primary)"; }, 1000);
         }
 
-        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+        async function removeFromCart(index) { cart.splice(index, 1); await updateCartUI(); }
 
-        function getCartTotal() {
+        async function getCartTotal() {
             let subtotal = 0;
             cart.forEach(item => subtotal += item.price);
             let discount = 0;
             if (appliedCoupon) {
-                const coupons = getCoupons();
+                const coupons = await getCoupons();
                 const c = coupons.find(x => (x.code || "").toLowerCase() === (appliedCoupon.code || "").toLowerCase());
                 if (c) {
                     if (c.type === "percent") discount = subtotal * (Math.min(100, Math.max(0, parseFloat(c.value) || 0)) / 100);
@@ -1201,10 +1295,10 @@
             return { subtotal, discount, total: Math.max(0, subtotal - discount) };
         }
 
-        function updateCartUI() {
+        async function updateCartUI() {
             document.getElementById("cart-count").innerText = cart.length;
             const container = document.getElementById("cart-items-container");
-            const tot = getCartTotal();
+            const tot = await getCartTotal();
             
             if(cart.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #666;">Vacío</p>';
@@ -1236,12 +1330,14 @@
             }
         }
 
-        function applyCoupon() {
+        async function applyCoupon() {
             const input = document.getElementById("coupon-code-input");
             const code = (input.value || "").trim();
             document.getElementById("coupon-error-box").style.display = "none";
             if (!code) return;
-            const coupons = getCoupons();
+            
+            // Buscar cupón en Firebase
+            const coupons = await getCoupons();
             const c = coupons.find(x => (x.code || "").toLowerCase() === code.toLowerCase());
             if (!c) {
                 document.getElementById("coupon-error-box").innerText = "Cupón no válido o no existe.";
@@ -1250,13 +1346,13 @@
             }
             appliedCoupon = { code: c.code, type: c.type, value: c.value };
             document.getElementById("coupon-code-input").value = "";
-            updateCartUI();
+            await updateCartUI();
         }
 
-        function removeCoupon() {
+        async function removeCoupon() {
             appliedCoupon = null;
             document.getElementById("coupon-error-box").style.display = "none";
-            updateCartUI();
+            await updateCartUI();
         }
 
         function toggleGiftInput() {
@@ -1264,11 +1360,11 @@
             document.getElementById("gift-nickname").style.display = isGift ? "block" : "none";
         }
 
-        function checkout() {
+        async function checkout() {
             if(cart.length === 0) return alert("Carrito vacío");
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
-            const tot = getCartTotal();
+            const tot = await getCartTotal();
             let msg = "";
             const currentUser = globalUser || "Invitado";
 
@@ -1315,7 +1411,7 @@
             document.querySelectorAll(".amount").forEach(el => {
                 el.innerText = isPermanent ? el.getAttribute("data-p") : el.getAttribute("data-m");
             });
-            if(cart.length > 0) { cart = []; updateCartUI(); }
+            if(cart.length > 0) { cart = []; updateCartUI().catch(e => console.error(e)); }
         }
 
         // --- MODALES EXTRA ---
@@ -1375,57 +1471,105 @@
 
         function copyIP() { navigator.clipboard.writeText("play.enderland.org"); alert("IP Copiada"); }
 
-        // --- ADMIN CUPONES (solo lachispa1122) ---
-        function openAdminCoupons() {
-            renderAdminCouponsList();
+        // --- ADMIN CUPONES (solo admin autorizado) ---
+        async function openAdminCoupons() {
+            if (!isAdminUser) {
+                alert("No tienes permisos para acceder a esta sección.");
+                return;
+            }
+            await renderAdminCouponsList();
             document.getElementById("admin-coupons-modal").style.display = "flex";
         }
-        function renderAdminCouponsList() {
-            const list = getCoupons();
+        
+        async function renderAdminCouponsList() {
+            const list = await getCoupons();
+            renderAdminCouponsListFromData(list);
+        }
+        
+        function renderAdminCouponsListFromData(list) {
             const container = document.getElementById("admin-coupons-list");
             if (list.length === 0) {
                 container.innerHTML = '<p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>';
                 return;
             }
-            container.innerHTML = list.map((c, idx) => {
+            container.innerHTML = list.map((c) => {
                 const desc = c.type === "percent" ? c.value + "%" : "$" + parseFloat(c.value).toFixed(2);
                 return `<div class="admin-coupon-card">
                     <div><code>${escapeHtml(c.code)}</code> <span class="coupon-meta">${c.type === "percent" ? desc + " descuento" : desc + " USD"}</span></div>
-                    <button type="button" class="btn-delete-coupon" onclick="deleteAdminCoupon(${idx})"><i class="fas fa-trash"></i> Eliminar</button>
+                    <button type="button" class="btn-delete-coupon" onclick="deleteAdminCoupon('${c.id}')"><i class="fas fa-trash"></i> Eliminar</button>
                 </div>`;
             }).join("");
         }
+        
         function escapeHtml(text) {
             const div = document.createElement("div");
             div.textContent = text;
             return div.innerHTML;
         }
-        function addAdminCoupon() {
+        
+        async function addAdminCoupon() {
+            if (!isAdminUser) {
+                alert("No tienes permisos para agregar cupones.");
+                return;
+            }
             const codeInput = document.getElementById("admin-coupon-code");
             const typeInput = document.getElementById("admin-coupon-type");
             const valueInput = document.getElementById("admin-coupon-value");
             const code = (codeInput.value || "").trim().toUpperCase();
             const type = typeInput.value;
             const value = type === "percent" ? Math.min(100, Math.max(0, parseFloat(valueInput.value) || 0)) : Math.max(0, parseFloat(valueInput.value) || 0);
-            if (!code) return alert("Escribe un código para el cupón.");
-            const list = getCoupons();
-            if (list.some(c => (c.code || "").toLowerCase() === code.toLowerCase())) return alert("Ya existe un cupón con ese código.");
-            list.push({ code, type, value });
-            saveCoupons(list);
-            codeInput.value = "";
-            valueInput.value = "";
-            renderAdminCouponsList();
+            
+            if (!code) {
+                alert("Escribe un código para el cupón.");
+                return;
+            }
+            
+            // Verificar si ya existe el cupón
+            const list = await getCoupons();
+            if (list.some(c => (c.code || "").toLowerCase() === code.toLowerCase())) {
+                alert("Ya existe un cupón con ese código.");
+                return;
+            }
+            
+            // Agregar nuevo cupón directamente a Firebase
+            try {
+                const newCouponRef = database.ref(COUPONS_DB_PATH).push();
+                await newCouponRef.set({ code, type, value });
+                codeInput.value = "";
+                valueInput.value = "";
+                // El listener actualizará automáticamente la lista
+            } catch (e) {
+                console.error("Error al agregar cupón:", e);
+                alert("Error al agregar cupón: " + e.message);
+            }
         }
-        function deleteAdminCoupon(index) {
-            const list = getCoupons();
-            const c = list[index];
+        
+        async function deleteAdminCoupon(couponId) {
+            if (!isAdminUser) {
+                alert("No tienes permisos para eliminar cupones.");
+                return;
+            }
+            
+            const list = await getCoupons();
+            const c = list.find(x => x.id === couponId);
             if (!c) return;
+            
             if (!confirm("¿Eliminar el cupón \"" + (c.code || "") + "\"?")) return;
+            
             const removedCode = (c.code || "").toLowerCase();
-            list.splice(index, 1);
-            saveCoupons(list);
-            if (appliedCoupon && (appliedCoupon.code || "").toLowerCase() === removedCode) removeCoupon();
-            renderAdminCouponsList();
+            
+            // Eliminar directamente de Firebase
+            try {
+                await database.ref(COUPONS_DB_PATH).child(couponId).remove();
+                // El listener actualizará automáticamente la lista
+                // Si el cupón eliminado estaba aplicado, removerlo
+                if (appliedCoupon && (appliedCoupon.code || "").toLowerCase() === removedCode) {
+                    await removeCoupon();
+                }
+            } catch (e) {
+                console.error("Error al eliminar cupón:", e);
+                alert("Error al eliminar cupón: " + e.message);
+            }
         }
 
         // --- NAVIGATION SCROLL ---
