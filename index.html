@@ -235,6 +235,26 @@
             display: flex; flex-direction: column; position: relative; transition: 0.3s;
         }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .flash-offer-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ff4747;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(255,71,71,0.6);
+            z-index: 5;
+        }
+        .flash-offer-price {
+            color: #00ff88;
+            font-weight: 800;
+            margin-left: 6px;
+        }
         .card.netherite { border: 1px solid #5a0b0b; background: linear-gradient(145deg, #1e1e1e 0%, #290a0a 100%); }
         .card.netherite h3 { color: #ff5555; }
         .card h3 { font-size: 1.5rem; margin: 0 0 5px 0; color: var(--primary); text-transform: uppercase; }
@@ -485,6 +505,21 @@
             color: #ff5555;
             font-size: 0.8rem;
             margin-top: 5px;
+        }
+        #admin-console-log {
+            background: #000;
+            color: #00ff88;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.8rem;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            height: 180px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        #admin-console-log::-webkit-scrollbar-thumb {
+            background: #00aa55;
         }
 
         #toast-container {
@@ -1042,6 +1077,11 @@
                         <div class="admin-label-small" style="margin-top:10px;">Cupones activos</div>
                         <div id="admin-coupons-list" style="margin-top:5px; font-size:0.8rem; color:#ccc;"></div>
                     </div>
+                    <div class="admin-card">
+                        <h4>Consola de Monitoreo Staff</h4>
+                        <div class="admin-label-small">Logs en tiempo real (system_logs)</div>
+                        <div id="admin-console-log"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1197,7 +1237,8 @@
             offers: db.ref('offers'),
             coupons: db.ref('coupons'),
             recentPurchases: db.ref('recent_purchases'),
-            ipOrders: db.ref('ip_orders')
+            ipOrders: db.ref('ip_orders'),
+            systemLogs: db.ref('system_logs')
         };
 
         const ADMIN_HASH = "3aaf91d308b920d133f0792fc4a36649fb28af614082520f786768c6f35eb5bbf7f2557c6f42c82a44504583806e981f1d5f0fbf2e3747928cd5962961f1e0f2";
@@ -1227,6 +1268,7 @@
             dbRefs.offers.on('value', snapshot => {
                 activeOffers = snapshot.val() || {};
                 renderFlashOffers();
+                applyOffersToOriginalCards();
                 populateOfferSelector();
             });
 
@@ -1256,6 +1298,8 @@
                 renderAdminCatalogList(catalog);
                 updateDynamicSidebar(catalog);
             });
+
+            subscribeSystemLogs();
         }
 
         function renderFlashOffers() {
@@ -1290,6 +1334,74 @@
             });
         }
 
+        function applyOffersToOriginalCards() {
+            // Aplica visualmente las ofertas sobre las cards originales
+            const offersByName = {};
+            Object.values(activeOffers || {}).forEach(o => {
+                if (o && o.active && o.productName) {
+                    offersByName[o.productName] = o;
+                }
+            });
+
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                const addBtn = card.querySelector(".btn-add");
+                const amountEl = card.querySelector(".price-tag .amount");
+                if (!addBtn || !amountEl) return;
+
+                const onclickVal = addBtn.getAttribute("onclick") || "";
+                const match = onclickVal.match(/addToCart\('([^']+)'/);
+                const productName = match ? match[1] : null;
+                if (!productName) return;
+
+                const offer = offersByName[productName];
+                const badge = card.querySelector(".flash-offer-badge");
+                const currencySymbol = card.querySelector(".price-tag .currency-symbol");
+
+                if (offer) {
+                    const basePrice = amountEl.dataset.originalPrice || amountEl.textContent.trim();
+                    amountEl.dataset.originalPrice = basePrice;
+                    amountEl.style.textDecoration = "line-through";
+                    amountEl.style.color = "#ff5555";
+
+                    let offerSpan = card.querySelector(".flash-offer-price");
+                    if (!offerSpan) {
+                        offerSpan = document.createElement("span");
+                        offerSpan.className = "flash-offer-price";
+                        if (currencySymbol && currencySymbol.nextSibling) {
+                            currencySymbol.parentNode.insertBefore(offerSpan, currencySymbol.nextSibling.nextSibling || null);
+                        } else {
+                            amountEl.parentNode.appendChild(offerSpan);
+                        }
+                    }
+                    const flashPrice = parseFloat(offer.flashPrice || 0);
+                    offerSpan.textContent = flashPrice.toFixed(2);
+
+                    if (!badge) {
+                        const newBadge = document.createElement("div");
+                        newBadge.className = "flash-offer-badge";
+                        newBadge.textContent = "¡OFERTA RELÁMPAGO!";
+                        card.appendChild(newBadge);
+                    }
+                } else {
+                    // Restaurar estado original sin oferta
+                    if (amountEl.dataset.originalPrice) {
+                        amountEl.textContent = amountEl.dataset.originalPrice;
+                    }
+                    amountEl.style.textDecoration = "none";
+                    amountEl.style.color = "#fff";
+
+                    const offerSpan = card.querySelector(".flash-offer-price");
+                    if (offerSpan) {
+                        offerSpan.remove();
+                    }
+                    if (badge) {
+                        badge.remove();
+                    }
+                }
+            });
+        }
+
         function populateOfferSelector(dynamicCatalog) {
             const select = document.getElementById("admin-offer-product");
             if (!select) return;
@@ -1318,41 +1430,37 @@
             if (current) select.value = current;
         }
 
+        const CATEGORY_GRID_MAP = {
+            "semi-rangos": "#semi-anarquico .grid",
+            "vanilla-rangos": "#vanilla-rangos .grid",
+            "semi-kits": "#semi-kits .grid",
+            "vanilla-kits": "#vanilla-kits .grid"
+        };
+
         function renderDynamicCatalog(catalog) {
-            // Renderiza una sección extra de catálogo dinámico debajo de los kits
-            let container = document.getElementById("dynamic-catalog-section");
-            if (!container) {
-                const main = document.getElementById("scroll-container");
-                if (!main) return;
-                const footer = document.querySelector(".site-footer");
-                container = document.createElement("section");
-                container.id = "dynamic-catalog-section";
-                container.innerHTML = `
-                    <div class="section-header">
-                        <i class="fas fa-boxes"></i>
-                        <h2>Categorías Personalizadas</h2>
-                    </div>
-                    <div id="dynamic-catalog-wrapper"></div>
-                `;
-                main.insertBefore(container, footer);
-            }
+            // Inyecta los kits dinámicos directamente en los .grid de las secciones originales
+            Object.entries(CATEGORY_GRID_MAP).forEach(([catKey, selector]) => {
+                const grid = document.querySelector(selector);
+                if (!grid) return;
 
-            const wrapper = document.getElementById("dynamic-catalog-wrapper");
-            if (!wrapper) return;
-            wrapper.innerHTML = "";
+                // Guardar HTML estático original una sola vez
+                if (!grid.dataset.staticHtml) {
+                    grid.dataset.staticHtml = grid.innerHTML;
+                }
 
-            Object.entries(catalog || {}).forEach(([catKey, cat]) => {
-                if (!cat || !cat.kits) return;
-                const title = cat.name || catKey;
-                const sectionDiv = document.createElement("div");
-                sectionDiv.id = "cat-" + catKey;
-                sectionDiv.style.marginBottom = "40px";
-                sectionDiv.innerHTML = `
-                    <h3 style="margin:0 0 15px 0; font-size:1.3rem; color:var(--primary); text-transform:uppercase;">${title}</h3>
-                    <div class="grid"></div>
-                `;
-                const grid = sectionDiv.querySelector(".grid");
-                Object.values(cat.kits).forEach(kit => {
+                const cat = (catalog || {})[catKey];
+                const kits = cat && cat.kits ? Object.values(cat.kits) : [];
+
+                if (!cat || kits.length === 0) {
+                    // Si no hay categoría o no tiene kits, restaurar diseño original
+                    grid.innerHTML = grid.dataset.staticHtml;
+                    return;
+                }
+
+                // Renderizar sólo desde Firebase para esta categoría
+                grid.innerHTML = "";
+                kits.forEach(kit => {
+                    if (!kit) return;
                     const card = document.createElement("div");
                     card.className = "card";
                     const descList = (kit.benefits || []).map(b => `<li><i class="fas fa-check icon-list"></i> ${b}</li>`).join("");
@@ -1361,12 +1469,13 @@
                             <img src="${kit.imageUrl}" alt="${kit.name}" class="kit-image">
                         </div>` : "";
                     const cartName = kit.cartName || kit.displayName || kit.name;
+                    const price = parseFloat(kit.price || 0);
                     card.innerHTML = `
                         ${imgHtml}
                         <h3>${kit.displayName || kit.name}</h3>
                         <div class="price-tag">
                             <span class="currency-symbol">$</span>
-                            <span class="amount" data-m="${kit.price}" data-p="${kit.price}">${parseFloat(kit.price || 0).toFixed(2)}</span>
+                            <span class="amount" data-m="${price.toFixed(2)}" data-p="${price.toFixed(2)}">${price.toFixed(2)}</span>
                             <span class="currency-code">USD</span>
                         </div>
                         <ul>${descList}</ul>
@@ -1374,7 +1483,6 @@
                     `;
                     grid.appendChild(card);
                 });
-                wrapper.appendChild(sectionDiv);
             });
         }
 
@@ -1389,7 +1497,7 @@
             }
             container.innerHTML = "";
 
-            const entries = Object.entries(catalog || {});
+            const entries = Object.entries(catalog || {}).filter(([catKey]) => CATEGORY_GRID_MAP[catKey]);
             if (entries.length === 0) return;
 
             const title = document.createElement("div");
@@ -1399,8 +1507,10 @@
 
             entries.forEach(([catKey, cat]) => {
                 const name = cat && cat.name ? cat.name : catKey;
+                const selector = CATEGORY_GRID_MAP[catKey];
+                const targetSection = selector ? selector.split(" ")[0] : null;
                 const link = document.createElement("a");
-                link.href = "#cat-" + catKey;
+                link.href = targetSection || "#";
                 link.className = "nav-item";
                 link.textContent = name;
                 container.appendChild(link);
@@ -1959,98 +2069,135 @@
         }
 
         async function checkout() {
-            if(cart.length === 0) { alert("Carrito vacío"); return; }
+            if (cart.length === 0) { alert("Carrito vacío"); return; }
 
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
             const currentUser = globalUser || "Invitado";
 
-            if(isGift && !giftNick) {
+            if (isGift && !giftNick) {
                 alert("Por favor, ingresa el Nickname del destinatario.");
                 return;
             }
 
+            // --- Obtener IP con checkout blindado (fallback 0.0.0.0) ---
+            let resolvedIP = "0.0.0.0";
             try {
-                // Obtener IP del cliente
-                const ipResp = await fetch("https://api.ipify.org?format=json");
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const ipResp = await fetch("https://api.ipify.org?format=json", { signal: controller.signal });
+                clearTimeout(timeoutId);
                 const ipData = await ipResp.json();
-                currentClientIP = ipData.ip;
+                if (ipData && ipData.ip) resolvedIP = ipData.ip;
+            } catch (e) {
+                console.warn("No se pudo obtener IP pública, usando 0.0.0.0", e);
+            }
+            currentClientIP = resolvedIP;
 
-                const canOrder = await checkAntiSpam(currentClientIP);
-                if (!canOrder) {
-                    alert("Has realizado demasiados pedidos recientemente. Intenta nuevamente en unos minutos.");
-                    return;
-                }
+            const canOrder = await checkAntiSpam(currentClientIP);
+            if (!canOrder) {
+                alert("Has realizado demasiados pedidos recientemente. Intenta nuevamente en unos minutos.");
+                return;
+            }
 
-                // Construir información de carrito con prioridad de precio (oferta)
-                const items = [];
-                let totalBase = 0;
-                let totalFinal = 0;
+            // --- Construir información de carrito con prioridad de precio (oferta) ---
+            const items = [];
+            let totalBase = 0;
+            let totalFinal = 0;
 
-                cart.forEach(i => {
-                    const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
-                    const basePrice = parseFloat(i.price);
-                    const finalPrice = offer ? parseFloat(offer.flashPrice) : basePrice;
-                    totalBase += basePrice;
-                    totalFinal += finalPrice;
-                    items.push({
-                        name: i.name,
-                        type: i.type,
-                        basePrice,
-                        finalPrice,
-                        hasOffer: !!offer
-                    });
+            cart.forEach(i => {
+                const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
+                const basePrice = parseFloat(i.price);
+                const finalPrice = offer ? parseFloat(offer.flashPrice) : basePrice;
+                totalBase += basePrice;
+                totalFinal += finalPrice;
+                items.push({
+                    name: i.name,
+                    type: i.type,
+                    basePrice,
+                    finalPrice,
+                    hasOffer: !!offer
                 });
+            });
 
-                // Aplicar cupón al total final (si hay)
-                if (appliedDiscountPercent > 0 && appliedCouponCode) {
-                    totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
-                }
+            // --- Aplicar cupón al total final (si hay) ANTES de enviar a Discord ---
+            if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
+            }
 
-                const order = {
-                    user: currentUser,
-                    isGift,
-                    giftNick: isGift ? giftNick : null,
-                    items,
-                    totalBase,
-                    totalFinal,
-                    couponCode: appliedCouponCode || null,
-                    couponPercent: appliedDiscountPercent || 0,
-                    ip: currentClientIP,
-                    createdAt: Date.now()
-                };
+            const order = {
+                user: currentUser,
+                isGift,
+                giftNick: isGift ? giftNick : null,
+                items,
+                totalBase,
+                totalFinal,
+                couponCode: appliedCouponCode || null,
+                couponPercent: appliedDiscountPercent || 0,
+                ip: currentClientIP,
+                createdAt: Date.now()
+            };
 
-                // Guardar en recent_purchases
+            // --- Persistencia en Firebase (obligatoria) ---
+            let savedToFirebase = false;
+            try {
                 const newRef = dbRefs.recentPurchases.push();
                 await newRef.set(order);
 
-                // Guardar referencia por IP para anti-spam
-                const ipRef = dbRefs.ipOrders.child(order.ip).push();
+                const ipKey = order.ip || "0.0.0.0";
+                const ipRef = dbRefs.ipOrders.child(ipKey).push();
                 await ipRef.set({ createdAt: order.createdAt });
-
-                // Enviar al webhook de Discord (staff)
-                await sendDiscordWebhook(order);
-
-                // Mantener compatibilidad: también copiar mensaje para el jugador
-                let msg = "";
-                if(isGift) {
-                    msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
-                } else {
-                    msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
-                }
-                items.forEach(i => {
-                    msg += `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}\n`;
-                });
-                msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
-
-                await navigator.clipboard.writeText(msg);
-                alert("Pedido generado y enviado al staff. El detalle fue copiado, pégalo en tu ticket.");
-                window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
-
+                savedToFirebase = true;
             } catch (e) {
-                console.error("Error en checkout:", e);
-                alert("Ocurrió un error al procesar tu pedido. Inténtalo nuevamente.");
+                console.error("Error guardando pedido en Firebase:", e);
             }
+
+            // --- Webhook de Discord en try/catch independiente ---
+            try {
+                await sendDiscordWebhook(order);
+            } catch (e) {
+                console.error("Error en webhook (ignorando para no romper checkout):", e);
+            }
+
+            // --- Mensaje para el jugador + portapapeles (SIEMPRE se intenta) ---
+            let msg = "";
+            if (isGift) {
+                msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
+            } else {
+                msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
+            }
+            items.forEach(i => {
+                msg += `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}\n`;
+            });
+            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+
+            let clipboardOk = true;
+            try {
+                await navigator.clipboard.writeText(msg);
+            } catch (e) {
+                clipboardOk = false;
+                console.error("No se pudo copiar al portapapeles:", e);
+            }
+
+            // --- Feedback final al jugador ---
+            if (!savedToFirebase) {
+                alert("Tu pedido se generó, pero hubo un problema al registrarlo en el sistema. El detalle fue copiado (si es posible), pégalo en tu ticket y avisa al staff.");
+                return;
+            }
+
+            // Reproducir sonido justo antes del alert de éxito
+            try {
+                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3");
+                successSound.play().catch(() => {});
+            } catch (e) {
+                console.warn("No se pudo reproducir el sonido de éxito:", e);
+            }
+
+            const alertMsg = clipboardOk
+                ? "Pedido generado y enviado al staff. El detalle fue copiado, pégalo en tu ticket."
+                : "Pedido generado y enviado al staff. Si el detalle no se copió automáticamente, por favor describe manualmente tu compra en el ticket.";
+            alert(alertMsg);
+            window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
         }
 
         async function checkAntiSpam(ip) {
@@ -2093,6 +2240,34 @@
             } catch (e) {
                 console.error("Error enviando webhook:", e);
             }
+        }
+
+        function subscribeSystemLogs() {
+            const logRef = dbRefs.systemLogs;
+            if (!logRef) return;
+            logRef.limitToLast(100).on("child_added", snap => {
+                const entry = snap.val();
+                if (!entry) return;
+                appendAdminLog(entry);
+            });
+        }
+
+        function appendAdminLog(entry) {
+            const box = document.getElementById("admin-console-log");
+            if (!box) return;
+
+            const ts = entry.timestamp || entry.createdAt || Date.now();
+            const level = (entry.level || "info").toUpperCase();
+            const msg = entry.message || entry.error || JSON.stringify(entry);
+            const line = document.createElement("div");
+            const date = new Date(ts);
+            line.textContent = `[${date.toLocaleTimeString()}] [${level}] ${msg}`;
+            box.appendChild(line);
+
+            while (box.childNodes.length > 200) {
+                box.removeChild(box.firstChild);
+            }
+            box.scrollTop = box.scrollHeight;
         }
 
         function addOfferItemToCart(name, flashPrice) {
