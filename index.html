@@ -1241,7 +1241,7 @@
             systemLogs: db.ref('system_logs')
         };
 
-        const ADMIN_HASH = "3aaf91d308b920d133f0792fc4a36649fb28af614082520f786768c6f35eb5bbf7f2557c6f42c82a44504583806e981f1d5f0fbf2e3747928cd5962961f1e0f2";
+        const ADMIN_HASH = "6ea2d849adfc88c9eec262b87bb10d76c6e87033d55443d3a9d0db2d3c190b31cca208a2657956f63b36f7154934dbfc406fbeded79ff07d9069caf49139f40c";
 
         let activeOffers = {}; // { productName: { price, active } }
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
@@ -1614,7 +1614,7 @@
             try {
                 const normalizedUser = (globalUser || "").toLowerCase();
                 if (normalizedUser !== "lachispa1122") {
-                    errorBox.textContent = "Solo el usuario lachispa1122 puede acceder al panel.";
+                    errorBox.textContent = "Solo el usuario noteimporta puede acceder al panel.";
                     return;
                 }
                 const hash = await hashStringSHA512(pwd);
