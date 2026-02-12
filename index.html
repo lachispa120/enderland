@@ -10,10 +10,6 @@
     
     <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
 <style>
         /* --- CONFIGURACIÓN BASE --- */
         :root {
@@ -317,51 +313,6 @@
         .gift-input-field { display: none; width: 100%; padding: 12px; margin-top: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #fff; outline: none; transition: 0.3s; }
         .gift-input-field:focus { border-color: var(--primary); background: #222; }
 
-        /* --- CUPÓN DE DESCUENTO (antes de pagar) --- */
-        .coupon-section {
-            margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;
-            display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-        }
-        .coupon-section label { color: #ccc; font-size: 0.9rem; width: 100%; margin-bottom: 5px; }
-        .coupon-input { flex: 1; min-width: 120px; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; color: #fff; outline: none; }
-        .coupon-input:focus { border-color: var(--primary); }
-        .btn-apply-coupon { padding: 10px 18px; background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.3s; }
-        .btn-apply-coupon:hover { background: #7a00c7; }
-        .coupon-applied { margin-top: 10px; padding: 10px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); border-radius: 6px; color: var(--success); font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-        .coupon-applied span { display: flex; align-items: center; gap: 8px; }
-        .coupon-remove { background: transparent; border: 1px solid #ff5555; color: #ff5555; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .coupon-remove:hover { background: #ff5555; color: #fff; }
-        .coupon-error { margin-top: 8px; padding: 8px; background: rgba(255,71,71,0.1); border: 1px solid rgba(255,71,71,0.3); border-radius: 6px; color: #ff4747; font-size: 0.85rem; }
-
-        /* --- PANEL ADMIN CUPONES (solo admin autorizado) --- */
-        .admin-coupons-panel { display: none; }
-        .admin-coupons-panel.visible { display: block; }
-        .admin-coupon-card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .admin-coupon-card code { background: #111; padding: 4px 8px; border-radius: 4px; color: var(--primary); font-size: 0.9rem; }
-        .admin-coupon-card .coupon-meta { color: #888; font-size: 0.85rem; }
-        .admin-coupon-card .btn-delete-coupon { background: #ff4747; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .admin-coupon-card .btn-delete-coupon:hover { background: #cc3333; }
-        .admin-coupon-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #333; }
-        .admin-coupon-form .form-group { display: flex; flex-direction: column; gap: 4px; }
-        .admin-coupon-form .form-group label { font-size: 0.8rem; color: #888; }
-        .admin-coupon-form input, .admin-coupon-form select { padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; color: #fff; }
-        .admin-coupon-form .btn-add-coupon { padding: 10px 20px; background: var(--success); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .admin-coupon-form .btn-add-coupon:hover { background: #00cc6a; }
-        .admin-settings-row { display:flex; justify-content:flex-end; margin-bottom:10px; }
-        .admin-toggle-offers { display:flex; align-items:center; gap:8px; }
-        .admin-stats-block { margin-top:15px; padding-top:12px; border-top:1px solid #333; font-size:0.85rem; color:#ccc; }
-        .admin-stats-block h4 { margin:0 0 8px 0; font-size:0.95rem; color:#fff; }
-        .admin-stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; }
-        .admin-stat-card { background:#181818; border:1px solid #333; border-radius:6px; padding:8px 10px; }
-        .admin-stat-label { font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px; }
-        .admin-stat-value { font-size:0.95rem; margin-top:4px; color:#fff; }
-        .admin-stat-list { margin-top:4px; padding-left:15px; color:#bbb; font-size:0.8rem; }
-
-        /* Ofertas especiales */
-        #ofertas-especiales .card h3 {
-            text-transform: none;
-        }
-
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
             .sidebar { width: 100%; height: auto; position: relative; padding: 15px; border-bottom: 1px solid #333; border-right: none; }
@@ -449,46 +400,127 @@
             .promo-counter { width: 100%; text-align: center; }
             .progress-mini { margin: 0 auto; width: 80%; }
         }
-
-        /* --- TOASTS (SOCIAL PROOF) --- */
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        .toast {
-            min-width: 260px;
-            max-width: 90vw;
-            background: rgba(20, 20, 20, 0.95);
-            border-radius: 8px;
-            padding: 10px 16px;
-            color: #fff;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 255, 136, 0.4);
-            animation: toast-slide 0.3s ease-out;
-            pointer-events: auto;
-        }
-        .toast span.icon {
-            color: var(--success);
-        }
-        @keyframes toast-slide {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
+        
         @keyframes slideInFade {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ADMIN PANEL & TOASTS --- */
+        #admin-panel {
+            background: #111;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .admin-card {
+            background: #151515;
+            border-radius: 10px;
+            border: 1px solid #333;
+            padding: 15px 18px;
+            font-size: 0.9rem;
+        }
+        .admin-card h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        .admin-input, .admin-textarea, .admin-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #1d1d1d;
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            outline: none;
+        }
+        .admin-input:focus, .admin-textarea:focus, .admin-select:focus {
+            border-color: var(--primary);
+        }
+        .admin-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .admin-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .admin-btn:hover {
+            background: #7a00c7;
+        }
+        .admin-stat-big {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        .admin-label-small {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #admin-login-box {
+            background: #151515;
+            border-radius: 10px;
+            border: 1px solid #333;
+            padding: 15px 18px;
+            max-width: 360px;
+        }
+        #admin-login-error {
+            color: #ff5555;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 500;
+        }
+        .toast {
+            background: rgba(21,21,21,0.95);
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+        .toast-icon {
+            color: var(--success);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @media (max-width: 768px) {
+            #toast-container {
+                left: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
@@ -565,16 +597,6 @@
             <a href="#semi-kits" class="nav-item">Semi-Anárquico</a>
             <a href="#vanilla-kits" class="nav-item">Vanilla</a>
         </div>
-
-        <div class="nav-category-title" id="nav-ofertas-title" style="display:none;">OFERTAS</div>
-        <a href="#ofertas-especiales" class="nav-item" id="nav-ofertas" style="display:none;">
-            <i class="fas fa-bolt"></i> Ofertas Especiales
-        </a>
-
-        <div class="nav-category-title admin-coupons-panel" id="nav-admin-cupones-title">ADMIN</div>
-        <a href="#" class="nav-item admin-coupons-panel" id="nav-admin-cupones" onclick="openAdminCoupons(); return false;" style="display: none;">
-            <i class="fas fa-tags"></i> Administrar cupones
-        </a>
 
         <div class="nav-category-title">SOPORTE</div>
         <a href="https://discord.gg/PJ3JfM2BbJ" target="_blank" class="nav-item">
@@ -653,42 +675,6 @@
                         <span><i class="fas fa-signal" style="color:var(--primary)"></i> <span id="server-ping">-- ms</span></span>
                         <span id="server-version">1.20.x</span>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="ofertas-especiales" style="display:none;">
-            <div class="section-header">
-                <i class="fas fa-bolt"></i>
-                <h2>Ofertas Especiales</h2>
-            </div>
-            <p style="color:#ccc; margin-bottom:20px; max-width:720px;">
-                Estas ofertas cambian dinámicamente según la configuración del staff. Aprovecha los descuentos y packs especiales por tiempo limitado.
-            </p>
-            <div class="grid">
-                <div class="card">
-                    <h3 style="color:#ffd700;">Pack Leyenda + Kit Intoxicado</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount">24.99</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-crown icon-list"></i> Rango Leyenda (Vanilla)</li>
-                        <li><i class="fas fa-skull-crossbones icon-list"></i> Kit Intoxicado</li>
-                        <li><i class="fas fa-percentage icon-list"></i> Bonus del 10% en futuras compras (cupón especial)</li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Pack Leyenda + Intoxicado (Oferta)', this)">Añadir</button>
-                </div>
-                <div class="card">
-                    <h3 style="color:#9d00ff;">Starter Semi-Anárquico</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount">3.50</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-shield-alt icon-list"></i> Rango Cobre (Semi)</li>
-                        <li><i class="fas fa-box-open icon-list"></i> Kit Comida (Semi)</li>
-                        <li><i class="fas fa-bolt icon-list"></i> Acceso anticipado a futuros eventos</li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Starter Semi-Anárquico (Oferta)', this)">Añadir</button>
                 </div>
             </div>
         </section>
@@ -988,6 +974,78 @@
             </div>
         </section>
 
+        <section id="ofertas-especiales">
+            <div class="section-header">
+                <i class="fas fa-bolt"></i>
+                <h2>Ofertas Relámpago</h2>
+            </div>
+            <div id="ofertas-grid" class="grid"></div>
+            <p id="ofertas-empty" style="color:#777; font-size:0.9rem;">No hay ofertas activas en este momento.</p>
+        </section>
+
+        <section id="admin-panel">
+            <div class="section-header">
+                <i class="fas fa-lock"></i>
+                <h2>Panel Administrativo</h2>
+            </div>
+            <div id="admin-login-box">
+                <div class="admin-label-small">Acceso restringido Staff</div>
+                <input type="password" id="admin-password" class="admin-input" placeholder="Contraseña de administración">
+                <button class="admin-btn" onclick="adminLogin()">Entrar</button>
+                <div id="admin-login-error"></div>
+            </div>
+            <div id="admin-content" style="display:none; margin-top:20px;">
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h4>Estadísticas</h4>
+                        <div class="admin-label-small">Total recaudado</div>
+                        <div class="admin-stat-big">$<span id="stat-total">0.00</span> USD</div>
+                        <div class="admin-label-small" style="margin-top:10px;">Cupón más usado</div>
+                        <div id="stat-top-coupon" style="font-size:0.95rem; color:#ccc;">Sin datos</div>
+                        <div class="admin-label-small" style="margin-top:10px;">Top 3 productos</div>
+                        <ol id="stat-top-products" style="padding-left:18px; margin:5px 0 0 0; color:#ccc; font-size:0.85rem;"></ol>
+                    </div>
+                    <div class="admin-card">
+                        <h4>Gestión de Catálogo</h4>
+                        <div class="admin-label-small">Categoría</div>
+                        <input type="text" id="admin-category-name" class="admin-input" placeholder="Ej: Semi-Anárquico Kits" />
+                        <input type="text" id="admin-category-key" class="admin-input" placeholder="ID interno (sin espacios)" />
+                        <hr style="border-color:#333; margin:8px 0;">
+                        <div class="admin-label-small">Nuevo Kit</div>
+                        <input type="text" id="admin-kit-name" class="admin-input" placeholder="Nombre del kit">
+                        <input type="text" id="admin-kit-image" class="admin-input" placeholder="URL de la imagen">
+                        <input type="number" step="0.01" id="admin-kit-price" class="admin-input" placeholder="Precio en USD">
+                        <textarea id="admin-kit-description" class="admin-textarea" placeholder="Lista de beneficios (una línea por beneficio)"></textarea>
+                        <button class="admin-btn" onclick="saveNewKit()">Guardar kit en catálogo</button>
+                        <div id="admin-kit-status" style="font-size:0.8rem; color:#888; margin-top:5px;"></div>
+                        <div id="admin-catalog-list" style="margin-top:10px; font-size:0.8rem; color:#ccc;"></div>
+                    </div>
+                    <div class="admin-card">
+                        <h4>Ofertas Relámpago</h4>
+                        <select id="admin-offer-product" class="admin-select">
+                            <option value="">Selecciona un producto…</option>
+                        </select>
+                        <input type="number" step="0.01" id="admin-offer-price" class="admin-input" placeholder="Precio relámpago USD">
+                        <label style="font-size:0.85rem; color:#ccc; display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                            <input type="checkbox" id="admin-offer-active"> Activar oferta
+                        </label>
+                        <button class="admin-btn" onclick="saveFlashOffer()">Guardar oferta</button>
+                        <div id="admin-offer-status" style="font-size:0.8rem; color:#888; margin-top:5px;"></div>
+                    </div>
+                    <div class="admin-card">
+                        <h4>Configuración</h4>
+                        <div class="admin-label-small">Discord Webhook (staff)</div>
+                        <input type="text" id="admin-webhook-url" class="admin-input" placeholder="URL del webhook de Discord">
+                        <button class="admin-btn" onclick="saveSettings()">Guardar configuración</button>
+                        <div id="admin-settings-status" style="font-size:0.8rem; color:#888; margin-top:5px;"></div>
+                        <p style="font-size:0.8rem; color:#777; margin-top:10px;">
+                            El panel registra IPs y protege contra spam (máx. 3 pedidos cada 5 minutos por IP).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-col">
@@ -1041,22 +1099,8 @@
                 </label>
                 <input type="text" id="gift-nickname" class="gift-input-field" placeholder="Ingresa el Nick exacto del destinatario...">
             </div>
-            <div class="coupon-section">
-                <label><i class="fas fa-tag" style="color: var(--primary);"></i> Código de descuento</label>
-                <input type="text" id="coupon-code-input" class="coupon-input" placeholder="Ej: BIENVENIDA10" maxlength="30">
-                <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">Aplicar</button>
-                <div id="coupon-applied-box" class="coupon-applied" style="display: none;">
-                    <span><i class="fas fa-check-circle"></i> Cupón <strong id="coupon-applied-code"></strong> aplicado: <span id="coupon-applied-desc"></span></span>
-                    <button type="button" class="coupon-remove" onclick="removeCoupon()">Quitar</button>
-                </div>
-                <div id="coupon-error-box" class="coupon-error" style="display: none;"></div>
-            </div>
-            <div style="margin-top: 20px; text-align: right; font-size: 1.1rem;">
-                <div id="cart-subtotal-line" style="display: none; color: #888; margin-bottom: 5px;">Subtotal: $<span id="cart-subtotal-price">0.00</span></div>
-                <div id="cart-discount-line" style="display: none; color: var(--success); margin-bottom: 5px;">Descuento: -$<span id="cart-discount-amount">0.00</span></div>
-                <div style="font-size: 1.2rem; font-weight: bold; color: var(--success);">
-                    Total: $<span id="cart-total-price">0.00</span>
-                </div>
+            <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
+                Total: $<span id="cart-total-price">0.00</span>
             </div>
             <button onclick="checkout()" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                 <i class="fab fa-discord"></i> GENERAR PEDIDO
@@ -1119,61 +1163,548 @@
         </div>
     </div>
 
-    <!-- Contenedor para toasts de compras recientes -->
     <div id="toast-container"></div>
 
-    <div class="modal" id="admin-coupons-modal">
-        <div class="modal-content" style="max-width: 560px;">
-            <i class="fas fa-times close-modal" onclick="closeModal('admin-coupons-modal')"></i>
-            <h3 style="margin:0 0 20px 0; color: var(--primary); text-transform: uppercase;">
-                <i class="fas fa-tags"></i> Administrar cupones de descuento
-            </h3>
-            <div class="admin-coupon-form">
-                <div class="form-group">
-                    <label>Código</label>
-                    <input type="text" id="admin-coupon-code" placeholder="Ej: VERANO20" maxlength="30">
-                </div>
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="admin-coupon-type">
-                        <option value="percent">Porcentaje (%)</option>
-                        <option value="fixed">Monto fijo (USD)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Valor</label>
-                    <input type="number" id="admin-coupon-value" placeholder="10" min="0" step="0.01">
-                </div>
-                <button type="button" class="btn-add-coupon" onclick="addAdminCoupon()"><i class="fas fa-plus"></i> Agregar cupón</button>
-            </div>
-
-            <!-- Ajustes rápidos de admin -->
-            <div class="admin-settings-row">
-                <div class="admin-toggle-offers">
-                    <span style="font-size:0.85rem; color:#888; margin-right:10px;">Ofertas del Día</span>
-                    <label class="switch">
-                        <input type="checkbox" id="admin-offers-toggle" onchange="toggleOffersSetting(this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 10px; color: #888; font-size: 0.9rem;">Cupones activos:</div>
-            <div id="admin-coupons-list" style="max-height: 200px; overflow-y: auto;">
-                <p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>
-            </div>
-
-            <!-- Panel de estadísticas -->
-            <div class="admin-stats-block">
-                <h4><i class="fas fa-chart-line" style="color:var(--primary);"></i> Estadísticas de ventas</h4>
-                <div id="admin-stats-body">
-                    <p style="color:#666; font-size:0.85rem;">Cargando estadísticas...</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Firebase (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <script>
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOkYiVzU0wrALPeTBcGNIqK-NhV7QBIVs",
+            authDomain: "enderland-7c875.firebaseapp.com",
+            databaseURL: "https://enderland-7c875-default-rtdb.firebaseio.com",
+            projectId: "enderland-7c875",
+            storageBucket: "enderland-7c875.firebasestorage.app",
+            messagingSenderId: "90498636412",
+            appId: "1:90498636412:web:41081a7ff3693104bb87f9",
+            measurementId: "G-HT5SQYX3KQ"
+        }; // <-- ESTA LLAVE Y PUNTO Y COMA SON CLAVE
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const dbRefs = {
+            catalog: db.ref('catalog'),
+            offers: db.ref('offers'),
+            coupons: db.ref('coupons'),
+            recentPurchases: db.ref('recent_purchases'),
+            settings: db.ref('settings'),
+            ipOrders: db.ref('ip_orders')
+        };
+
+        const ADMIN_HASH = "5afad834d11df956d5f61c2ba871b5824a73d467067083d3b8643d521e51d1c4";
+
+        let activeOffers = {}; // { productName: { price, active } }
+        let webhookUrlCache = null;
+
+        const STATIC_PRODUCT_NAMES = [
+            "Rango Cobre (Semi)", "Rango Hierro (Semi)", "Rango Oro (Semi)", "Rango Diamante (Semi)",
+            "Rango Esmeralda (Semi)", "Rango Netherite (Semi)",
+            "Rango Aprendiz (Vanilla)", "Rango Explorador (Vanilla)", "Rango Guerrero (Vanilla)",
+            "Rango Épico (Vanilla)", "Rango Héroe (Vanilla)", "Rango Leyenda (Vanilla)",
+            "Kit Pociones (Semi)", "Kit Comida (Semi)",
+            "Kit Intoxicado (Vanilla)", "Kit Pociones (Vanilla)", "Kit Comida (Vanilla)"
+        ];
+
+        async function hashStringSHA512(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest("SHA-512", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        function initFirebaseRealtime() {
+            // Ofertas activas
+            dbRefs.offers.on('value', snapshot => {
+                activeOffers = snapshot.val() || {};
+                renderFlashOffers();
+                populateOfferSelector();
+            });
+
+            // Configuración (webhook)
+            dbRefs.settings.child('webhookUrl').on('value', snap => {
+                webhookUrlCache = snap.val() || null;
+                const input = document.getElementById("admin-webhook-url");
+                if (input && webhookUrlCache) input.value = webhookUrlCache;
+            });
+
+            // Social proof: toasts en tiempo real
+            dbRefs.recentPurchases.limitToLast(5).on('child_added', snap => {
+                const order = snap.val();
+                if (order) showPurchaseToast(order);
+            });
+
+            // Render catálogo dinámico + panel admin + menú lateral
+            dbRefs.catalog.on('value', snapshot => {
+                const catalog = snapshot.val() || {};
+                currentCatalogSnapshot = catalog || {};
+                renderDynamicCatalog(catalog);
+                populateOfferSelector(catalog);
+                renderAdminCatalogList(catalog);
+                updateDynamicSidebar(catalog);
+            });
+        }
+
+        function renderFlashOffers() {
+            const grid = document.getElementById("ofertas-grid");
+            const emptyText = document.getElementById("ofertas-empty");
+            if (!grid || !emptyText) return;
+            grid.innerHTML = "";
+
+            const entries = Object.values(activeOffers || {}).filter(o => o && o.active);
+            if (entries.length === 0) {
+                emptyText.style.display = "block";
+                return;
+            }
+            emptyText.style.display = "none";
+
+            entries.forEach(offer => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>${offer.productName || "Producto"}</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span>
+                        <span class="amount">${parseFloat(offer.flashPrice || 0).toFixed(2)}</span>
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-bolt icon-list"></i> Oferta relámpago activa</li>
+                    </ul>
+                    <button class="btn-add" onclick="addOfferItemToCart('${offer.productName || ""}', ${parseFloat(offer.flashPrice || 0)})">Añadir</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function populateOfferSelector(dynamicCatalog) {
+            const select = document.getElementById("admin-offer-product");
+            if (!select) return;
+
+            const dynamicNames = [];
+            if (dynamicCatalog) {
+                Object.values(dynamicCatalog).forEach(cat => {
+                    if (cat && cat.kits) {
+                        Object.values(cat.kits).forEach(kit => {
+                            if (kit && kit.displayName) dynamicNames.push(kit.displayName);
+                        });
+                    }
+                });
+            }
+
+            const allNames = Array.from(new Set([...STATIC_PRODUCT_NAMES, ...dynamicNames])).sort();
+
+            const current = select.value;
+            select.innerHTML = '<option value="">Selecciona un producto…</option>';
+            allNames.forEach(name => {
+                const opt = document.createElement("option");
+                opt.value = name;
+                opt.textContent = name;
+                select.appendChild(opt);
+            });
+            if (current) select.value = current;
+        }
+
+        function renderDynamicCatalog(catalog) {
+            // Renderiza una sección extra de catálogo dinámico debajo de los kits
+            let container = document.getElementById("dynamic-catalog-section");
+            if (!container) {
+                const main = document.getElementById("scroll-container");
+                if (!main) return;
+                const footer = document.querySelector(".site-footer");
+                container = document.createElement("section");
+                container.id = "dynamic-catalog-section";
+                container.innerHTML = `
+                    <div class="section-header">
+                        <i class="fas fa-boxes"></i>
+                        <h2>Categorías Personalizadas</h2>
+                    </div>
+                    <div id="dynamic-catalog-wrapper"></div>
+                `;
+                main.insertBefore(container, footer);
+            }
+
+            const wrapper = document.getElementById("dynamic-catalog-wrapper");
+            if (!wrapper) return;
+            wrapper.innerHTML = "";
+
+            Object.entries(catalog || {}).forEach(([catKey, cat]) => {
+                if (!cat || !cat.kits) return;
+                const title = cat.name || catKey;
+                const sectionDiv = document.createElement("div");
+                sectionDiv.id = "cat-" + catKey;
+                sectionDiv.style.marginBottom = "40px";
+                sectionDiv.innerHTML = `
+                    <h3 style="margin:0 0 15px 0; font-size:1.3rem; color:var(--primary); text-transform:uppercase;">${title}</h3>
+                    <div class="grid"></div>
+                `;
+                const grid = sectionDiv.querySelector(".grid");
+                Object.values(cat.kits).forEach(kit => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    const descList = (kit.benefits || []).map(b => `<li><i class="fas fa-check icon-list"></i> ${b}</li>`).join("");
+                    const imgHtml = kit.imageUrl ? `
+                        <div class="kit-image-container">
+                            <img src="${kit.imageUrl}" alt="${kit.name}" class="kit-image">
+                        </div>` : "";
+                    const cartName = kit.cartName || kit.displayName || kit.name;
+                    card.innerHTML = `
+                        ${imgHtml}
+                        <h3>${kit.displayName || kit.name}</h3>
+                        <div class="price-tag">
+                            <span class="currency-symbol">$</span>
+                            <span class="amount" data-m="${kit.price}" data-p="${kit.price}">${parseFloat(kit.price || 0).toFixed(2)}</span>
+                            <span class="currency-code">USD</span>
+                        </div>
+                        <ul>${descList}</ul>
+                        <button class="btn-add" onclick="addToCart('${cartName}', this)">Añadir</button>
+                    `;
+                    grid.appendChild(card);
+                });
+                wrapper.appendChild(sectionDiv);
+            });
+        }
+
+        function updateDynamicSidebar(catalog) {
+            const sidebar = document.querySelector(".sidebar");
+            if (!sidebar) return;
+            let container = document.getElementById("dynamic-nav-container");
+            if (!container) {
+                container = document.createElement("div");
+                container.id = "dynamic-nav-container";
+                sidebar.appendChild(container);
+            }
+            container.innerHTML = "";
+
+            const entries = Object.entries(catalog || {});
+            if (entries.length === 0) return;
+
+            const title = document.createElement("div");
+            title.className = "nav-category-title";
+            title.textContent = "CATÁLOGO DINÁMICO";
+            container.appendChild(title);
+
+            entries.forEach(([catKey, cat]) => {
+                const name = cat && cat.name ? cat.name : catKey;
+                const link = document.createElement("a");
+                link.href = "#cat-" + catKey;
+                link.className = "nav-item";
+                link.textContent = name;
+                container.appendChild(link);
+            });
+        }
+
+        function renderAdminCatalogList(catalog) {
+            const container = document.getElementById("admin-catalog-list");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const entries = Object.entries(catalog || {});
+            if (entries.length === 0) {
+                container.innerHTML = '<div style="color:#777;">No hay categorías creadas aún.</div>';
+                return;
+            }
+
+            entries.forEach(([catKey, cat]) => {
+                const catDiv = document.createElement("div");
+                catDiv.style.marginBottom = "6px";
+                const name = cat && cat.name ? cat.name : catKey;
+
+                let html = `<div><strong>${name}</strong> <small style="color:#777;">(${catKey})</small>
+                    <button class="admin-btn" style="padding:4px 8px; font-size:0.7rem; margin-left:6px;" onclick="renameCategory('${catKey}')">Renombrar</button>
+                    <button class="admin-btn" style="padding:4px 8px; font-size:0.7rem; margin-left:4px; background:#ff4747;" onclick="deleteCategory('${catKey}')">Borrar</button>
+                </div>`;
+
+                const kits = (cat && cat.kits) ? Object.entries(cat.kits) : [];
+                if (kits.length > 0) {
+                    html += `<div style="margin-left:10px; margin-top:3px;">`;
+                    kits.forEach(([kitKey, kit]) => {
+                        const kitName = kit && (kit.displayName || kit.name) ? (kit.displayName || kit.name) : kitKey;
+                        html += `<div style="margin-bottom:2px;">- ${kitName}
+                            <button class="admin-btn" style="padding:3px 6px; font-size:0.65rem; margin-left:4px;" onclick="startEditKit('${catKey}','${kitKey}')">Editar</button>
+                            <button class="admin-btn" style="padding:3px 6px; font-size:0.65rem; margin-left:2px; background:#ff4747;" onclick="deleteKit('${catKey}','${kitKey}')">Borrar</button>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                catDiv.innerHTML = html;
+                container.appendChild(catDiv);
+            });
+        }
+
+        function renameCategory(catKey) {
+            const cat = currentCatalogSnapshot && currentCatalogSnapshot[catKey];
+            const currentName = cat && cat.name ? cat.name : catKey;
+            const newName = prompt("Nuevo nombre para la categoría:", currentName);
+            if (!newName) return;
+            dbRefs.catalog.child(catKey).child("name").set(newName);
+        }
+
+        function deleteCategory(catKey) {
+            if (!confirm("¿Eliminar esta categoría y todos sus kits?")) return;
+            dbRefs.catalog.child(catKey).remove();
+        }
+
+        function startEditKit(catKey, kitKey) {
+            const cat = currentCatalogSnapshot && currentCatalogSnapshot[catKey];
+            if (!cat || !cat.kits || !cat.kits[kitKey]) return;
+            const kit = cat.kits[kitKey];
+
+            const catNameEl = document.getElementById("admin-category-name");
+            const catKeyEl = document.getElementById("admin-category-key");
+            const nameEl = document.getElementById("admin-kit-name");
+            const imgEl = document.getElementById("admin-kit-image");
+            const priceEl = document.getElementById("admin-kit-price");
+            const descEl = document.getElementById("admin-kit-description");
+            const statusEl = document.getElementById("admin-kit-status");
+
+            if (!catNameEl || !catKeyEl || !nameEl || !imgEl || !priceEl || !descEl || !statusEl) return;
+
+            catNameEl.value = cat.name || catKey;
+            catKeyEl.value = catKey;
+            nameEl.value = kit.displayName || kit.name || "";
+            imgEl.value = kit.imageUrl || "";
+            priceEl.value = kit.price || "";
+            descEl.value = (kit.benefits || []).join("\n");
+
+            editingCatKey = catKey;
+            editingKitKey = kitKey;
+            statusEl.style.color = "#ffd700";
+            statusEl.textContent = "Editando kit existente. Guarda para aplicar cambios.";
+        }
+
+        function deleteKit(catKey, kitKey) {
+            if (!confirm("¿Eliminar este kit?")) return;
+            dbRefs.catalog.child(catKey).child("kits").child(kitKey).remove();
+        }
+
+        async function adminLogin() {
+            const input = document.getElementById("admin-password");
+            const errorBox = document.getElementById("admin-login-error");
+            if (!input || !errorBox) return;
+            const pwd = input.value;
+            if (!pwd) {
+                errorBox.textContent = "Ingresa la contraseña.";
+                return;
+            }
+            try {
+                const normalizedUser = (globalUser || "").toLowerCase();
+                if (normalizedUser !== "lachispa1122") {
+                    errorBox.textContent = "Solo el usuario lachispa1122 puede acceder al panel.";
+                    return;
+                }
+                const hash = await hashStringSHA512(pwd);
+                if (hash === ADMIN_HASH) {
+                    document.getElementById("admin-login-box").style.display = "none";
+                    document.getElementById("admin-content").style.display = "block";
+                    errorBox.textContent = "";
+                    loadStats();
+                } else {
+                    errorBox.textContent = "Contraseña incorrecta.";
+                }
+            } catch (e) {
+                errorBox.textContent = "Error de autenticación.";
+            }
+        }
+
+        function saveNewKit() {
+            const catNameEl = document.getElementById("admin-category-name");
+            const catKeyEl = document.getElementById("admin-category-key");
+            const nameEl = document.getElementById("admin-kit-name");
+            const imgEl = document.getElementById("admin-kit-image");
+            const priceEl = document.getElementById("admin-kit-price");
+            const descEl = document.getElementById("admin-kit-description");
+            const statusEl = document.getElementById("admin-kit-status");
+
+            if (!catNameEl || !catKeyEl || !nameEl || !priceEl || !descEl || !statusEl) return;
+
+            let catKey = (catKeyEl.value || "").trim();
+            const catName = (catNameEl.value || "").trim();
+            const kitName = (nameEl.value || "").trim();
+            const price = parseFloat(priceEl.value || "0");
+            const img = (imgEl.value || "").trim();
+            const benefits = (descEl.value || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+            if (!catKey || !catName || !kitName || !price) {
+                statusEl.style.color = "#ff5555";
+                statusEl.textContent = "Completa categoría, nombre y precio.";
+                return;
+            }
+
+            const kitDataToSave = {
+                name: kitName,
+                displayName: kitName,
+                cartName: kitName,
+                imageUrl: img,
+                price: price,
+                benefits: benefits
+            };
+
+            // Si estamos editando un kit existente, no cambiamos la clave de categoría
+            if (editingCatKey && editingKitKey) {
+                catKey = editingCatKey;
+                const kitRef = dbRefs.catalog.child(catKey).child("kits").child(editingKitKey);
+                kitRef.set(kitDataToSave, err => {
+                    if (err) {
+                        statusEl.style.color = "#ff5555";
+                        statusEl.textContent = "Error al guardar cambios.";
+                    } else {
+                        statusEl.style.color = "#00ff88";
+                        statusEl.textContent = "Kit actualizado correctamente.";
+                        editingCatKey = null;
+                        editingKitKey = null;
+                    }
+                });
+            } else {
+                const catRef = dbRefs.catalog.child(catKey);
+                catRef.child("name").set(catName);
+                catRef.child("kits").push(kitDataToSave, err => {
+                    if (err) {
+                        statusEl.style.color = "#ff5555";
+                        statusEl.textContent = "Error al guardar.";
+                    } else {
+                        statusEl.style.color = "#00ff88";
+                        statusEl.textContent = "Kit guardado correctamente.";
+                        nameEl.value = "";
+                        imgEl.value = "";
+                        priceEl.value = "";
+                        descEl.value = "";
+                    }
+                });
+            }
+        }
+
+        function saveFlashOffer() {
+            const productSel = document.getElementById("admin-offer-product");
+            const priceEl = document.getElementById("admin-offer-price");
+            const activeEl = document.getElementById("admin-offer-active");
+            const statusEl = document.getElementById("admin-offer-status");
+            if (!productSel || !priceEl || !activeEl || !statusEl) return;
+
+            const productName = productSel.value;
+            const price = parseFloat(priceEl.value || "0");
+            const active = !!activeEl.checked;
+
+            if (!productName || !price) {
+                statusEl.style.color = "#ff5555";
+                statusEl.textContent = "Selecciona producto y precio.";
+                return;
+            }
+
+            const key = productName.replace(/[^\w]/g, "_");
+            const data = {
+                productName,
+                flashPrice: price,
+                active,
+                updatedAt: Date.now()
+            };
+            dbRefs.offers.child(key).set(data, err => {
+                if (err) {
+                    statusEl.style.color = "#ff5555";
+                    statusEl.textContent = "Error al guardar oferta.";
+                } else {
+                    statusEl.style.color = "#00ff88";
+                    statusEl.textContent = "Oferta actualizada.";
+                }
+            });
+        }
+
+        function saveSettings() {
+            const input = document.getElementById("admin-webhook-url");
+            const statusEl = document.getElementById("admin-settings-status");
+            if (!input || !statusEl) return;
+            const url = (input.value || "").trim();
+            dbRefs.settings.child("webhookUrl").set(url, err => {
+                if (err) {
+                    statusEl.style.color = "#ff5555";
+                    statusEl.textContent = "Error al guardar configuración.";
+                } else {
+                    statusEl.style.color = "#00ff88";
+                    statusEl.textContent = "Configuración guardada.";
+                }
+            });
+        }
+
+        function showPurchaseToast(order) {
+            const container = document.getElementById("toast-container");
+            if (!container || !order || !order.items) return;
+
+            const who = order.user || order.username || "Un jugador";
+            const firstItem = order.items[0];
+            const what = firstItem ? firstItem.name || firstItem.productName || "un paquete" : "un paquete";
+
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `
+                <span class="toast-icon"><i class="fas fa-shopping-basket"></i></span>
+                <span><strong>${who}</strong> acaba de comprar <strong>${what}</strong>.</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(-10px)";
+                setTimeout(() => toast.remove(), 300);
+            }, 6000);
+        }
+
+        function loadStats() {
+            dbRefs.recentPurchases.once("value").then(snapshot => {
+                const data = snapshot.val() || {};
+                let total = 0;
+                const couponCount = {};
+                const productCount = {};
+
+                Object.values(data).forEach(order => {
+                    if (!order) return;
+                    const amount = order.totalFinal || order.total || 0;
+                    total += parseFloat(amount) || 0;
+
+                    if (order.couponCode) {
+                        couponCount[order.couponCode] = (couponCount[order.couponCode] || 0) + 1;
+                    }
+
+                    (order.items || []).forEach(item => {
+                        const name = item.name || item.productName;
+                        if (!name) return;
+                        productCount[name] = (productCount[name] || 0) + 1;
+                    });
+                });
+
+                const totalEl = document.getElementById("stat-total");
+                const couponEl = document.getElementById("stat-top-coupon");
+                const topProductsEl = document.getElementById("stat-top-products");
+                if (totalEl) totalEl.textContent = total.toFixed(2);
+
+                if (couponEl) {
+                    const entries = Object.entries(couponCount);
+                    if (entries.length === 0) {
+                        couponEl.textContent = "Sin datos";
+                    } else {
+                        entries.sort((a, b) => b[1] - a[1]);
+                        couponEl.textContent = `${entries[0][0]} (${entries[0][1]} usos)`;
+                    }
+                }
+
+                if (topProductsEl) {
+                    topProductsEl.innerHTML = "";
+                    const entries = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                    entries.forEach(([name, count]) => {
+                        const li = document.createElement("li");
+                        li.textContent = `${name} (${count})`;
+                        topProductsEl.appendChild(li);
+                    });
+                    if (entries.length === 0) {
+                        const li = document.createElement("li");
+                        li.textContent = "Sin datos";
+                        topProductsEl.appendChild(li);
+                    }
+                }
+            });
+        }
+
         // --- DATA ---
         const kitImages = {
             'cobre': 'https://i.postimg.cc/PxFZp50K/cobre.png',
@@ -1214,255 +1745,15 @@
             'security': { title: "¿Es seguro?", text: "Totalmente. Todas las compras son gestionadas manualmente por los dueños del servidor (Polagodd y Chimii) para garantizar que recibas tus ítems sin problemas." }
         };
 
-        // ============================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ============================================
-        // Pega aquí tus credenciales de Firebase:
-        const firebaseConfig = {
-  apiKey: "AIzaSyCOkYiVzU0wrALPeTBcGNIqK-NhV7QBIVs",
-  authDomain: "enderland-7c875.firebaseapp.com",
-  projectId: "enderland-7c875",
-  storageBucket: "enderland-7c875.firebasestorage.app",
-  messagingSenderId: "90498636412",
-  appId: "1:90498636412:web:41081a7ff3693104bb87f9",
-  measurementId: "G-HT5SQYX3KQ"
-};
-
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const COUPONS_DB_PATH = "coupons"; // Ruta en Firebase Realtime Database
-        const RECENT_PURCHASES_PATH = "recent_purchases"; // Ruta para registro de compras
-
-        // Webhook de Discord para pedidos (rellenar con tu URL)
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
-
-        // ============================================
-        // FIN CONFIGURACIÓN DE FIREBASE
-        // ============================================
-
         // --- GLOBAL VARS ---
-        const ADMIN_HASH = "5afad834d11df956d5f61c2ba871b5824a73d467067083d3b8643d521e51d1c4"; // Hash SHA-256 del admin (tutulilipan)
         let globalUser = "Invitado"; // Inicializada por defecto
         let skinViewer = null;
         let cart = [];
-        let appliedCoupon = null; // { code, type, value }
         let isPermanent = false;
-        let isAdminUser = false; // Flag para verificar si el usuario actual es admin
-        let couponsListener = null; // Listener de Firebase para cupones
-        let recentPurchasesListenerAttached = false; // Listener de compras recientes
-
-        // Función para calcular hash SHA-256 de un string
-        async function calculateSHA256(text) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(text.toLowerCase().trim());
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Obtener cupones desde Firebase (async)
-        async function getCoupons() {
-            try {
-                const snapshot = await database.ref(COUPONS_DB_PATH).once('value');
-                const data = snapshot.val();
-                if (!data) return [];
-                // Convertir objeto de Firebase a array
-                return Object.keys(data).map(key => ({ id: key, ...data[key] }));
-            } catch (e) {
-                console.error("Error al obtener cupones:", e);
-                return [];
-            }
-        }
-
-        // Guardar cupones en Firebase (solo admin)
-        async function saveCoupons(list) {
-            if (!isAdminUser) {
-                alert("No tienes permisos para modificar cupones.");
-                return false;
-            }
-            try {
-                // Convertir array a objeto para Firebase
-                const couponsObj = {};
-                list.forEach((coupon, index) => {
-                    const id = coupon.id || `coupon_${Date.now()}_${index}`;
-                    couponsObj[id] = { code: coupon.code, type: coupon.type, value: coupon.value };
-                });
-                await database.ref(COUPONS_DB_PATH).set(couponsObj);
-                return true;
-            } catch (e) {
-                console.error("Error al guardar cupones:", e);
-                alert("Error al guardar cupones: " + e.message);
-                return false;
-            }
-        }
-
-        // Escuchar cambios en tiempo real de cupones (solo para admin)
-        function setupCouponsListener() {
-            if (couponsListener) {
-                couponsListener.off(); // Remover listener anterior si existe
-            }
-            couponsListener = database.ref(COUPONS_DB_PATH).on('value', (snapshot) => {
-                const data = snapshot.val();
-                const list = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
-                // Actualizar UI si el modal de admin está abierto
-                if (document.getElementById("admin-coupons-modal").style.display === "flex") {
-                    renderAdminCouponsListFromData(list);
-                }
-            });
-        }
-
-        // Remover listener de cupones
-        function removeCouponsListener() {
-            if (couponsListener) {
-                database.ref(COUPONS_DB_PATH).off('value', couponsListener);
-                couponsListener = null;
-            }
-        }
-
-        // Generar ID de pedido, ej: #END-7B2A
-        function generateOrderId() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let code = "";
-            for (let i = 0; i < 4; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return `#END-${code}`;
-        }
-
-        // Enviar pedido al webhook de Discord
-        async function sendOrderToDiscord(order) {
-            const lines = [];
-            lines.push(`📦 **Nuevo pedido ${order.id}**`);
-            lines.push(`👤 Usuario: **${order.user}**`);
-            if (order.isGift) {
-                lines.push(`🎁 Para: **${order.giftNick}**`);
-            }
-            lines.push("──────────────");
-            order.items.forEach(i => {
-                lines.push(`• ${i.name} [${i.type}] - $${i.price.toFixed(2)}`);
-            });
-            if (order.couponCode && order.discount > 0) {
-                lines.push("──────────────");
-                lines.push(`🏷️ Cupón: **${order.couponCode}** ( -$${order.discount.toFixed(2)} )`);
-            }
-            lines.push("──────────────");
-            lines.push(`💰 TOTAL: **$${order.total.toFixed(2)} USD**`);
-            if (order.userIP) {
-                lines.push(`🌐 **IP del cliente:** ${order.userIP}`);
-            }
-
-            const payload = { content: lines.join("\n") };
-            try {
-                const res = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                    keepalive: true
-                });
-                console.log("[Discord Webhook] status:", res.status);
-                if (!res.ok) {
-                    const text = await res.text().catch(() => "");
-                    console.log("[Discord Webhook] response body:", text);
-                }
-            } catch (e) {
-                console.error("Error al enviar pedido a Discord:", e);
-            }
-        }
-
-        // Guardar compra reciente en Firebase
-        async function saveRecentPurchase(order) {
-            try {
-                const ref = database.ref(RECENT_PURCHASES_PATH).push();
-                await ref.set({
-                    id: order.id,
-                    user: order.user,
-                    isGift: order.isGift,
-                    giftNick: order.giftNick || null,
-                    items: order.items,
-                    total: order.total,
-                    couponCode: order.couponCode || null,
-                    discount: order.discount || 0,
-                    userIP: order.userIP || null,
-                    timestamp: Date.now()
-                });
-            } catch (e) {
-                console.error("Error al guardar compra reciente:", e);
-            }
-        }
-
-        // Listener de compras recientes (social proof)
-        function setupRecentPurchasesListener() {
-            if (recentPurchasesListenerAttached) return;
-            recentPurchasesListenerAttached = true;
-
-            database.ref(RECENT_PURCHASES_PATH).limitToLast(20).on("child_added", snapshot => {
-                const data = snapshot.val();
-                if (!data) return;
-                const now = Date.now();
-                if (!data.timestamp || now - data.timestamp > 5 * 60 * 1000) {
-                    // Solo mostrar si fue en los últimos 5 minutos
-                    return;
-                }
-                const name = data.user || "Un jugador";
-                const total = typeof data.total === "number" ? data.total.toFixed(2) : data.total;
-                showToast(`🛒 ${name} realizó un pedido de $${total} USD`);
-            });
-        }
-
-        // Mostrar toast en pantalla
-        function showToast(message) {
-            const container = document.getElementById("toast-container");
-            if (!container) return;
-            const toast = document.createElement("div");
-            toast.className = "toast";
-            toast.innerHTML = `<span class="icon">✔</span><span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = "0";
-                toast.style.transition = "opacity 0.3s";
-                setTimeout(() => {
-                    if (toast.parentNode) toast.parentNode.removeChild(toast);
-                }, 300);
-            }, 4000);
-        }
-
-        // Iniciar escucha de ofertas al cargar el script
-        setupOffersSettingsListener();
-
-        // Ofertas especiales (settings/show_offers)
-        function applyOffersVisibility(show) {
-            const sec = document.getElementById("ofertas-especiales");
-            const nav = document.getElementById("nav-ofertas");
-            const title = document.getElementById("nav-ofertas-title");
-            if (sec) sec.style.display = show ? "" : "none";
-            if (nav) nav.style.display = show ? "flex" : "none";
-            if (title) title.style.display = show ? "block" : "none";
-            const toggle = document.getElementById("admin-offers-toggle");
-            if (toggle) toggle.checked = !!show;
-        }
-
-        function setupOffersSettingsListener() {
-            database.ref("settings/show_offers").on("value", snap => {
-                const val = !!snap.val();
-                applyOffersVisibility(val);
-            });
-        }
-
-        async function toggleOffersSetting(enabled) {
-            if (!isAdminUser) {
-                alert("No tienes permisos para modificar ofertas.");
-                const toggle = document.getElementById("admin-offers-toggle");
-                if (toggle) toggle.checked = !enabled;
-                return;
-            }
-            try {
-                await database.ref("settings/show_offers").set(!!enabled);
-            } catch (e) {
-                console.error("Error al actualizar show_offers:", e);
-                alert("Error al actualizar Ofertas del Día: " + e.message);
-            }
-        }
+        let currentClientIP = null;
+        let currentCatalogSnapshot = {};
+        let editingCatKey = null;
+        let editingKitKey = null;
 
         // --- FUNCIONES SISTEMA ---
         function updateSkin() {
@@ -1489,32 +1780,19 @@
             }, 500);
         }
 
-        async function enterShop() {
+        function enterShop() {
             document.getElementById("sidebar-username").innerText = globalUser;
             document.getElementById("sidebar-avatar").style.backgroundImage = `url('https://minotar.net/helm/${globalUser}/40.png')`;
             document.getElementById("cart-username").innerText = globalUser;
             document.getElementById("terms-overlay").style.opacity = "0";
             setTimeout(() => document.getElementById("terms-overlay").style.display = "none", 500);
             
-            // Panel admin cupones: comparar hash SHA-256 del usuario con el hash del admin
-            const userHash = await calculateSHA256(globalUser || "");
-            isAdminUser = userHash === ADMIN_HASH;
-            document.querySelectorAll(".admin-coupons-panel").forEach(el => el.style.display = isAdminUser ? "" : "none");
-            document.getElementById("nav-admin-cupones").style.display = isAdminUser ? "flex" : "none";
-            document.getElementById("nav-admin-cupones-title").style.display = isAdminUser ? "block" : "none";
-            
-            // Configurar listener de Firebase solo si es admin
-            if (isAdminUser) {
-                setupCouponsListener();
-            } else {
-                removeCouponsListener();
-            }
-
-            // Listener global de compras recientes (social proof)
-            setupRecentPurchasesListener();
-            
+            // Iniciar widget del servidor al entrar
             fetchServerStatus();
             setInterval(fetchServerStatus, 60000); 
+            
+            // Iniciar lógica de Firebase (ofertas, catálogo, toasts)
+            initFirebaseRealtime();
         }
 
         function resetNavigation() {
@@ -1529,14 +1807,19 @@
         function openCart() { document.getElementById("cart-modal").style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-        async function addToCart(name, btn) {
+        function addToCart(name, btn) {
             const card = btn.closest('.card');
-            const price = parseFloat(card.querySelector('.amount').innerText);
+            let price = parseFloat(card.querySelector('.amount').innerText);
+            // Prioridad de precio: si hay oferta activa en Firebase, usar flashPrice
+            const offer = Object.values(activeOffers || {}).find(o => o && o.active && o.productName === name);
+            if (offer && offer.flashPrice) {
+                price = parseFloat(offer.flashPrice);
+            }
             let type = "Único";
             if(name.includes("Rango")) type = isPermanent ? "Permanente" : "Mensual";
             else type = "Paquete"; 
             cart.push({ name, price, type });
-            await updateCartUI();
+            updateCartUI();
             
             const originalText = btn.innerText;
             btn.innerText = "¡Listo!";
@@ -1544,36 +1827,19 @@
             setTimeout(() => { btn.innerText = originalText; btn.style.borderColor = "var(--primary)"; }, 1000);
         }
 
-        async function removeFromCart(index) { cart.splice(index, 1); await updateCartUI(); }
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
-        async function getCartTotal() {
-            let subtotal = 0;
-            cart.forEach(item => subtotal += item.price);
-            let discount = 0;
-            if (appliedCoupon) {
-                const coupons = await getCoupons();
-                const c = coupons.find(x => (x.code || "").toLowerCase() === (appliedCoupon.code || "").toLowerCase());
-                if (c) {
-                    if (c.type === "percent") discount = subtotal * (Math.min(100, Math.max(0, parseFloat(c.value) || 0)) / 100);
-                    else discount = Math.min(subtotal, parseFloat(c.value) || 0);
-                }
-            }
-            return { subtotal, discount, total: Math.max(0, subtotal - discount) };
-        }
-
-        async function updateCartUI() {
+        function updateCartUI() {
             document.getElementById("cart-count").innerText = cart.length;
             const container = document.getElementById("cart-items-container");
-            const tot = await getCartTotal();
+            let total = 0;
             
             if(cart.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #666;">Vacío</p>';
-                document.getElementById("coupon-applied-box").style.display = "none";
-                document.getElementById("coupon-error-box").style.display = "none";
-                appliedCoupon = null;
             } else {
                 container.innerHTML = "";
                 cart.forEach((item, index) => {
+                    total += item.price;
                     container.innerHTML += `
                         <div class="cart-item">
                             <div>${item.name} <small>(${item.type})</small></div>
@@ -1581,44 +1847,7 @@
                         </div>`;
                 });
             }
-            document.getElementById("cart-total-price").innerText = tot.total.toFixed(2);
-            const showSub = appliedCoupon && tot.discount > 0;
-            document.getElementById("cart-subtotal-line").style.display = showSub ? "block" : "none";
-            document.getElementById("cart-discount-line").style.display = showSub ? "block" : "none";
-            document.getElementById("cart-subtotal-price").innerText = tot.subtotal.toFixed(2);
-            document.getElementById("cart-discount-amount").innerText = tot.discount.toFixed(2);
-            if (appliedCoupon) {
-                document.getElementById("coupon-applied-box").style.display = "flex";
-                document.getElementById("coupon-applied-code").innerText = appliedCoupon.code;
-                document.getElementById("coupon-applied-desc").innerText = appliedCoupon.type === "percent" ? (appliedCoupon.value + "%") : ("$" + appliedCoupon.value);
-            } else {
-                document.getElementById("coupon-applied-box").style.display = "none";
-            }
-        }
-
-        async function applyCoupon() {
-            const input = document.getElementById("coupon-code-input");
-            const code = (input.value || "").trim();
-            document.getElementById("coupon-error-box").style.display = "none";
-            if (!code) return;
-            
-            // Buscar cupón en Firebase
-            const coupons = await getCoupons();
-            const c = coupons.find(x => (x.code || "").toLowerCase() === code.toLowerCase());
-            if (!c) {
-                document.getElementById("coupon-error-box").innerText = "Cupón no válido o no existe.";
-                document.getElementById("coupon-error-box").style.display = "block";
-                return;
-            }
-            appliedCoupon = { code: c.code, type: c.type, value: c.value };
-            document.getElementById("coupon-code-input").value = "";
-            await updateCartUI();
-        }
-
-        async function removeCoupon() {
-            appliedCoupon = null;
-            document.getElementById("coupon-error-box").style.display = "none";
-            await updateCartUI();
+            document.getElementById("cart-total-price").innerText = total.toFixed(2);
         }
 
         function toggleGiftInput() {
@@ -1627,89 +1856,142 @@
         }
 
         async function checkout() {
-            if(cart.length === 0) return alert("Carrito vacío");
+            if(cart.length === 0) { alert("Carrito vacío"); return; }
+
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
-            const tot = await getCartTotal();
-            // Obtener IP pública del cliente antes de procesar el pedido
-            let userIP = null;
-            try {
-                const ipRes = await fetch("https://api.ipify.org?format=json");
-                if (ipRes.ok) {
-                    const ipData = await ipRes.json();
-                    if (ipData && ipData.ip) {
-                        userIP = ipData.ip;
-                    }
-                } else {
-                    console.log("[IP] Error status:", ipRes.status);
-                }
-            } catch (e) {
-                console.error("[IP] Error al obtener IP pública:", e);
-            }
-
-            // Filtro anti-spam por IP (máx 3 pedidos en últimos 5 minutos)
-            if (userIP) {
-                try {
-                    const now = Date.now();
-                    const windowStart = now - 5 * 60 * 1000;
-                    const snap = await database.ref(RECENT_PURCHASES_PATH)
-                        .orderByChild("userIP")
-                        .equalTo(userIP)
-                        .once("value");
-                    let count = 0;
-                    snap.forEach(child => {
-                        const val = child.val();
-                        if (val && val.timestamp && val.timestamp >= windowStart) {
-                            count++;
-                        }
-                    });
-                    if (count > 3) {
-                        alert("⚠️ Has generado demasiados pedidos. Por favor, espera unos minutos.");
-                        return;
-                    }
-                } catch (e) {
-                    console.error("Error en filtro anti-spam por IP:", e);
-                }
-            }
-            const orderId = generateOrderId();
-            let msg = "";
             const currentUser = globalUser || "Invitado";
 
-            if(isGift) {
-                if(!giftNick) return alert("Por favor, ingresa el Nickname del destinatario.");
-                msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n🧾 **ID Pedido:** ${orderId}\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
-            } else {
-                msg = `¡Hola! Quiero realizar una compra.\n\n🧾 **ID Pedido:** ${orderId}\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
+            if(isGift && !giftNick) {
+                alert("Por favor, ingresa el Nickname del destinatario.");
+                return;
             }
-            
-            cart.forEach(i => msg += `• ${i.name} [${i.type}] - $${i.price}\n`);
-            if (appliedCoupon && tot.discount > 0) {
-                msg += `--------------------------------\n🏷️ **Cupón:** ${appliedCoupon.code} (-$${tot.discount.toFixed(2)})\n`;
+
+            try {
+                // Obtener IP del cliente
+                const ipResp = await fetch("https://api.ipify.org?format=json");
+                const ipData = await ipResp.json();
+                currentClientIP = ipData.ip;
+
+                const canOrder = await checkAntiSpam(currentClientIP);
+                if (!canOrder) {
+                    alert("Has realizado demasiados pedidos recientemente. Intenta nuevamente en unos minutos.");
+                    return;
+                }
+
+                // Construir información de carrito con prioridad de precio (oferta)
+                const items = [];
+                let totalBase = 0;
+                let totalFinal = 0;
+
+                cart.forEach(i => {
+                    const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
+                    const basePrice = parseFloat(i.price);
+                    const finalPrice = offer ? parseFloat(offer.flashPrice) : basePrice;
+                    totalBase += basePrice;
+                    totalFinal += finalPrice;
+                    items.push({
+                        name: i.name,
+                        type: i.type,
+                        basePrice,
+                        finalPrice,
+                        hasOffer: !!offer
+                    });
+                });
+
+                const order = {
+                    user: currentUser,
+                    isGift,
+                    giftNick: isGift ? giftNick : null,
+                    items,
+                    totalBase,
+                    totalFinal,
+                    couponCode: null,
+                    ip: currentClientIP,
+                    createdAt: Date.now()
+                };
+
+                // Guardar en recent_purchases
+                const newRef = dbRefs.recentPurchases.push();
+                await newRef.set(order);
+
+                // Guardar referencia por IP para anti-spam
+                const ipRef = dbRefs.ipOrders.child(order.ip).push();
+                await ipRef.set({ createdAt: order.createdAt });
+
+                // Enviar al webhook de Discord (staff)
+                await sendDiscordWebhook(order);
+
+                // Mantener compatibilidad: también copiar mensaje para el jugador
+                let msg = "";
+                if(isGift) {
+                    msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
+                } else {
+                    msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
+                }
+                items.forEach(i => {
+                    msg += `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}\n`;
+                });
+                msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+
+                await navigator.clipboard.writeText(msg);
+                alert("Pedido generado y enviado al staff. El detalle fue copiado, pégalo en tu ticket.");
+                window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
+
+            } catch (e) {
+                console.error("Error en checkout:", e);
+                alert("Ocurrió un error al procesar tu pedido. Inténtalo nuevamente.");
             }
-            msg += `--------------------------------\n💰 TOTAL: $${tot.total.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+        }
 
-            // Construir objeto de pedido para Discord y Firebase
-            const orderPayload = {
-                id: orderId,
-                user: currentUser,
-                isGift,
-                giftNick: isGift ? giftNick : null,
-                items: cart.map(i => ({ name: i.name, type: i.type, price: i.price })),
-                total: tot.total,
-                couponCode: appliedCoupon ? appliedCoupon.code : null,
-                discount: tot.discount || 0,
-                userIP: userIP
-            };
+        async function checkAntiSpam(ip) {
+            if (!ip) return true;
+            const snap = await dbRefs.ipOrders.child(ip).once("value");
+            const data = snap.val() || {};
+            const now = Date.now();
+            const FIVE_MIN = 5 * 60 * 1000;
+            const recent = Object.values(data).filter(o => o && (now - o.createdAt) <= FIVE_MIN);
+            return recent.length < 3;
+        }
 
-            // Prioridad: enviar al Webhook ANTES de abrir Discord (evita cancelación)
-            await sendOrderToDiscord(orderPayload);
+        async function sendDiscordWebhook(order) {
+            const url = webhookUrlCache;
+            if (!url) return;
+            try {
+                const lines = order.items.map(i => `• ${i.name} [${i.type}] - $${i.finalPrice.toFixed(2)}`).join("\\n");
+                const body = {
+                    content: null,
+                    embeds: [
+                        {
+                            title: "Nuevo pedido en Enderland",
+                            color: 0x9d00ff,
+                            fields: [
+                                { name: "Jugador", value: order.user || "Desconocido", inline: true },
+                                { name: "Es regalo", value: order.isGift ? `Sí → ${order.giftNick || "-"}` : "No", inline: true },
+                                { name: "Total", value: `$${(order.totalFinal || 0).toFixed(2)} USD`, inline: true },
+                                { name: "Paquetes", value: lines || "-", inline: false },
+                                { name: "IP Cliente", value: order.ip || "N/D", inline: false }
+                            ],
+                            timestamp: new Date(order.createdAt).toISOString()
+                        }
+                    ]
+                };
+                await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+            } catch (e) {
+                console.error("Error enviando webhook:", e);
+            }
+        }
 
-            // Guardar en Firebase para social proof
-            saveRecentPurchase(orderPayload).catch(e => console.error(e));
-
-            navigator.clipboard.writeText(msg);
-            alert("Pedido copiado con éxito. ¡Pégalo en el ticket!");
-            window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
+        function addOfferItemToCart(name, flashPrice) {
+            if (!name) return;
+            const type = "Oferta relámpago";
+            const price = parseFloat(flashPrice || 0);
+            cart.push({ name, price, type });
+            updateCartUI();
         }
 
         // --- PRECIOS ---
@@ -1737,7 +2019,7 @@
             document.querySelectorAll(".amount").forEach(el => {
                 el.innerText = isPermanent ? el.getAttribute("data-p") : el.getAttribute("data-m");
             });
-            if(cart.length > 0) { cart = []; updateCartUI().catch(e => console.error(e)); }
+            if(cart.length > 0) { cart = []; updateCartUI(); }
         }
 
         // --- MODALES EXTRA ---
@@ -1796,186 +2078,6 @@
         }
 
         function copyIP() { navigator.clipboard.writeText("play.enderland.org"); alert("IP Copiada"); }
-
-        // --- ADMIN CUPONES (solo admin autorizado) ---
-        async function openAdminCoupons() {
-            if (!isAdminUser) {
-                alert("No tienes permisos para acceder a esta sección.");
-                return;
-            }
-            await renderAdminCouponsList();
-            await loadAdminStats();
-            document.getElementById("admin-coupons-modal").style.display = "flex";
-        }
-        
-        async function renderAdminCouponsList() {
-            const list = await getCoupons();
-            renderAdminCouponsListFromData(list);
-        }
-        
-        function renderAdminCouponsListFromData(list) {
-            const container = document.getElementById("admin-coupons-list");
-            if (list.length === 0) {
-                container.innerHTML = '<p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>';
-                return;
-            }
-            container.innerHTML = list.map((c) => {
-                const desc = c.type === "percent" ? c.value + "%" : "$" + parseFloat(c.value).toFixed(2);
-                return `<div class="admin-coupon-card">
-                    <div><code>${escapeHtml(c.code)}</code> <span class="coupon-meta">${c.type === "percent" ? desc + " descuento" : desc + " USD"}</span></div>
-                    <button type="button" class="btn-delete-coupon" onclick="deleteAdminCoupon('${c.id}')"><i class="fas fa-trash"></i> Eliminar</button>
-                </div>`;
-            }).join("");
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        async function addAdminCoupon() {
-            if (!isAdminUser) {
-                alert("No tienes permisos para agregar cupones.");
-                return;
-            }
-            const codeInput = document.getElementById("admin-coupon-code");
-            const typeInput = document.getElementById("admin-coupon-type");
-            const valueInput = document.getElementById("admin-coupon-value");
-            const code = (codeInput.value || "").trim().toUpperCase();
-            const type = typeInput.value;
-            const value = type === "percent" ? Math.min(100, Math.max(0, parseFloat(valueInput.value) || 0)) : Math.max(0, parseFloat(valueInput.value) || 0);
-            
-            if (!code) {
-                alert("Escribe un código para el cupón.");
-                return;
-            }
-            
-            // Verificar si ya existe el cupón
-            const list = await getCoupons();
-            if (list.some(c => (c.code || "").toLowerCase() === code.toLowerCase())) {
-                alert("Ya existe un cupón con ese código.");
-                return;
-            }
-            
-            // Agregar nuevo cupón directamente a Firebase
-            try {
-                const newCouponRef = database.ref(COUPONS_DB_PATH).push();
-                await newCouponRef.set({ code, type, value });
-                codeInput.value = "";
-                valueInput.value = "";
-                // El listener actualizará automáticamente la lista
-            } catch (e) {
-                console.error("Error al agregar cupón:", e);
-                alert("Error al agregar cupón: " + e.message);
-            }
-        }
-        
-        async function deleteAdminCoupon(couponId) {
-            if (!isAdminUser) {
-                alert("No tienes permisos para eliminar cupones.");
-                return;
-            }
-            
-            const list = await getCoupons();
-            const c = list.find(x => x.id === couponId);
-            if (!c) return;
-            
-            if (!confirm("¿Eliminar el cupón \"" + (c.code || "") + "\"?")) return;
-            
-            const removedCode = (c.code || "").toLowerCase();
-            
-            // Eliminar directamente de Firebase
-            try {
-                await database.ref(COUPONS_DB_PATH).child(couponId).remove();
-                // El listener actualizará automáticamente la lista
-                // Si el cupón eliminado estaba aplicado, removerlo
-                if (appliedCoupon && (appliedCoupon.code || "").toLowerCase() === removedCode) {
-                    await removeCoupon();
-                }
-            } catch (e) {
-                console.error("Error al eliminar cupón:", e);
-                alert("Error al eliminar cupón: " + e.message);
-            }
-        }
-
-        // Estadísticas de ventas (solo admin)
-        async function loadAdminStats() {
-            const container = document.getElementById("admin-stats-body");
-            if (!container) return;
-            container.innerHTML = '<p style="color:#666; font-size:0.85rem;">Cargando estadísticas...</p>';
-            try {
-                const snap = await database.ref(RECENT_PURCHASES_PATH).once('value');
-                const data = snap.val();
-                if (!data) {
-                    container.innerHTML = '<p style="color:#666; font-size:0.85rem;">Aún no hay pedidos registrados.</p>';
-                    return;
-                }
-                const orders = Object.values(data);
-                let totalAmount = 0;
-                const couponCounts = {};
-                const itemCounts = {};
-
-                orders.forEach(o => {
-                    const t = parseFloat(o.total) || 0;
-                    totalAmount += t;
-                    if (o.couponCode) {
-                        const key = String(o.couponCode).toUpperCase();
-                        couponCounts[key] = (couponCounts[key] || 0) + 1;
-                    }
-                    if (Array.isArray(o.items)) {
-                        o.items.forEach(it => {
-                            const name = it && it.name ? String(it.name) : "Desconocido";
-                            itemCounts[name] = (itemCounts[name] || 0) + 1;
-                        });
-                    }
-                });
-
-                // Cupón estrella
-                let bestCoupon = "Ninguno";
-                let bestCouponCount = 0;
-                Object.keys(couponCounts).forEach(code => {
-                    if (couponCounts[code] > bestCouponCount) {
-                        bestCoupon = code;
-                        bestCouponCount = couponCounts[code];
-                    }
-                });
-
-                // Top 3 ítems
-                const topItems = Object.entries(itemCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 3);
-
-                let topItemsHtml = "";
-                if (topItems.length === 0) {
-                    topItemsHtml = "<li>Sin datos suficientes.</li>";
-                } else {
-                    topItemsHtml = topItems.map(([name, count]) => `<li>${escapeHtml(name)} <span style="color:#777;">(${count} pedidos)</span></li>`).join("");
-                }
-
-                container.innerHTML = `
-                    <div class="admin-stats-grid">
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-label">Total recaudado</div>
-                            <div class="admin-stat-value">$${totalAmount.toFixed(2)} USD</div>
-                        </div>
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-label">Cupón estrella</div>
-                            <div class="admin-stat-value">${bestCoupon}${bestCoupon !== "Ninguno" ? ` <span style="color:#777;">(${bestCouponCount} usos)</span>` : ""}</div>
-                        </div>
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-label">Top 3 ítems</div>
-                            <ul class="admin-stat-list">
-                                ${topItemsHtml}
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            } catch (e) {
-                console.error("Error al cargar estadísticas:", e);
-                container.innerHTML = '<p style="color:#ff5555; font-size:0.85rem;">Error al cargar estadísticas.</p>';
-            }
-        }
 
         // --- NAVIGATION SCROLL ---
         const mainContent = document.getElementById('scroll-container');
