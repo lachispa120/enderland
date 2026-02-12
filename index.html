@@ -2178,7 +2178,13 @@
             items.forEach(i => {
                 msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
             });
-            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD.\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n`;
+            
+            if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                msg += `Descuento: ${appliedCouponCode} - ${appliedDiscountPercent}% desc.\n`;
+            }
+            
+            msg += `He leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
 
             let clipboardOk = true;
             try {
@@ -2196,17 +2202,13 @@
 
             // Reproducir sonido justo antes del alert de éxito
             try {
-                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3.");
+                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3");
                 successSound.play().catch(() => {});
             } catch (e) {
                 console.warn("No se pudo reproducir el sonido de éxito:", e);
             }
 
-            const alertMsg = clipboardOk
-                ? "Pedido generado y enviado al staff. El detalle fue copiado, pégalo en tu ticket."
-                : "Pedido generado y enviado al staff. Si el detalle no se copió automáticamente, por favor describe manualmente tu compra en el ticket.";
-            alert(alertMsg);
-            window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
+            startDiscordRedirectCountdown(5, clipboardOk);
         }
 
         async function checkAntiSpam(ip) {
@@ -2223,7 +2225,14 @@
             const url = WEBHOOK_URL;
             if (!url) return;
             try {
-                const lines = order.items.map(i => `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}`).join("\\n");
+                const lines = order.items.map(i => {
+                    let line = `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}`;
+                    if (order.couponCode && order.couponPercent > 0) {
+                        line += ` (Cupón aplicado: ${order.couponCode} - ${order.couponPercent}% desc.)`;
+                    }
+                    return line;
+                }).join("\n");
+
                 const body = {
                     content: null,
                     embeds: [
@@ -2237,7 +2246,7 @@
                                 { name: "Paquetes", value: lines || "-", inline: false },
                                 { name: "IP Cliente", value: order.ip || "0.0.0.0", inline: false }
                             ],
-                            footer: { text: new Date(order.createdAt).toLocaleString() },
+                            footer: { text: "Enderland Store • " + new Date(order.createdAt).toLocaleString() },
                             timestamp: new Date(order.createdAt).toISOString()
                         }
                     ]
@@ -2299,6 +2308,30 @@
             } catch (e) {
                 console.error("#admin-console-log No se pudo registrar en system_logs:", e);
             }
+        }
+
+        function startDiscordRedirectCountdown(seconds, clipboardOk) {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+            
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            
+            const baseMsg = "Pedido copiado con éxito. Abre ticket en el servidor de Discord, direccionando al servidor en";
+            
+            let s = seconds;
+            toast.innerHTML = `<span class="toast-icon"><i class="fas fa-bell"></i></span><span>${baseMsg} ${s}</span>`;
+            container.appendChild(toast);
+            
+            const iv = setInterval(() => {
+                s -= 1;
+                toast.innerHTML = `<span class="toast-icon"><i class="fas fa-bell"></i></span><span>${baseMsg} ${s}</span>`;
+                if (s <= 0) {
+                    clearInterval(iv);
+                    setTimeout(() => toast.remove(), 1000);
+                    window.open("https://discord.gg/wmS4Ztg8Af", "_blank");
+                }
+            }, 1000);
         }
 
         function addOfferItemToCart(name, flashPrice) {
