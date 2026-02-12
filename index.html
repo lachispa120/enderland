@@ -634,7 +634,7 @@
         </div>
 
         <div class="nav-category-title">SOPORTE</div>
-        <a href="https://discord.gg/eUDuwfjJaT" target="_blank" class="nav-item">
+        <a href="https://discord.gg/eUDuwfjJaT" class="nav-item">
             <i class="fab fa-discord"></i> Discord
         </a>
         <div class="nav-item" style="cursor: default;">
@@ -681,7 +681,7 @@
                         <div class="welcome-btn" onclick="copyIP()">
                             IP: <strong>play.enderland.org</strong> <i class="far fa-copy" style="margin-left: 10px;"></i>
                         </div>
-                        <a href="https://discord.gg/eUDuwfjJaT" target="_blank" class="welcome-btn" style="background: #5865F2; border-color: #5865F2;">
+                        <a href="https://discord.gg/eUDuwfjJaT" class="welcome-btn" style="background: #5865F2; border-color: #5865F2;">
                             <i class="fab fa-discord"></i> Unirse a Discord
                         </a>
                     </div>
@@ -1107,7 +1107,7 @@
                     <p>Ante cualquier duda o problema con tu compra:</p>
                     <a href="mailto:Soporte@enderland.org"><i class="fas fa-envelope"></i> Soporte@enderland.org</a>
                     <br>
-                    <a href="https://discord.gg/eUDuwfjJaT" target="_blank"><i class="fab fa-discord"></i> Ticket en Discord</a>
+                    <a href="https://discord.gg/eUDuwfjJaT"><i class="fab fa-discord"></i> Ticket en Discord</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -1150,7 +1150,7 @@
             <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
                 Total: $<span id="cart-total-price">0.00</span>
             </div>
-            <button onclick="checkout()" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            <button onclick="checkout(this)" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                 <i class="fab fa-discord"></i> GENERAR PEDIDO
             </button>
         </div>
@@ -1987,6 +1987,7 @@
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
         function addToCart(name, btn) {
+            console.log("DEBUG: addToCart called for:", name);
             const card = btn.closest('.card');
             let price = parseFloat(card.querySelector('.amount').innerText);
             // Prioridad de precio: si hay oferta activa en Firebase, usar flashPrice
@@ -2009,6 +2010,7 @@
         function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
         function updateCartUI() {
+            console.log("DEBUG: updateCartUI, cart size:", cart.length);
             document.getElementById("cart-count").innerText = cart.length;
             const container = document.getElementById("cart-items-container");
             let subtotal = 0;
@@ -2068,155 +2070,207 @@
             updateCartUI();
         }
 
-        async function checkout() {
-            if (cart.length === 0) { alert("Carrito vacío"); return; }
-
-            const isGift = document.getElementById("is-gift").checked;
-            const giftNick = document.getElementById("gift-nickname").value.trim();
-            const currentUser = globalUser || "Invitado";
-
-            if (isGift && !giftNick) {
-                alert("Por favor, ingresa el Nickname del destinatario.");
-                return;
-            }
-
-            // --- Obtener IP con checkout blindado (fallback 0.0.0.0) ---
-            let resolvedIP = "0.0.0.0";
+        async function checkout(btnElement) {
+            console.log("DEBUG: checkout() call started", { cartLength: cart.length });
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000);
-                const ipResp = await fetch("https://api.ipify.org?format=json", { signal: controller.signal });
-                clearTimeout(timeoutId);
-                const ipData = await ipResp.json();
-                if (ipData && ipData.ip) resolvedIP = ipData.ip;
-            } catch (e) {
-                console.warn("No se pudo obtener IP pública, usando 0.0.0.0", e);
+                if (cart.length === 0) { 
+                    alert("⚠️ Tu carrito está vacío."); 
+                    return; 
+                }
+
+                // Feedback visual inmediato en el botón
+                const btn = btnElement || document.querySelector('button[onclick*="checkout"]');
+                const originalContent = btn ? btn.innerHTML : "GENERAR PEDIDO";
+                if (btn) {
+                    console.log("DEBUG: Setting button to processing state");
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO...';
+                    btn.disabled = true;
+                    btn.style.opacity = "0.7";
+                }
+
+                const isGift = document.getElementById("is-gift")?.checked || false;
+                const giftNick = document.getElementById("gift-nickname")?.value.trim() || "";
+                const currentUser = typeof globalUser !== 'undefined' ? globalUser : "Invitado";
+
+                console.log("DEBUG: Order info", { isGift, giftNick, currentUser });
+
+                if (isGift && !giftNick) {
+                    alert("⚠️ Por favor, ingresa el Nickname del destinatario.");
+                    if (btn) {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                    }
+                    return;
+                }
+
+                // --- 1. IP ---
+                console.log("DEBUG: Fetching IP...");
+                let resolvedIP = "0.0.0.0";
                 try {
-                    await logSystem("error", "Fallo obteniendo IP pública; usando 0.0.0.0", { error: (e && e.message) || String(e) });
-                } catch (_) {}
-            }
-            currentClientIP = resolvedIP;
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 4000);
+                    const ipResp = await fetch("https://api.ipify.org?format=json", { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    const ipData = await ipResp.json();
+                    if (ipData && ipData.ip) resolvedIP = ipData.ip;
+                } catch (e) {
+                    console.warn("IP fetch error, using 0.0.0.0", e);
+                }
+                currentClientIP = resolvedIP || "0.0.0.0";
+                console.log("DEBUG: Resolved IP:", currentClientIP);
 
-            const canOrder = await checkAntiSpam(currentClientIP);
-            if (!canOrder) {
-                alert("Has realizado demasiados pedidos recientemente. Intenta nuevamente en unos minutos.");
-                return;
-            }
+                // --- 2. AntiSpam ---
+                try {
+                    console.log("DEBUG: Checking AntiSpam...");
+                    const canOrder = await checkAntiSpam(currentClientIP);
+                    if (!canOrder) {
+                        alert("❌ Has realizado demasiados pedidos recientemente. Intenta en 5 minutos.");
+                        if (btn) {
+                            btn.innerHTML = originalContent;
+                            btn.disabled = false;
+                            btn.style.opacity = "1";
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    console.error("AntiSpam error:", e);
+                }
 
-            // --- Construir información de carrito con prioridad de precio (oferta) ---
-            const items = [];
-            let totalBase = 0;
-            let totalFinal = 0;
+                // --- 3. Calcular Totales con Ofertas ---
+                console.log("DEBUG: Calculating totals...");
+                const items = [];
+                let totalFinal = 0;
 
-            cart.forEach(i => {
-                const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
-                const basePrice = parseFloat(i.price);
-                const finalPrice = offer ? parseFloat(offer.flashPrice) : basePrice;
-                totalBase += basePrice;
-                totalFinal += finalPrice;
-                items.push({
-                    name: i.name,
-                    type: i.type,
-                    basePrice,
-                    finalPrice,
-                    hasOffer: !!offer
+                cart.forEach(i => {
+                    const offer = Object.values(activeOffers || {}).find(o => o && o.active && (o.productName === i.name));
+                    const price = offer ? parseFloat(offer.flashPrice) : parseFloat(i.price);
+                    totalFinal += price;
+                    items.push({
+                        name: i.name,
+                        type: i.type,
+                        finalPrice: price
+                    });
                 });
-            });
 
-            // --- Aplicar cupón al total final (si hay) ANTES de enviar a Discord ---
-            if (appliedDiscountPercent > 0 && appliedCouponCode) {
-                totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
-            }
+                if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                    totalFinal = totalFinal * (1 - appliedDiscountPercent / 100);
+                }
 
-            const order = {
-                user: currentUser,
-                isGift,
-                giftNick: isGift ? giftNick : null,
-                items,
-                totalBase,
-                totalFinal,
-                couponCode: appliedCouponCode || null,
-                couponPercent: appliedDiscountPercent || 0,
-                ip: currentClientIP,
-                createdAt: Date.now()
-            };
+                const order = {
+                    user: currentUser,
+                    isGift,
+                    giftNick: isGift ? giftNick : null,
+                    items,
+                    totalFinal,
+                    couponCode: appliedCouponCode || null,
+                    couponPercent: appliedDiscountPercent || 0,
+                    ip: currentClientIP,
+                    createdAt: Date.now()
+                };
+                console.log("DEBUG: Order object ready", order);
 
-            // --- Persistencia en Firebase (obligatoria) ---
-            let savedToFirebase = false;
-            try {
-                const newRef = dbRefs.recentPurchases.push();
-                await newRef.set(order);
-
-                const ipKey = order.ip || "0.0.0.0";
-                const ipRef = dbRefs.ipOrders.child(ipKey).push();
-                await ipRef.set({ createdAt: order.createdAt });
-                savedToFirebase = true;
-            } catch (e) {
-                console.error("Error guardando pedido en Firebase:", e);
+                // --- 4. Persistencia en Firebase ---
                 try {
-                    await logSystem("error", "Fallo guardando pedido en Firebase", { error: (e && e.message) || String(e) });
-                } catch (_) {}
-            }
+                    console.log("DEBUG: Saving to Firebase...");
+                    if (dbRefs && dbRefs.recentPurchases) {
+                        await dbRefs.recentPurchases.push().set(order);
+                        const ipKey = (currentClientIP || "0_0_0_0").replace(/\./g, '_');
+                        await dbRefs.ipOrders.child(ipKey).push().set({ createdAt: order.createdAt });
+                        console.log("DEBUG: Firebase save success");
+                    } else {
+                        console.warn("DEBUG: dbRefs or recentPurchases missing");
+                    }
+                } catch (e) {
+                    console.error("Firebase error:", e);
+                }
 
-            // --- Webhook de Discord en try/catch independiente ---
-            try {
-                await sendDiscordWebhook(order);
-            } catch (e) {
-                console.error("Error en webhook (ignorando para no romper checkout):", e);
+                // --- 5. Webhook Discord ---
                 try {
-                    await logSystem("error", "Fallo enviando webhook de Discord", { error: (e && e.message) || String(e) });
-                } catch (_) {}
-            }
+                    console.log("DEBUG: Sending Webhook...");
+                    await sendDiscordWebhook(order);
+                    console.log("DEBUG: Webhook success");
+                } catch (e) {
+                    console.error("Webhook error:", e);
+                }
 
-            // --- Mensaje para el jugador + portapapeles (SIEMPRE se intenta) ---
-            let msg = "";
-            if (isGift) {
-                msg = `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n--------------------------------\n`;
-            } else {
-                msg = `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n--------------------------------\n`;
-            }
-            items.forEach(i => {
-                msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
-            });
-            msg += `--------------------------------\n💰 TOTAL: $${totalFinal.toFixed(2)} USD\n`;
-            if (appliedDiscountPercent > 0 && appliedCouponCode) {
-                msg += `Descuento: ${appliedCouponCode} - ${appliedDiscountPercent}% desc.\n`;
-            }
-            msg += `He leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+                // --- 6. Portapapeles ---
+                console.log("DEBUG: Copying to clipboard...");
+                let msg = isGift ? 
+                    `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n` :
+                    `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n`;
+                
+                msg += "--------------------------------\n";
+                items.forEach(i => {
+                    msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
+                });
+                
+                if (appliedDiscountPercent > 0 && appliedCouponCode) {
+                    msg += `Descuento: ${appliedCouponCode} (-${appliedDiscountPercent}%)\n`;
+                }
+                
+                msg += "--------------------------------\n";
+                msg += `💰 TOTAL: $${totalFinal.toFixed(2)} USD\n`;
+                msg += "He leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.";
 
-            let clipboardOk = true;
-            try {
-                await navigator.clipboard.writeText(msg);
-            } catch (e) {
-                clipboardOk = false;
-                console.error("No se pudo copiar al portapapeles:", e);
-            }
+                let clipboardOk = false;
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(msg);
+                        clipboardOk = true;
+                    } else {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = msg;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        clipboardOk = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                    }
+                    console.log("DEBUG: Clipboard result:", clipboardOk);
+                } catch (e) {
+                    console.error("Clipboard error:", e);
+                }
 
-            // --- Feedback final al jugador ---
-            if (!savedToFirebase) {
-                alert("Tu pedido se generó, pero hubo un problema al registrarlo en el sistema. El detalle fue copiado (si es posible), pégalo en tu ticket y avisa al staff.");
-                return;
-            }
+                // --- 7. Finalizar ---
+                if (btn) {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                }
 
-            // Reproducir sonido justo antes del alert de éxito
-            try {
-                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3.");
-                successSound.play().catch(() => {});
-            } catch (e) {
-                console.warn("No se pudo reproducir el sonido de éxito:", e);
-            }
+                try {
+                    new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3").play().catch(() => {});
+                } catch (e) {}
 
-            startDiscordRedirectCountdown(5, clipboardOk);
+                alert("✅ ¡Pedido generado con éxito! El detalle ha sido copiado al portapapeles. Ahora te redireccionaremos a Discord.");
+                startDiscordRedirectCountdown(5, clipboardOk);
+
+            } catch (err) {
+                console.error("FATAL ERROR in checkout:", err);
+                alert("❌ Error crítico: " + err.message);
+                const btn = btnElement || document.querySelector('button[onclick*="checkout"]');
+                if (btn) {
+                    btn.innerHTML = '<i class="fab fa-discord"></i> GENERAR PEDIDO';
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                }
+            }
         }
 
         async function checkAntiSpam(ip) {
             if (!ip) return true;
-            const snap = await dbRefs.ipOrders.child(ip).once("value");
-            const data = snap.val() || {};
-            const now = Date.now();
-            const FIVE_MIN = 5 * 60 * 1000;
-            const recent = Object.values(data).filter(o => o && (now - o.createdAt) <= FIVE_MIN);
-            return recent.length < 3;
+            try {
+                const ipKey = ip.replace(/\./g, '_');
+                const snap = await dbRefs.ipOrders.child(ipKey).once("value");
+                const data = snap.val() || {};
+                const now = Date.now();
+                const FIVE_MIN = 5 * 60 * 1000;
+                const recent = Object.values(data).filter(o => o && (now - o.createdAt) <= FIVE_MIN);
+                return recent.length < 3;
+            } catch (e) {
+                console.error("AntiSpam check error:", e);
+                return true;
+            }
         }
 
         async function sendDiscordWebhook(order) {
