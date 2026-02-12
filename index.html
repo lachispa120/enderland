@@ -436,6 +436,42 @@
             .progress-mini { margin: 0 auto; width: 80%; }
         }
 
+        /* --- TOASTS (SOCIAL PROOF) --- */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            min-width: 260px;
+            max-width: 90vw;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            animation: toast-slide 0.3s ease-out;
+            pointer-events: auto;
+        }
+        .toast span.icon {
+            color: var(--success);
+        }
+        @keyframes toast-slide {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
         @keyframes slideInFade {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -1028,6 +1064,9 @@
         </div>
     </div>
 
+    <!-- Contenedor para toasts de compras recientes -->
+    <div id="toast-container"></div>
+
     <div class="modal" id="admin-coupons-modal">
         <div class="modal-content" style="max-width: 560px;">
             <i class="fas fa-times close-modal" onclick="closeModal('admin-coupons-modal')"></i>
@@ -1118,6 +1157,10 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const COUPONS_DB_PATH = "coupons"; // Ruta en Firebase Realtime Database
+        const RECENT_PURCHASES_PATH = "recent_purchases"; // Ruta para registro de compras
+
+        // Webhook de Discord para pedidos (rellenar con tu URL)
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
 
         // ============================================
         // FIN CONFIGURACIÓN DE FIREBASE
@@ -1132,6 +1175,7 @@
         let isPermanent = false;
         let isAdminUser = false; // Flag para verificar si el usuario actual es admin
         let couponsListener = null; // Listener de Firebase para cupones
+        let recentPurchasesListenerAttached = false; // Listener de compras recientes
 
         // Función para calcular hash SHA-256 de un string
         async function calculateSHA256(text) {
@@ -1201,6 +1245,107 @@
             }
         }
 
+        // Generar ID de pedido, ej: #END-7B2A
+        function generateOrderId() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let code = "";
+            for (let i = 0; i < 4; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return `#END-${code}`;
+        }
+
+        // Enviar pedido al webhook de Discord
+        async function sendOrderToDiscord(order) {
+            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt") {
+                console.warn("Webhook de Discord no configurado.");
+                return;
+            }
+            const lines = [];
+            lines.push(`📦 **Nuevo pedido ${order.id}**`);
+            lines.push(`👤 Usuario: **${order.user}**`);
+            if (order.isGift) {
+                lines.push(`🎁 Para: **${order.giftNick}**`);
+            }
+            lines.push("──────────────");
+            order.items.forEach(i => {
+                lines.push(`• ${i.name} [${i.type}] - $${i.price.toFixed(2)}`);
+            });
+            if (order.couponCode && order.discount > 0) {
+                lines.push("──────────────");
+                lines.push(`🏷️ Cupón: **${order.couponCode}** ( -$${order.discount.toFixed(2)} )`);
+            }
+            lines.push("──────────────");
+            lines.push(`💰 TOTAL: **$${order.total.toFixed(2)} USD**`);
+
+            const payload = { content: lines.join("\n") };
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.error("Error al enviar pedido a Discord:", e);
+            }
+        }
+
+        // Guardar compra reciente en Firebase
+        async function saveRecentPurchase(order) {
+            try {
+                const ref = database.ref(RECENT_PURCHASES_PATH).push();
+                await ref.set({
+                    id: order.id,
+                    user: order.user,
+                    isGift: order.isGift,
+                    giftNick: order.giftNick || null,
+                    items: order.items,
+                    total: order.total,
+                    couponCode: order.couponCode || null,
+                    discount: order.discount || 0,
+                    timestamp: Date.now()
+                });
+            } catch (e) {
+                console.error("Error al guardar compra reciente:", e);
+            }
+        }
+
+        // Listener de compras recientes (social proof)
+        function setupRecentPurchasesListener() {
+            if (recentPurchasesListenerAttached) return;
+            recentPurchasesListenerAttached = true;
+
+            database.ref(RECENT_PURCHASES_PATH).limitToLast(20).on("child_added", snapshot => {
+                const data = snapshot.val();
+                if (!data) return;
+                const now = Date.now();
+                if (!data.timestamp || now - data.timestamp > 5 * 60 * 1000) {
+                    // Solo mostrar si fue en los últimos 5 minutos
+                    return;
+                }
+                const name = data.user || "Un jugador";
+                const total = typeof data.total === "number" ? data.total.toFixed(2) : data.total;
+                showToast(`🛒 ${name} realizó un pedido de $${total} USD`);
+            });
+        }
+
+        // Mostrar toast en pantalla
+        function showToast(message) {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `<span class="icon">✔</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transition = "opacity 0.3s";
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
         // --- FUNCIONES SISTEMA ---
         function updateSkin() {
             const nick = document.getElementById("nick-input").value;
@@ -1246,6 +1391,9 @@
             } else {
                 removeCouponsListener();
             }
+
+            // Listener global de compras recientes (social proof)
+            setupRecentPurchasesListener();
             
             fetchServerStatus();
             setInterval(fetchServerStatus, 60000); 
@@ -1365,14 +1513,15 @@
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
             const tot = await getCartTotal();
+            const orderId = generateOrderId();
             let msg = "";
             const currentUser = globalUser || "Invitado";
 
             if(isGift) {
                 if(!giftNick) return alert("Por favor, ingresa el Nickname del destinatario.");
-                msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
+                msg = `¡Hola! Quiero realizar una compra para **REGALAR**.\n\n🧾 **ID Pedido:** ${orderId}\n👤 **De:** ${currentUser}\n🎁 **Para:** ${giftNick}\n--------------------------------\n`;
             } else {
-                msg = `¡Hola! Quiero realizar una compra.\n\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
+                msg = `¡Hola! Quiero realizar una compra.\n\n🧾 **ID Pedido:** ${orderId}\n👤 **Usuario:** ${currentUser}\n--------------------------------\n`;
             }
             
             cart.forEach(i => msg += `• ${i.name} [${i.type}] - $${i.price}\n`);
@@ -1380,7 +1529,25 @@
                 msg += `--------------------------------\n🏷️ **Cupón:** ${appliedCoupon.code} (-$${tot.discount.toFixed(2)})\n`;
             }
             msg += `--------------------------------\n💰 TOTAL: $${tot.total.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
-            
+
+            // Construir objeto de pedido para Discord y Firebase
+            const orderPayload = {
+                id: orderId,
+                user: currentUser,
+                isGift,
+                giftNick: isGift ? giftNick : null,
+                items: cart.map(i => ({ name: i.name, type: i.type, price: i.price })),
+                total: tot.total,
+                couponCode: appliedCoupon ? appliedCoupon.code : null,
+                discount: tot.discount || 0
+            };
+
+            // Enviar a Discord (no bloqueante para el usuario)
+            sendOrderToDiscord(orderPayload).catch(e => console.error(e));
+
+            // Guardar en Firebase para social proof
+            saveRecentPurchase(orderPayload).catch(e => console.error(e));
+
             navigator.clipboard.writeText(msg);
             alert("Pedido copiado con éxito. ¡Pégalo en el ticket!");
             window.open("https://discord.gg/PJ3JfM2BbJ", "_blank");
