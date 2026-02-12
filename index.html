@@ -347,6 +347,20 @@
         .admin-coupon-form input, .admin-coupon-form select { padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; color: #fff; }
         .admin-coupon-form .btn-add-coupon { padding: 10px 20px; background: var(--success); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .admin-coupon-form .btn-add-coupon:hover { background: #00cc6a; }
+        .admin-settings-row { display:flex; justify-content:flex-end; margin-bottom:10px; }
+        .admin-toggle-offers { display:flex; align-items:center; gap:8px; }
+        .admin-stats-block { margin-top:15px; padding-top:12px; border-top:1px solid #333; font-size:0.85rem; color:#ccc; }
+        .admin-stats-block h4 { margin:0 0 8px 0; font-size:0.95rem; color:#fff; }
+        .admin-stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; }
+        .admin-stat-card { background:#181818; border:1px solid #333; border-radius:6px; padding:8px 10px; }
+        .admin-stat-label { font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px; }
+        .admin-stat-value { font-size:0.95rem; margin-top:4px; color:#fff; }
+        .admin-stat-list { margin-top:4px; padding-left:15px; color:#bbb; font-size:0.8rem; }
+
+        /* Ofertas especiales */
+        #ofertas-especiales .card h3 {
+            text-transform: none;
+        }
 
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
@@ -552,6 +566,11 @@
             <a href="#vanilla-kits" class="nav-item">Vanilla</a>
         </div>
 
+        <div class="nav-category-title" id="nav-ofertas-title" style="display:none;">OFERTAS</div>
+        <a href="#ofertas-especiales" class="nav-item" id="nav-ofertas" style="display:none;">
+            <i class="fas fa-bolt"></i> Ofertas Especiales
+        </a>
+
         <div class="nav-category-title admin-coupons-panel" id="nav-admin-cupones-title">ADMIN</div>
         <a href="#" class="nav-item admin-coupons-panel" id="nav-admin-cupones" onclick="openAdminCoupons(); return false;" style="display: none;">
             <i class="fas fa-tags"></i> Administrar cupones
@@ -634,6 +653,42 @@
                         <span><i class="fas fa-signal" style="color:var(--primary)"></i> <span id="server-ping">-- ms</span></span>
                         <span id="server-version">1.20.x</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ofertas-especiales" style="display:none;">
+            <div class="section-header">
+                <i class="fas fa-bolt"></i>
+                <h2>Ofertas Especiales</h2>
+            </div>
+            <p style="color:#ccc; margin-bottom:20px; max-width:720px;">
+                Estas ofertas cambian dinámicamente según la configuración del staff. Aprovecha los descuentos y packs especiales por tiempo limitado.
+            </p>
+            <div class="grid">
+                <div class="card">
+                    <h3 style="color:#ffd700;">Pack Leyenda + Kit Intoxicado</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span><span class="amount">24.99</span><span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-crown icon-list"></i> Rango Leyenda (Vanilla)</li>
+                        <li><i class="fas fa-skull-crossbones icon-list"></i> Kit Intoxicado</li>
+                        <li><i class="fas fa-percentage icon-list"></i> Bonus del 10% en futuras compras (cupón especial)</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Pack Leyenda + Intoxicado (Oferta)', this)">Añadir</button>
+                </div>
+                <div class="card">
+                    <h3 style="color:#9d00ff;">Starter Semi-Anárquico</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span><span class="amount">3.50</span><span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-shield-alt icon-list"></i> Rango Cobre (Semi)</li>
+                        <li><i class="fas fa-box-open icon-list"></i> Kit Comida (Semi)</li>
+                        <li><i class="fas fa-bolt icon-list"></i> Acceso anticipado a futuros eventos</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Starter Semi-Anárquico (Oferta)', this)">Añadir</button>
                 </div>
             </div>
         </section>
@@ -1091,9 +1146,29 @@
                 </div>
                 <button type="button" class="btn-add-coupon" onclick="addAdminCoupon()"><i class="fas fa-plus"></i> Agregar cupón</button>
             </div>
+
+            <!-- Ajustes rápidos de admin -->
+            <div class="admin-settings-row">
+                <div class="admin-toggle-offers">
+                    <span style="font-size:0.85rem; color:#888; margin-right:10px;">Ofertas del Día</span>
+                    <label class="switch">
+                        <input type="checkbox" id="admin-offers-toggle" onchange="toggleOffersSetting(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
             <div style="margin-bottom: 10px; color: #888; font-size: 0.9rem;">Cupones activos:</div>
-            <div id="admin-coupons-list" style="max-height: 280px; overflow-y: auto;">
+            <div id="admin-coupons-list" style="max-height: 200px; overflow-y: auto;">
                 <p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>
+            </div>
+
+            <!-- Panel de estadísticas -->
+            <div class="admin-stats-block">
+                <h4><i class="fas fa-chart-line" style="color:var(--primary);"></i> Estadísticas de ventas</h4>
+                <div id="admin-stats-body">
+                    <p style="color:#666; font-size:0.85rem;">Cargando estadísticas...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1352,6 +1427,43 @@
             }, 4000);
         }
 
+        // Iniciar escucha de ofertas al cargar el script
+        setupOffersSettingsListener();
+
+        // Ofertas especiales (settings/show_offers)
+        function applyOffersVisibility(show) {
+            const sec = document.getElementById("ofertas-especiales");
+            const nav = document.getElementById("nav-ofertas");
+            const title = document.getElementById("nav-ofertas-title");
+            if (sec) sec.style.display = show ? "" : "none";
+            if (nav) nav.style.display = show ? "flex" : "none";
+            if (title) title.style.display = show ? "block" : "none";
+            const toggle = document.getElementById("admin-offers-toggle");
+            if (toggle) toggle.checked = !!show;
+        }
+
+        function setupOffersSettingsListener() {
+            database.ref("settings/show_offers").on("value", snap => {
+                const val = !!snap.val();
+                applyOffersVisibility(val);
+            });
+        }
+
+        async function toggleOffersSetting(enabled) {
+            if (!isAdminUser) {
+                alert("No tienes permisos para modificar ofertas.");
+                const toggle = document.getElementById("admin-offers-toggle");
+                if (toggle) toggle.checked = !enabled;
+                return;
+            }
+            try {
+                await database.ref("settings/show_offers").set(!!enabled);
+            } catch (e) {
+                console.error("Error al actualizar show_offers:", e);
+                alert("Error al actualizar Ofertas del Día: " + e.message);
+            }
+        }
+
         // --- FUNCIONES SISTEMA ---
         function updateSkin() {
             const nick = document.getElementById("nick-input").value;
@@ -1534,6 +1646,31 @@
             } catch (e) {
                 console.error("[IP] Error al obtener IP pública:", e);
             }
+
+            // Filtro anti-spam por IP (máx 3 pedidos en últimos 5 minutos)
+            if (userIP) {
+                try {
+                    const now = Date.now();
+                    const windowStart = now - 5 * 60 * 1000;
+                    const snap = await database.ref(RECENT_PURCHASES_PATH)
+                        .orderByChild("userIP")
+                        .equalTo(userIP)
+                        .once("value");
+                    let count = 0;
+                    snap.forEach(child => {
+                        const val = child.val();
+                        if (val && val.timestamp && val.timestamp >= windowStart) {
+                            count++;
+                        }
+                    });
+                    if (count > 3) {
+                        alert("⚠️ Has generado demasiados pedidos. Por favor, espera unos minutos.");
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Error en filtro anti-spam por IP:", e);
+                }
+            }
             const orderId = generateOrderId();
             let msg = "";
             const currentUser = globalUser || "Invitado";
@@ -1667,6 +1804,7 @@
                 return;
             }
             await renderAdminCouponsList();
+            await loadAdminStats();
             document.getElementById("admin-coupons-modal").style.display = "flex";
         }
         
@@ -1758,6 +1896,84 @@
             } catch (e) {
                 console.error("Error al eliminar cupón:", e);
                 alert("Error al eliminar cupón: " + e.message);
+            }
+        }
+
+        // Estadísticas de ventas (solo admin)
+        async function loadAdminStats() {
+            const container = document.getElementById("admin-stats-body");
+            if (!container) return;
+            container.innerHTML = '<p style="color:#666; font-size:0.85rem;">Cargando estadísticas...</p>';
+            try {
+                const snap = await database.ref(RECENT_PURCHASES_PATH).once('value');
+                const data = snap.val();
+                if (!data) {
+                    container.innerHTML = '<p style="color:#666; font-size:0.85rem;">Aún no hay pedidos registrados.</p>';
+                    return;
+                }
+                const orders = Object.values(data);
+                let totalAmount = 0;
+                const couponCounts = {};
+                const itemCounts = {};
+
+                orders.forEach(o => {
+                    const t = parseFloat(o.total) || 0;
+                    totalAmount += t;
+                    if (o.couponCode) {
+                        const key = String(o.couponCode).toUpperCase();
+                        couponCounts[key] = (couponCounts[key] || 0) + 1;
+                    }
+                    if (Array.isArray(o.items)) {
+                        o.items.forEach(it => {
+                            const name = it && it.name ? String(it.name) : "Desconocido";
+                            itemCounts[name] = (itemCounts[name] || 0) + 1;
+                        });
+                    }
+                });
+
+                // Cupón estrella
+                let bestCoupon = "Ninguno";
+                let bestCouponCount = 0;
+                Object.keys(couponCounts).forEach(code => {
+                    if (couponCounts[code] > bestCouponCount) {
+                        bestCoupon = code;
+                        bestCouponCount = couponCounts[code];
+                    }
+                });
+
+                // Top 3 ítems
+                const topItems = Object.entries(itemCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+
+                let topItemsHtml = "";
+                if (topItems.length === 0) {
+                    topItemsHtml = "<li>Sin datos suficientes.</li>";
+                } else {
+                    topItemsHtml = topItems.map(([name, count]) => `<li>${escapeHtml(name)} <span style="color:#777;">(${count} pedidos)</span></li>`).join("");
+                }
+
+                container.innerHTML = `
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-label">Total recaudado</div>
+                            <div class="admin-stat-value">$${totalAmount.toFixed(2)} USD</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-label">Cupón estrella</div>
+                            <div class="admin-stat-value">${bestCoupon}${bestCoupon !== "Ninguno" ? ` <span style="color:#777;">(${bestCouponCount} usos)</span>` : ""}</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-label">Top 3 ítems</div>
+                            <ul class="admin-stat-list">
+                                ${topItemsHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error("Error al cargar estadísticas:", e);
+                container.innerHTML = '<p style="color:#ff5555; font-size:0.85rem;">Error al cargar estadísticas.</p>';
             }
         }
 
