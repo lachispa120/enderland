@@ -1273,6 +1273,9 @@
             }
             lines.push("──────────────");
             lines.push(`💰 TOTAL: **$${order.total.toFixed(2)} USD**`);
+            if (order.userIP) {
+                lines.push(`🌐 **IP del cliente:** ${order.userIP}`);
+            }
 
             const payload = { content: lines.join("\n") };
             try {
@@ -1305,6 +1308,7 @@
                     total: order.total,
                     couponCode: order.couponCode || null,
                     discount: order.discount || 0,
+                    userIP: order.userIP || null,
                     timestamp: Date.now()
                 });
             } catch (e) {
@@ -1515,6 +1519,21 @@
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
             const tot = await getCartTotal();
+            // Obtener IP pública del cliente antes de procesar el pedido
+            let userIP = null;
+            try {
+                const ipRes = await fetch("https://api.ipify.org?format=json");
+                if (ipRes.ok) {
+                    const ipData = await ipRes.json();
+                    if (ipData && ipData.ip) {
+                        userIP = ipData.ip;
+                    }
+                } else {
+                    console.log("[IP] Error status:", ipRes.status);
+                }
+            } catch (e) {
+                console.error("[IP] Error al obtener IP pública:", e);
+            }
             const orderId = generateOrderId();
             let msg = "";
             const currentUser = globalUser || "Invitado";
@@ -1541,7 +1560,8 @@
                 items: cart.map(i => ({ name: i.name, type: i.type, price: i.price })),
                 total: tot.total,
                 couponCode: appliedCoupon ? appliedCoupon.code : null,
-                discount: tot.discount || 0
+                discount: tot.discount || 0,
+                userIP: userIP
             };
 
             // Prioridad: enviar al Webhook ANTES de abrir Discord (evita cancelación)
