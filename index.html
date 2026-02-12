@@ -1257,10 +1257,6 @@
 
         // Enviar pedido al webhook de Discord
         async function sendOrderToDiscord(order) {
-            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt") {
-                console.warn("Webhook de Discord no configurado.");
-                return;
-            }
             const lines = [];
             lines.push(`📦 **Nuevo pedido ${order.id}**`);
             lines.push(`👤 Usuario: **${order.user}**`);
@@ -1280,11 +1276,17 @@
 
             const payload = { content: lines.join("\n") };
             try {
-                await fetch(DISCORD_WEBHOOK_URL, {
+                const res = await fetch(DISCORD_WEBHOOK_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    keepalive: true
                 });
+                console.log("[Discord Webhook] status:", res.status);
+                if (!res.ok) {
+                    const text = await res.text().catch(() => "");
+                    console.log("[Discord Webhook] response body:", text);
+                }
             } catch (e) {
                 console.error("Error al enviar pedido a Discord:", e);
             }
@@ -1542,8 +1544,8 @@
                 discount: tot.discount || 0
             };
 
-            // Enviar a Discord (no bloqueante para el usuario)
-            sendOrderToDiscord(orderPayload).catch(e => console.error(e));
+            // Prioridad: enviar al Webhook ANTES de abrir Discord (evita cancelación)
+            await sendOrderToDiscord(orderPayload);
 
             // Guardar en Firebase para social proof
             saveRecentPurchase(orderPayload).catch(e => console.error(e));
