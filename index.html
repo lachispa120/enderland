@@ -313,6 +313,37 @@
         .gift-input-field { display: none; width: 100%; padding: 12px; margin-top: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #fff; outline: none; transition: 0.3s; }
         .gift-input-field:focus { border-color: var(--primary); background: #222; }
 
+        /* --- CUPÓN DE DESCUENTO (antes de pagar) --- */
+        .coupon-section {
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+        }
+        .coupon-section label { color: #ccc; font-size: 0.9rem; width: 100%; margin-bottom: 5px; }
+        .coupon-input { flex: 1; min-width: 120px; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; color: #fff; outline: none; }
+        .coupon-input:focus { border-color: var(--primary); }
+        .btn-apply-coupon { padding: 10px 18px; background: var(--primary); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.3s; }
+        .btn-apply-coupon:hover { background: #7a00c7; }
+        .coupon-applied { margin-top: 10px; padding: 10px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); border-radius: 6px; color: var(--success); font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .coupon-applied span { display: flex; align-items: center; gap: 8px; }
+        .coupon-remove { background: transparent; border: 1px solid #ff5555; color: #ff5555; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .coupon-remove:hover { background: #ff5555; color: #fff; }
+        .coupon-error { margin-top: 8px; padding: 8px; background: rgba(255,71,71,0.1); border: 1px solid rgba(255,71,71,0.3); border-radius: 6px; color: #ff4747; font-size: 0.85rem; }
+
+        /* --- PANEL ADMIN CUPONES (solo lachispa1122) --- */
+        .admin-coupons-panel { display: none; }
+        .admin-coupons-panel.visible { display: block; }
+        .admin-coupon-card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .admin-coupon-card code { background: #111; padding: 4px 8px; border-radius: 4px; color: var(--primary); font-size: 0.9rem; }
+        .admin-coupon-card .coupon-meta { color: #888; font-size: 0.85rem; }
+        .admin-coupon-card .btn-delete-coupon { background: #ff4747; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .admin-coupon-card .btn-delete-coupon:hover { background: #cc3333; }
+        .admin-coupon-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #333; }
+        .admin-coupon-form .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .admin-coupon-form .form-group label { font-size: 0.8rem; color: #888; }
+        .admin-coupon-form input, .admin-coupon-form select { padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; color: #fff; }
+        .admin-coupon-form .btn-add-coupon { padding: 10px 20px; background: var(--success); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .admin-coupon-form .btn-add-coupon:hover { background: #00cc6a; }
+
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
             .sidebar { width: 100%; height: auto; position: relative; padding: 15px; border-bottom: 1px solid #333; border-right: none; }
@@ -480,6 +511,11 @@
             <a href="#semi-kits" class="nav-item">Semi-Anárquico</a>
             <a href="#vanilla-kits" class="nav-item">Vanilla</a>
         </div>
+
+        <div class="nav-category-title admin-coupons-panel" id="nav-admin-cupones-title">ADMIN</div>
+        <a href="#" class="nav-item admin-coupons-panel" id="nav-admin-cupones" onclick="openAdminCoupons(); return false;" style="display: none;">
+            <i class="fas fa-tags"></i> Administrar cupones
+        </a>
 
         <div class="nav-category-title">SOPORTE</div>
         <a href="https://discord.gg/PJ3JfM2BbJ" target="_blank" class="nav-item">
@@ -910,8 +946,22 @@
                 </label>
                 <input type="text" id="gift-nickname" class="gift-input-field" placeholder="Ingresa el Nick exacto del destinatario...">
             </div>
-            <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
-                Total: $<span id="cart-total-price">0.00</span>
+            <div class="coupon-section">
+                <label><i class="fas fa-tag" style="color: var(--primary);"></i> Código de descuento</label>
+                <input type="text" id="coupon-code-input" class="coupon-input" placeholder="Ej: BIENVENIDA10" maxlength="30">
+                <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">Aplicar</button>
+                <div id="coupon-applied-box" class="coupon-applied" style="display: none;">
+                    <span><i class="fas fa-check-circle"></i> Cupón <strong id="coupon-applied-code"></strong> aplicado: <span id="coupon-applied-desc"></span></span>
+                    <button type="button" class="coupon-remove" onclick="removeCoupon()">Quitar</button>
+                </div>
+                <div id="coupon-error-box" class="coupon-error" style="display: none;"></div>
+            </div>
+            <div style="margin-top: 20px; text-align: right; font-size: 1.1rem;">
+                <div id="cart-subtotal-line" style="display: none; color: #888; margin-bottom: 5px;">Subtotal: $<span id="cart-subtotal-price">0.00</span></div>
+                <div id="cart-discount-line" style="display: none; color: var(--success); margin-bottom: 5px;">Descuento: -$<span id="cart-discount-amount">0.00</span></div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: var(--success);">
+                    Total: $<span id="cart-total-price">0.00</span>
+                </div>
             </div>
             <button onclick="checkout()" style="width: 100%; padding: 15px; margin-top: 20px; background: var(--success); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                 <i class="fab fa-discord"></i> GENERAR PEDIDO
@@ -974,6 +1024,37 @@
         </div>
     </div>
 
+    <div class="modal" id="admin-coupons-modal">
+        <div class="modal-content" style="max-width: 560px;">
+            <i class="fas fa-times close-modal" onclick="closeModal('admin-coupons-modal')"></i>
+            <h3 style="margin:0 0 20px 0; color: var(--primary); text-transform: uppercase;">
+                <i class="fas fa-tags"></i> Administrar cupones de descuento
+            </h3>
+            <div class="admin-coupon-form">
+                <div class="form-group">
+                    <label>Código</label>
+                    <input type="text" id="admin-coupon-code" placeholder="Ej: VERANO20" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="admin-coupon-type">
+                        <option value="percent">Porcentaje (%)</option>
+                        <option value="fixed">Monto fijo (USD)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" id="admin-coupon-value" placeholder="10" min="0" step="0.01">
+                </div>
+                <button type="button" class="btn-add-coupon" onclick="addAdminCoupon()"><i class="fas fa-plus"></i> Agregar cupón</button>
+            </div>
+            <div style="margin-bottom: 10px; color: #888; font-size: 0.9rem;">Cupones activos:</div>
+            <div id="admin-coupons-list" style="max-height: 280px; overflow-y: auto;">
+                <p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- DATA ---
         const kitImages = {
@@ -1016,10 +1097,23 @@
         };
 
         // --- GLOBAL VARS ---
+        const COUPONS_STORAGE_KEY = "enderland_coupons";
+        const ADMIN_NICKNAME = "lachispa1122";
         let globalUser = "Invitado"; // Inicializada por defecto
         let skinViewer = null;
         let cart = [];
+        let appliedCoupon = null; // { code, type, value }
         let isPermanent = false;
+
+        function getCoupons() {
+            try {
+                const raw = localStorage.getItem(COUPONS_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) { return []; }
+        }
+        function saveCoupons(list) {
+            localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(list));
+        }
 
         // --- FUNCIONES SISTEMA ---
         function updateSkin() {
@@ -1053,7 +1147,12 @@
             document.getElementById("terms-overlay").style.opacity = "0";
             setTimeout(() => document.getElementById("terms-overlay").style.display = "none", 500);
             
-            // Iniciar widget del servidor al entrar
+            // Panel admin cupones solo para lachispa1122
+            const isAdmin = (globalUser || "").toLowerCase() === ADMIN_NICKNAME.toLowerCase();
+            document.querySelectorAll(".admin-coupons-panel").forEach(el => el.style.display = isAdmin ? "" : "none");
+            document.getElementById("nav-admin-cupones").style.display = isAdmin ? "flex" : "none";
+            document.getElementById("nav-admin-cupones-title").style.display = isAdmin ? "block" : "none";
+            
             fetchServerStatus();
             setInterval(fetchServerStatus, 60000); 
         }
@@ -1087,17 +1186,34 @@
 
         function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
+        function getCartTotal() {
+            let subtotal = 0;
+            cart.forEach(item => subtotal += item.price);
+            let discount = 0;
+            if (appliedCoupon) {
+                const coupons = getCoupons();
+                const c = coupons.find(x => (x.code || "").toLowerCase() === (appliedCoupon.code || "").toLowerCase());
+                if (c) {
+                    if (c.type === "percent") discount = subtotal * (Math.min(100, Math.max(0, parseFloat(c.value) || 0)) / 100);
+                    else discount = Math.min(subtotal, parseFloat(c.value) || 0);
+                }
+            }
+            return { subtotal, discount, total: Math.max(0, subtotal - discount) };
+        }
+
         function updateCartUI() {
             document.getElementById("cart-count").innerText = cart.length;
             const container = document.getElementById("cart-items-container");
-            let total = 0;
+            const tot = getCartTotal();
             
             if(cart.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #666;">Vacío</p>';
+                document.getElementById("coupon-applied-box").style.display = "none";
+                document.getElementById("coupon-error-box").style.display = "none";
+                appliedCoupon = null;
             } else {
                 container.innerHTML = "";
                 cart.forEach((item, index) => {
-                    total += item.price;
                     container.innerHTML += `
                         <div class="cart-item">
                             <div>${item.name} <small>(${item.type})</small></div>
@@ -1105,7 +1221,42 @@
                         </div>`;
                 });
             }
-            document.getElementById("cart-total-price").innerText = total.toFixed(2);
+            document.getElementById("cart-total-price").innerText = tot.total.toFixed(2);
+            const showSub = appliedCoupon && tot.discount > 0;
+            document.getElementById("cart-subtotal-line").style.display = showSub ? "block" : "none";
+            document.getElementById("cart-discount-line").style.display = showSub ? "block" : "none";
+            document.getElementById("cart-subtotal-price").innerText = tot.subtotal.toFixed(2);
+            document.getElementById("cart-discount-amount").innerText = tot.discount.toFixed(2);
+            if (appliedCoupon) {
+                document.getElementById("coupon-applied-box").style.display = "flex";
+                document.getElementById("coupon-applied-code").innerText = appliedCoupon.code;
+                document.getElementById("coupon-applied-desc").innerText = appliedCoupon.type === "percent" ? (appliedCoupon.value + "%") : ("$" + appliedCoupon.value);
+            } else {
+                document.getElementById("coupon-applied-box").style.display = "none";
+            }
+        }
+
+        function applyCoupon() {
+            const input = document.getElementById("coupon-code-input");
+            const code = (input.value || "").trim();
+            document.getElementById("coupon-error-box").style.display = "none";
+            if (!code) return;
+            const coupons = getCoupons();
+            const c = coupons.find(x => (x.code || "").toLowerCase() === code.toLowerCase());
+            if (!c) {
+                document.getElementById("coupon-error-box").innerText = "Cupón no válido o no existe.";
+                document.getElementById("coupon-error-box").style.display = "block";
+                return;
+            }
+            appliedCoupon = { code: c.code, type: c.type, value: c.value };
+            document.getElementById("coupon-code-input").value = "";
+            updateCartUI();
+        }
+
+        function removeCoupon() {
+            appliedCoupon = null;
+            document.getElementById("coupon-error-box").style.display = "none";
+            updateCartUI();
         }
 
         function toggleGiftInput() {
@@ -1117,9 +1268,8 @@
             if(cart.length === 0) return alert("Carrito vacío");
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = document.getElementById("gift-nickname").value.trim();
+            const tot = getCartTotal();
             let msg = "";
-            
-            // Verificación segura de globalUser
             const currentUser = globalUser || "Invitado";
 
             if(isGift) {
@@ -1130,7 +1280,10 @@
             }
             
             cart.forEach(i => msg += `• ${i.name} [${i.type}] - $${i.price}\n`);
-            msg += `--------------------------------\n💰 TOTAL: $${document.getElementById("cart-total-price").innerText} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
+            if (appliedCoupon && tot.discount > 0) {
+                msg += `--------------------------------\n🏷️ **Cupón:** ${appliedCoupon.code} (-$${tot.discount.toFixed(2)})\n`;
+            }
+            msg += `--------------------------------\n💰 TOTAL: $${tot.total.toFixed(2)} USD\n\nHe leído y acepto los Términos y Condiciones.\nEspero instrucciones de pago.`;
             
             navigator.clipboard.writeText(msg);
             alert("Pedido copiado con éxito. ¡Pégalo en el ticket!");
@@ -1221,6 +1374,59 @@
         }
 
         function copyIP() { navigator.clipboard.writeText("play.enderland.org"); alert("IP Copiada"); }
+
+        // --- ADMIN CUPONES (solo lachispa1122) ---
+        function openAdminCoupons() {
+            renderAdminCouponsList();
+            document.getElementById("admin-coupons-modal").style.display = "flex";
+        }
+        function renderAdminCouponsList() {
+            const list = getCoupons();
+            const container = document.getElementById("admin-coupons-list");
+            if (list.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No hay cupones. Agrega uno arriba.</p>';
+                return;
+            }
+            container.innerHTML = list.map((c, idx) => {
+                const desc = c.type === "percent" ? c.value + "%" : "$" + parseFloat(c.value).toFixed(2);
+                return `<div class="admin-coupon-card">
+                    <div><code>${escapeHtml(c.code)}</code> <span class="coupon-meta">${c.type === "percent" ? desc + " descuento" : desc + " USD"}</span></div>
+                    <button type="button" class="btn-delete-coupon" onclick="deleteAdminCoupon(${idx})"><i class="fas fa-trash"></i> Eliminar</button>
+                </div>`;
+            }).join("");
+        }
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function addAdminCoupon() {
+            const codeInput = document.getElementById("admin-coupon-code");
+            const typeInput = document.getElementById("admin-coupon-type");
+            const valueInput = document.getElementById("admin-coupon-value");
+            const code = (codeInput.value || "").trim().toUpperCase();
+            const type = typeInput.value;
+            const value = type === "percent" ? Math.min(100, Math.max(0, parseFloat(valueInput.value) || 0)) : Math.max(0, parseFloat(valueInput.value) || 0);
+            if (!code) return alert("Escribe un código para el cupón.");
+            const list = getCoupons();
+            if (list.some(c => (c.code || "").toLowerCase() === code.toLowerCase())) return alert("Ya existe un cupón con ese código.");
+            list.push({ code, type, value });
+            saveCoupons(list);
+            codeInput.value = "";
+            valueInput.value = "";
+            renderAdminCouponsList();
+        }
+        function deleteAdminCoupon(index) {
+            const list = getCoupons();
+            const c = list[index];
+            if (!c) return;
+            if (!confirm("¿Eliminar el cupón \"" + (c.code || "") + "\"?")) return;
+            const removedCode = (c.code || "").toLowerCase();
+            list.splice(index, 1);
+            saveCoupons(list);
+            if (appliedCoupon && (appliedCoupon.code || "").toLowerCase() === removedCode) removeCoupon();
+            renderAdminCouponsList();
+        }
 
         // --- NAVIGATION SCROLL ---
         const mainContent = document.getElementById('scroll-container');
