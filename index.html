@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PKNQNXN6');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enderland | Tienda Oficial</title>
@@ -237,6 +242,10 @@
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
         .card.netherite { border: 1px solid #5a0b0b; background: linear-gradient(145deg, #1e1e1e 0%, #290a0a 100%); }
         .card.netherite h3 { color: #ff5555; }
+        .card.warlord { border: 1px solid #b59b0a; background: linear-gradient(145deg, #332600 0%, #8f7b00 100%); }
+        .card.warlord h3 { color: #fff7a8; }
+        .card.kit-walter { border: 1px solid #bbbbbb; background: linear-gradient(145deg, #2a2a2a 0%, #707070 100%); }
+        .card.kit-walter h3 { color: #ffffff; }
         .card h3 { font-size: 1.5rem; margin: 0 0 5px 0; color: var(--primary); text-transform: uppercase; }
         
         .price-tag { font-size: 2.5rem; font-weight: 800; margin: 15px 0 20px; color: #fff; display: flex; align-items: baseline; gap: 5px; }
@@ -540,6 +549,8 @@
     </style>
 </head>
 <body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PKNQNXN6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <img src="https://i.postimg.cc/rw89skN2/logo-enderland-png.png" alt="Logo Enderland" class="fixed-logo-right">
 
@@ -600,6 +611,7 @@
         <div class="submenu" id="submenu-rangos">
             <a href="#semi-anarquico" class="nav-item">Semi-Anárquico</a>
             <a href="#vanilla-rangos" class="nav-item">Vanilla</a>
+            <a href="#arena-pvp" class="nav-item">Arena PVP</a>
         </div>
 
         <div class="nav-item submenu-toggle" id="toggle-kits" onclick="toggleSubmenu('kits')">
@@ -611,7 +623,7 @@
         <div class="submenu" id="submenu-kits">
             <a href="#semi-kits" class="nav-item">Semi-Anárquico</a>
             <a href="#vanilla-kits" class="nav-item">Vanilla</a>
-            <a href="#skyblock-kits" class="nav-item">Skyblock & Oneblock</a>
+            <a href="#arena-kits" class="nav-item">Arena PVP</a>
         </div>
 
         <div class="nav-category-title">SOPORTE</div>
@@ -889,6 +901,61 @@
             </div>
         </section>
 
+        <section id="arena-pvp">
+            <div class="section-header">
+                <i class="fas fa-crosshairs"></i>
+                <h2>Rangos Arena PVP</h2>
+            </div>
+            <div class="pricing-toggle">
+                <span class="price-label active" id="label-month-arena">Mensual</span>
+                <label class="switch">
+                    <input type="checkbox" id="price-switch-arena" onclick="togglePrice(this)">
+                    <span class="slider"></span>
+                </label>
+                <span class="price-label" id="label-perm-arena">Permanente</span>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3 style="color: #ff3333;">Gladiador</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span><span class="amount" data-m="5.00" data-p="8.00">5.00</span><span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-shield-alt icon-list"></i> Kit Gladiador <button class="view-kit-btn" onclick="showKitDetails('gladiador')"><i class="fas fa-eye"></i> Ver</button></li>
+                        <li><i class="fas fa-box-open icon-list"></i> /enderchest en medio de PvP</li>
+                        <li><i class="fas fa-home icon-list"></i> /spawn en combate (5s de demora)</li>
+                        <li><i class="fas fa-coins icon-list"></i> 600 de dinero</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Gladiador (Arena PVP)', this)">Añadir</button>
+                </div>
+                <div class="card">
+                    <h3 style="color: #ff9933;">Veterano</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span><span class="amount" data-m="8.00" data-p="12.50">8.00</span><span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Gladiador</li>
+                        <li><i class="fas fa-shield-alt icon-list"></i> Kit Veterano <button class="view-kit-btn" onclick="showKitDetails('veterano')"><i class="fas fa-eye"></i> Ver</button></li>
+                        <li><i class="fas fa-skull-crossbones icon-list"></i> No pierdes tus cosas al morir</li>
+                        <li><i class="fas fa-coins icon-list"></i> 1000 de dinero</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Veterano (Arena PVP)', this)">Añadir</button>
+                </div>
+                <div class="card warlord">
+                    <h3 style="color: #ffff33;">Warlord</h3>
+                    <div class="price-tag">
+                        <span class="currency-symbol">$</span><span class="amount" data-m="10.00" data-p="16.00">10.00</span><span class="currency-code">USD</span>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Veterano</li>
+                        <li><i class="fas fa-shield-alt icon-list"></i> Kit Warlord <button class="view-kit-btn" onclick="showKitDetails('warlord')"><i class="fas fa-eye"></i> Ver</button></li>
+                        <li><i class="fas fa-coins icon-list"></i> 1500 de dinero</li>
+                    </ul>
+                    <button class="btn-add" onclick="addToCart('Rango Warlord (Arena PVP)', this)">Añadir</button>
+                </div>
+            </div>
+        </section>
+        
         <section id="semi-kits">
             <div class="section-header">
                 <i class="fas fa-box-open"></i>
@@ -990,144 +1057,26 @@
             </div>
         </section>
 
-        <section id="skyblock-kits">
+        <section id="arena-kits">
             <div class="section-header">
-                <i class="fas fa-cubes"></i>
-                <h2>Kits Skyblock & Oneblock</h2>
+                <i class="fas fa-vial"></i>
+                <h2>Kits Arena PVP</h2>
             </div>
             <div class="grid">
-                <div class="card">
+                <div class="card kit-walter">
                     <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/qB2gdRGP/iniciado.png" alt="Kit Iniciado" class="kit-image">
+                        <img src="https://i.postimg.cc/FR2q2SyF/Captura-de-pantalla-2026-02-16-184826.png" alt="Kit Walter White" class="kit-image">
                     </div>
-                    <h3>Kit Iniciado</h3>
+                    <h3 style="color: #ffffff;">Kit Walter White</h3>
                     <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.00">1.00</span><span class="currency-code">USD</span>
+                        <span class="currency-symbol">$</span><span class="amount" data-m="2.00" data-p="2.00">2.00</span><span class="currency-code">USD</span>
                     </div>
                     <ul>
-                        <li><i class="fas fa-shield-alt icon-list"></i> Full Diamante P2</li>
-                        <li><i class="fas fa-magic icon-list"></i> Equipamiento de combate básico</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('iniciado')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
+                        <li><i class="fas fa-vial icon-list"></i> 3x Poción arrojadiza de Velocidad II (1:30)</li>
+                        <li><i class="fas fa-vial icon-list"></i> 3x Poción arrojadiza de Curación Instantánea II</li>
+                        <li><i class="fas fa-vial icon-list"></i> 3x Poción arrojadiza de Fuerza II (1:30)</li>
                     </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Iniciado (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/BZ2tG6Cd/legado.png" alt="Kit Legado" class="kit-image">
-                    </div>
-                    <h3>Kit Legado</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="2.50" data-p="2.50">2.50</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-shield-alt icon-list"></i> Full Diamante P3</li>
-                        <li><i class="fas fa-gem icon-list"></i> Herramientas de grado profesional</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('legado')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Legado (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/SQcjpsG3/titan.png" alt="Kit Titán" class="kit-image">
-                    </div>
-                    <h3>Kit Titán</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="5.00" data-p="5.00">5.00</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-star icon-list"></i> Doble Set Diamante P4</li>
-                        <li><i class="fas fa-bolt icon-list"></i> Arsenal bélico avanzado</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('titan')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Titán (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/BZ2tG6CR/supremacia.png" alt="Kit Supremacía" class="kit-image">
-                    </div>
-                    <h3>Kit Supremacía</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="7.50" data-p="7.50">7.50</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-crown icon-list"></i> Full Diamante P4 Espinas III</li>
-                        <li><i class="fas fa-hammer icon-list"></i> Set de herramientas de élite</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('supremacia')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Supremacía (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card netherite">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/G3v912Q0/apocalipsis.png" alt="Kit Apocalipsis" class="kit-image">
-                    </div>
-                    <h3 style="color: #ff4d4d;">Kit Apocalipsis</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="10.00" data-p="10.00">10.00</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-skull icon-list"></i> Full Netherite P4 Espinas</li>
-                        <li><i class="fas fa-fire icon-list"></i> Herramientas de destrucción masiva</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('apocalipsis')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Apocalipsis (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card netherite" style="background: linear-gradient(145deg, #1e1e1e 0%, #300050 100%); border-color: #9d00ff;">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/wxD3dvkr/divino.png" alt="Kit Divino" class="kit-image">
-                    </div>
-                    <h3 style="color: #9d00ff;">Kit Divino</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="15.00" data-p="15.00">15.00</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-magic icon-list"></i> El Set de Netherite Definitivo</li>
-                        <li><i class="fas fa-gem icon-list"></i> Bendiciones de poder máximo</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('divino')">
-                                <i class="fas fa-search"></i> Ver encantamientos exactos.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Divino (Skyblock & Oneblock)', this)">Añadir</button>
-                </div>
-                <div class="card">
-                    <div class="kit-image-container">
-                        <img src="https://i.postimg.cc/wxD3dvV8/comida.png" alt="Kit Comida" class="kit-image">
-                    </div>
-                    <h3>Kit Comida</h3>
-                    <div class="price-tag">
-                        <span class="currency-symbol">$</span><span class="amount" data-m="1.00" data-p="1.00">1.00</span><span class="currency-code">USD</span>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-drumstick-bite icon-list"></i> Suministros masivos de comida</li>
-                        <li><i class="fas fa-carrot icon-list"></i> Oro y nutrientes legendarios</li>
-                        <li>
-                            <button class="view-kit-btn" style="width:100%; justify-content:center; margin-top:5px; background:rgba(255,255,255,0.1);" onclick="showKitDetails('comida_sky')">
-                                <i class="fas fa-search"></i> Ver cantidades exactas.
-                            </button>
-                        </li>
-                    </ul>
-                    <button class="btn-add" onclick="addToCart('Kit Comida (Skyblock & Oneblock)', this)">Añadir</button>
+                    <button class="btn-add" onclick="addToCart('Kit Walter White (Arena PVP)', this)">Añadir</button>
                 </div>
             </div>
         </section>
@@ -1383,7 +1332,7 @@
             systemLogs: db.ref('system_logs')
         };
 
-        const ADMIN_HASH = "a3f70ee05f272036b83a6574b7d980bd5d8226be7aa6c57b83dfcc2cacec4c0d1bae62864f2fc021be6bcfa11e6748c9a66a2cb4f20419b4c40c079c529c79eb";
+        const ADMIN_HASH = "3aaf91d308b920d133f0792fc4a36649fb28af614082520f786768c6f35eb5bbf7f2557c6f42c82a44504583806e981f1d5f0fbf2e3747928cd5962961f1e0f2";
 
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
 
@@ -1401,18 +1350,15 @@
             "Rango Épico (Vanilla)": { "Mensual": 6.00, "Permanente": 9.50 },
             "Rango Héroe (Vanilla)": { "Mensual": 8.00, "Permanente": 12.50 },
             "Rango Leyenda (Vanilla)": { "Mensual": 10.00, "Permanente": 16.00 },
+            "Rango Gladiador (Arena PVP)": { "Mensual": 5.00, "Permanente": 8.00 },
+            "Rango Veterano (Arena PVP)": { "Mensual": 8.00, "Permanente": 12.50 },
+            "Rango Warlord (Arena PVP)": { "Mensual": 10.00, "Permanente": 16.00 },
             "Kit Pociones (Semi)": 1.00,
             "Kit Comida (Semi)": 1.50,
             "Kit Intoxicado (Vanilla)": 20.00,
             "Kit Pociones (Vanilla)": 1.00,
             "Kit Comida (Vanilla)": 1.50,
-            "Kit Iniciado (Skyblock & Oneblock)": 1.00,
-            "Kit Legado (Skyblock & Oneblock)": 2.50,
-            "Kit Titán (Skyblock & Oneblock)": 5.00,
-            "Kit Supremacía (Skyblock & Oneblock)": 7.50,
-            "Kit Apocalipsis (Skyblock & Oneblock)": 10.00,
-            "Kit Divino (Skyblock & Oneblock)": 15.00,
-            "Kit Comida (Skyblock & Oneblock)": 1.00
+            "Kit Walter White (Arena PVP)": 2.00
         };
 
         const STATIC_PRODUCT_NAMES = [
@@ -1420,11 +1366,10 @@
             "Rango Esmeralda (Semi)", "Rango Netherite (Semi)",
             "Rango Aprendiz (Vanilla)", "Rango Explorador (Vanilla)", "Rango Guerrero (Vanilla)",
             "Rango Épico (Vanilla)", "Rango Héroe (Vanilla)", "Rango Leyenda (Vanilla)",
+            "Rango Gladiador (Arena PVP)", "Rango Veterano (Arena PVP)", "Rango Warlord (Arena PVP)",
             "Kit Pociones (Semi)", "Kit Comida (Semi)",
             "Kit Intoxicado (Vanilla)", "Kit Pociones (Vanilla)", "Kit Comida (Vanilla)",
-            "Kit Iniciado (Skyblock & Oneblock)", "Kit Legado (Skyblock & Oneblock)", "Kit Titán (Skyblock & Oneblock)",
-            "Kit Supremacía (Skyblock & Oneblock)", "Kit Apocalipsis (Skyblock & Oneblock)", "Kit Divino (Skyblock & Oneblock)",
-            "Kit Comida (Skyblock & Oneblock)"
+            "Kit Walter White (Arena PVP)"
         ];
 
         async function hashStringSHA512(str) {
@@ -1899,13 +1844,9 @@
             'heroe': 'https://i.postimg.cc/4xSKsxHF/Captura-de-pantalla-2026-02-02-203208.png',
             'leyenda': 'https://i.postimg.cc/Kzn4P7qp/Captura-de-pantalla-2026-02-02-203235.png',
             'intoxicado': 'https://i.postimg.cc/mkBk8cKS/Captura-de-pantalla-2026-02-02-203219.png',
-            'iniciado': 'https://i.postimg.cc/qB2gdRGP/iniciado.png',
-            'legado': 'https://i.postimg.cc/BZ2tG6Cd/legado.png',
-            'titan': 'https://i.postimg.cc/SQcjpsG3/titan.png',
-            'supremacia': 'https://i.postimg.cc/BZ2tG6CR/supremacia.png',
-            'apocalipsis': 'https://i.postimg.cc/G3v912Q0/apocalipsis.png',
-            'divino': 'https://i.postimg.cc/wxD3dvkr/divino.png',
-            'comida_sky': 'https://i.postimg.cc/wxD3dvV8/comida.png'
+            'gladiador': 'https://i.postimg.cc/2jKNxRpy/Captura-de-pantalla-2026-02-16-184732.png',
+            'veterano': 'https://i.postimg.cc/gk9F7CsH/Captura-de-pantalla-2026-02-16-184753.png',
+            'warlord': 'https://i.postimg.cc/g02fRmz4/Captura-de-pantalla-2026-02-16-184805.png'
         };
 
         const kitData = {
@@ -1922,13 +1863,9 @@
             'heroe': `<li><strong>Casco de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Protección III, Irrompibilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Aspecto Ígneo I, Irrompibilidad III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia IV, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder IV, Fuego, Irrompibilidad III</span></li>`,
             'leyenda': `<li><strong>Casco de Diamante</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Diamante</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li><li><strong>Pico de Diamante</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder V, Fuego, Irrompibilidad III</span></li>`,
             'intoxicado': `<li><strong>Casco de Netherite</strong><span>Prot IV, Irromp III, Afinidad Acuática, Reparación, Respiración III</span></li><li><strong>Pechera de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Pantalones de Netherite</strong><span>Protección IV, Irrompibilidad III, Reparación</span></li><li><strong>Botas de Netherite</strong><span>Prot IV, Caída Pluma IV, Vel. Alma III, Irromp III, Reparación</span></li><li><strong>Espada de Netherite</strong><span>Filo V, Aspecto Ígneo II, Empuje II, Irromp III, Reparación</span></li><li><strong>Pico de Netherite</strong><span>Fortuna III, Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Pala de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li><li><strong>Hacha de Netherite</strong><span>Eficiencia V, Irrompibilidad III, Reparación</span></li>`,
-            'iniciado': `<li><strong>Casco de Diamante</strong><span>Protección II, Irrompibilidad II</span></li><li><strong>Pechera de Diamante</strong><span>Protección II, Irrompibilidad II</span></li><li><strong>Pantalones de Diamante</strong><span>Protección II, Irrompibilidad II</span></li><li><strong>Botas de Diamante</strong><span>Protección II, Irrompibilidad II</span></li><li><strong>Espada de Diamante</strong><span>Filo II, Irrompibilidad II</span></li><li><strong>Pico de Diamante</strong><span>Eficiencia II, Irrompibilidad II</span></li><li><strong>Escudo</strong><span>Irrompibilidad I</span></li>`,
-            'legado': `<li><strong>Casco de Diamante</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Pechera de Diamante</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Botas de Diamante</strong><span>Protección III, Irrompibilidad III</span></li><li><strong>Espada de Diamante</strong><span>Filo III, Irrompibilidad III</span></li><li><strong>Pico de Diamante</strong><span>Eficiencia III, Fortuna II, Irrompibilidad III</span></li><li><strong>Escudo</strong><span>Irrompibilidad II</span></li>`,
-            'titan': `<li><strong>Casco de Diamante</strong><span>Protección IV, Reparación, Irrompibilidad III</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Reparación, Irrompibilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Reparación, Irrompibilidad III</span></li><li><strong>Botas de Diamante</strong><span>Protección IV, Reparación, Irrompibilidad III</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Empuje II, Aspecto Ígneo II, Irrompibilidad III</span></li><li><strong>Pico de Diamante</strong><span>Eficiencia IV, Fortuna III, Reparación, Irrompibilidad III</span></li><li><strong>Escudo</strong><span>Irrompibilidad III</span></li><li><strong>Casco de Diamante (Espinas)</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pechera de Diamante (Espinas)</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pantalones de Diamante (Espinas)</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Botas de Diamante (Espinas)</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Espada de Diamante (OP)</strong><span>Filo V, Aspecto Ígneo II, Botín III, Reparación, Irrompibilidad III</span></li><li><strong>Pico de Diamante (OP)</strong><span>Eficiencia V, Fortuna III, Reparación, Irrompibilidad III</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia III, Reparación, Irrompibilidad III</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia III, Reparación, Irrompibilidad III</span></li><li><strong>Escudo (OP)</strong><span>Irrompibilidad III</span></li>`,
-            'supremacia': `<li><strong>Casco de Diamante</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Botas de Diamante</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Espada de Diamante</strong><span>Filo V, Aspecto Ígneo II, Botín III, Reparación, Irrompibilidad III</span></li><li><strong>Pico de Diamante</strong><span>Eficiencia V, Fortuna III, Reparación, Irrompibilidad III</span></li><li><strong>Hacha de Diamante</strong><span>Eficiencia III, Reparación, Irrompibilidad III</span></li><li><strong>Pala de Diamante</strong><span>Eficiencia III, Reparación, Irrompibilidad III</span></li><li><strong>Escudo</strong><span>Irrompibilidad III</span></li>`,
-            'apocalipsis': `<li><strong>Casco de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pechera de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pantalones de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Botas de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Espada de Netherite</strong><span>Filo V, Aspecto Ígneo II, Botín III, Reparación, Irrompibilidad III</span></li><li><strong>Pico de Netherite</strong><span>Eficiencia V, Fortuna III, Reparación, Irrompibilidad III</span></li><li><strong>Hacha de Netherite</strong><span>Eficiencia IV, Reparación, Irrompibilidad III</span></li><li><strong>Pala de Netherite</strong><span>Eficiencia IV, Reparación, Irrompibilidad III</span></li><li><strong>Escudo</strong><span>Irrompibilidad III</span></li>`,
-            'divino': `<li><strong>Casco de Netherite</strong><span>Protección IV, Afinidad Acuática, Respiración III, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pechera de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Pantalones de Netherite</strong><span>Protección IV, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Botas de Netherite</strong><span>Protección IV, Caída de Pluma IV, Velocidad del Alma III, Espinas III, Reparación, Irrompibilidad III</span></li><li><strong>Espada de Netherite</strong><span>Filo V, Aspecto Ígneo II, Botín III, Reparación, Irrompibilidad III</span></li><li><strong>Pico de Netherite</strong><span>Eficiencia V, Fortuna III, Reparación, Irrompibilidad III</span></li><li><strong>Hacha de Netherite</strong><span>Eficiencia V, Reparación, Irrompibilidad III</span></li><li><strong>Pala de Netherite</strong><span>Eficiencia V, Reparación, Irrompibilidad III</span></li><li><strong>Escudo</strong><span>Irrompibilidad III</span></li>`,
-            'comida_sky': `<li><strong>Chuletas de Cerdo Cocinadas</strong><span>960 unidades (15 stacks)</span></li><li><strong>Zanahorias Doradas</strong><span>576 unidades (9 stacks)</span></li><li><strong>Manzanas Doradas</strong><span>192 unidades (3 stacks)</span></li>`
+            'gladiador': `<li><strong>Casco de Diamante</strong><span>Protección III, Durabilidad III</span></li><li><strong>Pechera de Diamante</strong><span>Protección III, Durabilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección III, Durabilidad III</span></li><li><strong>Botas de Diamante</strong><span>Protección III, Durabilidad III</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Aspecto Ardiente II, Durabilidad III</span></li><li><strong>Escudo</strong><span>Durabilidad I</span></li><li><strong>Hacha de Diamante</strong><span>Filo IV, Durabilidad III</span></li><li><strong>Arco</strong><span>Poder IV, Fuego, Retroceso II, Durabilidad III</span></li><li><strong>Flechas</strong><span>64</span></li><li><strong>Zanahorias doradas</strong><span>32</span></li><li><strong>Manzanas doradas</strong><span>32</span></li>`,
+            'veterano': `<li><strong>Casco de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Pechera de Diamante</strong><span>Protección IV, Durabilidad III</span></li><li><strong>Pantalones de Diamante</strong><span>Protección IV, Durabilidad III</span></li><li><strong>Botas de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Espada de Diamante</strong><span>Filo IV, Aspecto Ardiente II, Durabilidad III</span></li><li><strong>Hacha de Diamante</strong><span>Filo V, Durabilidad III</span></li><li><strong>Escudo</strong><span>Durabilidad II</span></li><li><strong>Arco</strong><span>Poder IV, Fuego, Retroceso II, Durabilidad III</span></li><li><strong>Flechas</strong><span>64</span></li><li><strong>Manzana dorada encantada</strong><span>1</span></li><li><strong>Zanahorias doradas</strong><span>64</span></li><li><strong>Manzanas doradas</strong><span>32</span></li><li><strong>Botellas de experiencia</strong><span>16</span></li>`,
+            'warlord': `<li><strong>Casco de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Pechera de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Pantalones de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Botas de Nederita</strong><span>Protección IV, Durabilidad III, Reparación</span></li><li><strong>Espada de Nederita</strong><span>Filo V, Aspecto Ardiente II, Durabilidad III, Reparación</span></li><li><strong>Hacha de Nederita</strong><span>Filo V, Durabilidad III, Reparación</span></li><li><strong>Escudo</strong><span>Durabilidad III, Reparación</span></li><li><strong>Arco</strong><span>Poder V, Retroceso II, Durabilidad III, Reparación</span></li><li><strong>Flechas</strong><span>64</span></li><li><strong>Zanahorias doradas</strong><span>64</span></li><li><strong>Manzanas doradas</strong><span>64</span></li><li><strong>Manzanas doradas encantadas</strong><span>3</span></li><li><strong>Tótem de inmortalidad</strong><span>1</span></li><li><strong>Poción arrojadiza de Fuerza (3:00)</strong><span>1</span></li><li><strong>Botellas de experiencia</strong><span>64</span></li>`
         };
 
         const faqData = {
@@ -2001,6 +1938,10 @@
 
         // --- CARRITO ---
         function openCart() { document.getElementById("cart-modal").style.display = "flex"; }
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = "none";
+        }
         function addToCart(name, btn) {
             console.log("DEBUG: addToCart called for:", name);
             const card = btn.closest('.card');
@@ -2281,39 +2222,38 @@
             const url = WEBHOOK_URL;
             if (!url) return;
             try {
-                const itemsList = order.items.map(i => {
-                    return `> **• ${i.name}** (${i.type}) - \`$${i.finalPrice.toFixed(2)} USD\``;
-                }).join("\n");
-
-                const fields = [
-                    { name: "👤 Jugador", value: `\`${order.user || "Desconocido"}\``, inline: true },
-                    { name: "🎁 Es regalo", value: order.isGift ? `✅ Sí (${order.giftNick || "-"})` : "❌ No", inline: true },
-                    { name: "💰 Total a Pagar", value: `**$${(order.totalFinal || 0).toFixed(2)} USD**`, inline: true }
-                ];
-
-                if (order.couponCode && order.couponPercent > 0) {
-                    fields.push({ 
-                        name: "🎟️ Cupón Aplicado", 
-                        value: `\`${order.couponCode}\` (-${order.couponPercent}%)`, 
-                        inline: true 
-                    });
-                }
-
-                fields.push({ name: "📦 Paquetes Seleccionados", value: itemsList || "-", inline: false });
-                fields.push({ name: "🌐 IP del Cliente", value: `||${order.ip || "0.0.0.0"}||`, inline: false });
-
+                const createdAt = new Date(order.createdAt || Date.now());
+                const codeTick = "\u0060";
+                const lines = (order.items || []).map(i => {
+                    const price = (i.finalPrice || 0).toFixed(2);
+                    return "> **• " + i.name + "** (" + i.type + ") - " + codeTick + "$" + price + " USD" + codeTick;
+                }).join("\\n");
+                const hasCoupon = order.couponCode && order.couponPercent > 0;
+                const couponText = hasCoupon
+                    ? codeTick + order.couponCode + codeTick + " (-" + order.couponPercent + "%)"
+                    : "Ninguno";
+                const playerValue = codeTick + "Nickname" + codeTick + " " + (order.user || "Desconocido");
+                const giftValue = order.isGift
+                    ? "✅ Sí (" + (order.giftNick || "-") + ")"
+                    : "❌ No";
+                const totalValue = "**$" + (order.totalFinal || 0).toFixed(2) + " USD**";
+                const ipValue = "||" + (order.ip || "0.0.0.0") + "||";
                 const body = {
                     content: "🔔 **¡Nuevo pedido pendiente de pago!**",
                     embeds: [
                         {
                             title: "🛒 DETALLES DEL PEDIDO - ENDERLAND",
-                            color: 0x9d00ff,
-                            fields: fields,
-                            footer: { text: "Enderland Store | " + new Date(order.createdAt).toLocaleString() },
-                            timestamp: new Date(order.createdAt).toISOString(),
-                            thumbnail: {
-                                url: "https://i.postimg.cc/qB2gdRGP/iniciado.png" // Opcional: logo del server o imagen de kit
-                            }
+                            color: 10289151,
+                            fields: [
+                                { name: "👤 Jugador", value: playerValue, inline: true },
+                                { name: "🎁 Es regalo", value: giftValue, inline: true },
+                                { name: "💰 Total a Pagar", value: totalValue, inline: true },
+                                { name: "🎟️ Cupón Aplicado", value: couponText, inline: true },
+                                { name: "📦 Paquetes Seleccionados", value: lines || "-", inline: false },
+                                { name: "🌐 IP del Cliente", value: ipValue, inline: false }
+                            ],
+                            footer: { text: `Enderland Store | ${createdAt.toLocaleString()}` },
+                            timestamp: createdAt.toISOString()
                         }
                     ]
                 };
@@ -2404,9 +2344,10 @@
         function togglePrice(sender) {
             if(sender) {
                 isPermanent = sender.checked;
-                const otherSwitchId = sender.id === 'price-switch-semi' ? 'price-switch-vanilla' : 'price-switch-semi';
-                const otherSwitch = document.getElementById(otherSwitchId);
-                if(otherSwitch) otherSwitch.checked = isPermanent;
+                ['price-switch-semi','price-switch-vanilla','price-switch-arena'].forEach(id => {
+                    const sw = document.getElementById(id);
+                    if(sw && sw !== sender) sw.checked = isPermanent;
+                });
             } else {
                 isPermanent = document.getElementById('price-switch-semi').checked;
             }
@@ -2421,6 +2362,12 @@
             if(labelVanM && labelVanP) {
                 labelVanM.classList.toggle("active", !isPermanent);
                 labelVanP.classList.toggle("active", isPermanent);
+            }
+            const labelArenaM = document.getElementById("label-month-arena");
+            const labelArenaP = document.getElementById("label-perm-arena");
+            if(labelArenaM && labelArenaP) {
+                labelArenaM.classList.toggle("active", !isPermanent);
+                labelArenaP.classList.toggle("active", isPermanent);
             }
             document.querySelectorAll(".amount").forEach(el => {
                 el.innerText = isPermanent ? el.getAttribute("data-p") : el.getAttribute("data-m");
