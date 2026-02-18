@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PKNQNXN6');</script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied'
+        });
+    </script>
+    <script>
+        (function(w,d,s,l,i){
+            w[l]=w[l]||[];
+            w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+            var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),
+                dl=l!='dataLayer'?'&l='+l:'';
+            j.async=true;
+            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+            f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PKNQNXN6');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enderland | Tienda Oficial</title>
@@ -302,7 +319,7 @@
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-            z-index: 300; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+            z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-content {
             background: #1a1a1a; width: 90%; max-width: 500px; border-radius: 15px; padding: 30px;
@@ -546,6 +563,90 @@
                 right: 10px;
             }
         }
+
+        #cookie-consent-banner {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 9999;
+            max-width: 640px;
+            width: calc(100% - 40px);
+            background: #111111;
+            border-radius: 12px;
+            border: 1px solid #333333;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        #cookie-consent-banner.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        .cookie-consent-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            border-left: 4px solid #9d00ff;
+        }
+        .cookie-consent-text h3 {
+            margin: 0 0 4px 0;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+        .cookie-consent-text p {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        .cookie-consent-text a {
+            color: #9d00ff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .cookie-consent-actions {
+            display: flex;
+            flex-shrink: 0;
+            gap: 8px;
+        }
+        .cookie-consent-actions button {
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        #cookie-accept-btn {
+            background: #9d00ff;
+            color: #ffffff;
+        }
+        #cookie-accept-btn:hover {
+            background: #7a00c7;
+        }
+        #cookie-reject-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid #444444;
+        }
+        #cookie-reject-btn:hover {
+            border-color: #9d00ff;
+        }
+        @media (max-width: 600px) {
+            .cookie-consent-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .cookie-consent-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
@@ -655,10 +756,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
             </div>
             <div class="promo-counter">
-                <span class="counter-badge">¡Solo quedan 8 cupos!</span>
-                <div style="font-size: 0.75rem; color: #888; margin-bottom: 3px;">2 / 10 Reclamados</div>
+                <span class="counter-badge">¡Solo quedan 7 cupos!</span>
+                <div style="font-size: 0.75rem; color: #888; margin-bottom: 3px;">3/10 Reclamados</div>
                 <div class="progress-mini">
-                    <div class="progress-mini-fill" style="width: 80%;"></div>
+                    <div class="progress-mini-fill" style="width: 70%;"></div>
                 </div>
             </div>
         </div>
@@ -1226,6 +1327,110 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
+    <div class="modal" id="privacy-modal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModal('privacy-modal')"></i>
+            <h3 style="margin:0 0 15px 0; color: var(--primary); text-transform:none; font-size:1.1rem;">
+                Política de Privacidad y Manejo de Datos – Enderland.org
+            </h3>
+            <div class="faq-answer" style="margin-top:10px; max-height:60vh; overflow-y:auto;">
+                <p>En <strong>Enderland.org</strong> nos comprometemos a proteger la información de nuestros jugadores y compradores. Esta sección explica de forma clara qué datos recopilamos, por qué lo hacemos y cómo los protegemos.</p>
+
+                <h3>1. Datos recopilados al generar un pedido</h3>
+                <p>Cuando un usuario realiza un pedido en nuestra tienda, el sistema registra automáticamente la siguiente información:</p>
+                <ul>
+                    <li>Nick de Minecraft del jugador.</li>
+                    <li>Indicación de si la compra es un regalo.</li>
+                    <li>Paquetes o productos seleccionados.</li>
+                    <li>Total a pagar.</li>
+                    <li>Cupón aplicado (por ejemplo, cupones de creadores de contenido).</li>
+                    <li>Dirección IP del cliente.</li>
+                </ul>
+                <p>Esta información se envía de forma automatizada a nuestro sistema interno mediante un Webhook de Discord para que el Staff pueda validar y procesar la orden de manera segura y eficiente.</p>
+
+                <h3>2. Uso del Nick de Minecraft</h3>
+                <p>El <strong>Nick de Minecraft</strong> es el dato esencial para:</p>
+                <ul>
+                    <li>Vincular la compra con la cuenta correcta dentro del servidor.</li>
+                    <li>Entregar automáticamente rangos, kits, cosméticos u otros beneficios.</li>
+                    <li>Verificar operaciones ante consultas o reclamos.</li>
+                </ul>
+                <p>No solicitamos nombre real ni documentación personal para operar la tienda. El Nick se utiliza exclusivamente para la gestión interna del servidor.</p>
+
+                <h3>3. Registro de cupones y paquetes</h3>
+                <p>Los cupones aplicados (incluyendo los asociados a creadores de contenido y streamers colaboradores) y los paquetes seleccionados se registran con fines de:</p>
+                <ul>
+                    <li>Auditoría interna de beneficios.</li>
+                    <li>Validación de promociones.</li>
+                    <li>Soporte técnico ante posibles errores o reclamos.</li>
+                    <li>Control administrativo y contable del servidor.</li>
+                </ul>
+                <p>Estos datos no se utilizan para fines ajenos al funcionamiento de Enderland.</p>
+
+                <h3>4. Dirección IP y prevención de fraude</h3>
+                <p>La dirección IP del cliente se recopila por motivos de seguridad y protección del proyecto. Su uso incluye:</p>
+                <ul>
+                    <li>Prevención de fraude y compras abusivas.</li>
+                    <li>Detección de intentos de manipulación o explotación del sistema.</li>
+                    <li>Validación técnica de transacciones.</li>
+                    <li>Protección del servidor y su economía interna.</li>
+                </ul>
+                <p>La IP no se utiliza para identificar personalmente a un usuario fuera del entorno técnico necesario para la seguridad del servicio.</p>
+
+                <h3>5. Analítica web y Política de Cookies</h3>
+                <p>Utilizamos Google Analytics 4 (GA4) y Google Tag Manager (ID: GTM-PKNQNXN6).</p>
+                <p>Estas herramientas nos permiten analizar estadísticas generales de navegación como:</p>
+                <ul>
+                    <li>Países de origen.</li>
+                    <li>Tipo de dispositivo.</li>
+                    <li>Páginas más visitadas.</li>
+                    <li>Interacciones generales dentro del sitio.</li>
+                </ul>
+                <p>La información recopilada es anónima y agregada, y se utiliza exclusivamente para mejorar el rendimiento y la experiencia de la tienda.</p>
+                <p>Implementamos Google Consent Mode v2, lo que implica que:</p>
+                <ul>
+                    <li>Las cookies de analítica están bloqueadas por defecto.</li>
+                    <li>Solo se activan si el usuario acepta expresamente desde el banner de cookies.</li>
+                    <li>El usuario puede aceptar, rechazar o modificar sus preferencias en cualquier momento desde esta sección.</li>
+                </ul>
+
+                <h3>6. Seguridad y confidencialidad</h3>
+                <p>Toda la información recopilada:</p>
+                <ul>
+                    <li>Es utilizada exclusivamente por el Staff autorizado de Enderland.</li>
+                    <li>No se vende, alquila ni comparte con terceros.</li>
+                    <li>Se emplea únicamente para la gestión de compras, soporte técnico, seguridad y administración interna.</li>
+                </ul>
+                <p>Adoptamos medidas técnicas razonables para proteger los datos frente a accesos no autorizados, alteraciones o usos indebidos.</p>
+
+                <h3>7. Compromiso con la comunidad</h3>
+                <p>Entendemos que muchos jugadores pueden ser menores de edad y que sus padres o tutores pueden revisar esta política. Por ello, mantenemos un enfoque transparente, responsable y orientado a la seguridad, priorizando siempre la protección del usuario y la integridad del servidor.</p>
+
+                <h3>8. Actualizaciones</h3>
+                <p>Nos reservamos el derecho de actualizar esta política cuando sea necesario por cambios técnicos, operativos o legales. Las modificaciones se publicarán en esta misma sección.</p>
+
+                <button id="cookie-reset-btn" class="btn-accept" style="margin-top:10px; width:100%;">Resetear preferencias de cookies</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cookie-consent-banner">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-text">
+                <h3>Tu privacidad en Enderland</h3>
+                <p>
+                    Usamos cookies opcionales para analítica y medición anónima del tráfico.
+                    Puedes aceptar o rechazar. Ver detalles en
+                    <a id="cookie-terms-link">nuestros Términos y Condiciones</a>.
+                </p>
+            </div>
+            <div class="cookie-consent-actions">
+                <button id="cookie-reject-btn">Rechazar</button>
+                <button id="cookie-accept-btn">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="skin-modal">
         <div class="modal-content" style="text-align: center;">
             <i class="fas fa-times close-modal" onclick="closeModal('skin-modal')"></i>
@@ -1335,6 +1540,107 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const ADMIN_HASH = "3aaf91d308b920d133f0792fc4a36649fb28af614082520f786768c6f35eb5bbf7f2557c6f42c82a44504583806e981f1d5f0fbf2e3747928cd5962961f1e0f2";
 
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1471400851862982751/lLxuD7WDa8KB-EjmASttayGws8vrCVzNev6lrZZaqMQ8VyvwLgIIe0X69z_VUYjIJjtt";
+
+        (function() {
+            var STORAGE_KEY = "enderland_cookie_consent_v2";
+            var banner = document.getElementById("cookie-consent-banner");
+            var acceptBtn = document.getElementById("cookie-accept-btn");
+            var rejectBtn = document.getElementById("cookie-reject-btn");
+            var termsLink = document.getElementById("cookie-terms-link");
+            var resetBtn = document.getElementById("cookie-reset-btn");
+
+            function updateConsent(status) {
+                if (typeof gtag !== "function") return;
+                if (status === "granted") {
+                    gtag("consent", "update", {
+                        analytics_storage: "granted",
+                        ad_storage: "granted",
+                        ad_user_data: "granted",
+                        ad_personalization: "granted"
+                    });
+                } else {
+                    gtag("consent", "update", {
+                        analytics_storage: "denied",
+                        ad_storage: "denied",
+                        ad_user_data: "denied",
+                        ad_personalization: "denied"
+                    });
+                }
+            }
+
+            function hideBanner() {
+                if (!banner) return;
+                banner.classList.remove("visible");
+            }
+
+            function showBanner() {
+                if (!banner) return;
+                setTimeout(function() {
+                    banner.classList.add("visible");
+                }, 1500);
+            }
+
+            function handleAccept() {
+                localStorage.setItem(STORAGE_KEY, "accepted");
+                updateConsent("granted");
+                hideBanner();
+            }
+
+            function handleReject() {
+                localStorage.setItem(STORAGE_KEY, "rejected");
+                updateConsent("denied");
+                hideBanner();
+            }
+
+            function openPrivacyModal() {
+                var modal = document.getElementById("privacy-modal");
+                if (!modal) return;
+                modal.style.display = "flex";
+            }
+
+            function handleReset() {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+
+            function initCookieBanner() {
+                if (!banner || !acceptBtn || !rejectBtn) return;
+                var stored = localStorage.getItem(STORAGE_KEY);
+
+                if (stored === "accepted") {
+                    updateConsent("granted");
+                    hideBanner();
+                } else if (stored === "rejected") {
+                    updateConsent("denied");
+                    hideBanner();
+                } else {
+                    showBanner();
+                }
+
+                acceptBtn.addEventListener("click", handleAccept);
+                rejectBtn.addEventListener("click", handleReject);
+
+                if (termsLink) {
+                    termsLink.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        openPrivacyModal();
+                    });
+                }
+
+                if (resetBtn) {
+                    resetBtn.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        handleReset();
+                    });
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initCookieBanner);
+            } else {
+                initCookieBanner();
+            }
+        })();
 
         // Precios oficiales para validación de seguridad (Cybersecurity Expert mode)
         const OFFICIAL_PRICES = {
