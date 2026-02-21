@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <script>
+    window.WEBHOOK_BASE = window.WEBHOOK_BASE || 'https://enderland-bot.onrender.com';
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('consent', 'default', {
@@ -1024,8 +1025,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <ul>
                         <li><i class="fas fa-shield-alt icon-list"></i> Kit Gladiador <button class="view-kit-btn" onclick="showKitDetails('gladiador')"><i class="fas fa-eye"></i> Ver</button></li>
                         <li><i class="fas fa-box-open icon-list"></i> /enderchest en medio de PvP</li>
-                        <li><i class="fas fa-home icon-list"></i> /spawn en combate (5s de demora)</li>
-                        <li><i class="fas fa-coins icon-list"></i> 600 de dinero</li>
+                        <li><i class="fas fa-home icon-list"></i> /spawn en combate (demora 5s)</li>
+                        <li><i class="fas fa-coins icon-list"></i> 600 de dinero por día</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Gladiador (Arena PVP)', this)">Añadir</button>
                 </div>
@@ -1037,8 +1038,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <ul>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Gladiador</li>
                         <li><i class="fas fa-shield-alt icon-list"></i> Kit Veterano <button class="view-kit-btn" onclick="showKitDetails('veterano')"><i class="fas fa-eye"></i> Ver</button></li>
-                        <li><i class="fas fa-skull-crossbones icon-list"></i> No pierdes tus cosas al morir</li>
-                        <li><i class="fas fa-coins icon-list"></i> 1000 de dinero</li>
+                        <li><i class="fas fa-skull-crossbones icon-list"></i> No pierdes tus cosas al morir (1 uso por día a la 1ra muerte)</li>
+                        <li><i class="fas fa-coins icon-list"></i> 1k de dinero por día</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Veterano (Arena PVP)', this)">Añadir</button>
                 </div>
@@ -1050,7 +1051,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <ul>
                         <li><i class="fas fa-arrow-up icon-list"></i> Todo lo de Veterano</li>
                         <li><i class="fas fa-shield-alt icon-list"></i> Kit Warlord <button class="view-kit-btn" onclick="showKitDetails('warlord')"><i class="fas fa-eye"></i> Ver</button></li>
-                        <li><i class="fas fa-coins icon-list"></i> 1500 de dinero</li>
+                        <li><i class="fas fa-coins icon-list"></i> 1.5k de dinero por día</li>
+                        <li><i class="fas fa-user-check icon-list"></i> /invsee (ver el inventario de otros jugadores)</li>
+                        <li><i class="fas fa-skull-crossbones icon-list"></i> No pierdes tus cosas al morir (2 uso por día a la 1ra muerte)</li>
                     </ul>
                     <button class="btn-add" onclick="addToCart('Rango Warlord (Arena PVP)', this)">Añadir</button>
                 </div>
@@ -1299,6 +1302,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <button type="button" class="admin-btn" style="padding:8px 12px; font-size:0.8rem;" onclick="applyCouponFromCart()">Aplicar</button>
                 </div>
                 <div id="cart-coupon-status" style="font-size:0.8rem; color:#888; margin-top:4px;"></div>
+            </div>
+            <div class="coupon-section" style="margin-top:15px; padding-top:10px; border-top:1px solid #333;">
+                <label style="font-size:0.9rem; color:#ccc;">Usuario de Discord</label>
+                <input type="text" id="discord-user-input" class="admin-input" placeholder="Ingresa tu username, mención <@id> o ID numérico" style="margin-top:5px;">
+                <div id="discord-user-help" style="font-size:0.8rem; color:#888; margin-top:4px;">Requerido: username, mención <@id> o ID numérico (15–25 dígitos).</div>
             </div>
             <div style="margin-top: 20px; text-align: right; font-size: 1.2rem; font-weight: bold; color: var(--success);">
                 Total: $<span id="cart-total-price">0.00</span>
@@ -2342,9 +2350,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const isGift = document.getElementById("is-gift").checked;
             const giftNick = (document.getElementById("gift-nickname").value || "").trim().replace(/[^a-zA-Z0-9_]/g, '');
             const currentUser = globalUser || "Invitado";
+            const discordUser = String((document.getElementById("discord-user-input") && document.getElementById("discord-user-input").value) || "").trim();
 
             if (isGift && !giftNick) {
                 alert("Por favor, ingresa el Nickname del destinatario (solo alfanumérico).");
+                return;
+            }
+            if (!discordUser) {
+                alert("Por favor, ingresa tu usuario de Discord (username, mención o ID).");
                 return;
             }
 
@@ -2442,6 +2455,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 couponCode: appliedCouponCode || null,
                 couponPercent: appliedDiscountPercent || 0,
                 ip: currentClientIP,
+                discordUser: discordUser,
                 createdAt: Date.now()
             };
 
@@ -2477,7 +2491,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (isGift) {
                 msg = `¡Hola! Quiero realizar una compra para REGALAR.\n👤 De: ${currentUser}\n🎁 Para: ${giftNick}\n--------------------------------\n`;
             } else {
-                msg = `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n--------------------------------\n`;
+                msg = `¡Hola! Quiero realizar una compra.\n👤 Usuario: ${currentUser}\n🔗 Discord: ${discordUser}\n--------------------------------\n`;
             }
             items.forEach(i => {
                 msg += `• ${i.name} [[${i.type}]] - $${i.finalPrice.toFixed(2)}\n`;
@@ -2501,16 +2515,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 alert("Tu pedido se generó, pero hubo un problema al registrarlo en el sistema. El detalle fue copiado (si es posible), pégalo en tu ticket y avisa al staff.");
                 return;
             }
+            
+            try {
+                cart = [];
+                appliedCouponCode = null;
+                appliedDiscountPercent = 0;
+                updateCartUI();
+            } catch (e) {
+                console.warn("No se pudo limpiar el carrito:", e);
+            }
 
             // Reproducir sonido justo antes del alert de éxito
             try {
-                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3.");
+                const successSound = new Audio("https://www.myinstants.com/media/sounds/apple-pay-45496.mp3");
                 successSound.play().catch(() => {});
             } catch (e) {
                 console.warn("No se pudo reproducir el sonido de éxito:", e);
             }
 
-            startDiscordRedirectCountdown(5, clipboardOk);
+            const orderId = String(order.createdAt || Date.now());
+            startDiscordRedirectCountdown(5, clipboardOk, orderId);
         }
 
         async function checkAntiSpam(ip) {
@@ -2552,6 +2576,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             color: 10289151,
                             fields: [
                                 { name: "👤 Jugador", value: playerValue, inline: true },
+                                { name: "🔗 Discord", value: codeTick + (order.discordUser || "-") + codeTick, inline: true },
                                 { name: "🎁 Es regalo", value: giftValue, inline: true },
                                 { name: "💰 Total a Pagar", value: totalValue, inline: true },
                                 { name: "🎟️ Cupón Aplicado", value: couponText, inline: true },
@@ -2568,6 +2593,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 });
+                try {
+                    const discordUser = String(order.discordUser || "").trim();
+                    if (discordUser) {
+                        const names = (order.items || []).map(function(i){ return i && i.name });
+                        const product = names.length === 1 ? (names[0] || "Pedido") : (names.length + " productos");
+                        const orderId = String(order.id || order.createdAt || Date.now());
+                        const controller = new AbortController();
+                        const t = setTimeout(function(){ try { controller.abort(); } catch(_){} }, 15000);
+                        await fetch(window.WEBHOOK_BASE + "/webhook/pedido", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "X-Webhook-Secret": "reymisterio" },
+                            body: JSON.stringify({ 
+                                discordUser: discordUser, 
+                                orderId: orderId, 
+                                product: product, 
+                                items: names,
+                                couponCode: order.couponCode || null,
+                                couponPercent: (order.couponPercent || 0),
+                                totalFinal: (order.totalFinal || 0)
+                            }),
+                            signal: controller.signal
+                }).then(function(r){ try { if(!r.ok) console.warn("Webhook pedido falló", r.status); else console.log("Webhook pedido OK", r.status) } catch(_){ } }).catch(function(e){ try { console.warn("Webhook pedido error", e && e.message); } catch(_){ } });
+                        try { clearTimeout(t); } catch(_){}
+                    }
+                } catch (_) {}
             } catch (e) {
                 console.error("Error enviando webhook:", e);
                 try {
@@ -2622,25 +2672,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        function startDiscordRedirectCountdown(seconds, clipboardOk) {
-            const container = document.getElementById("toast-container");
-            if (!container) return;
-            const toast = document.createElement("div");
-            toast.className = "toast";
+        function startDiscordRedirectCountdown(seconds, clipboardOk, orderId) {
+            seconds = parseInt(seconds, 10) || 5;
+            const overlay = document.createElement("div");
+            overlay.id = "ticket-redirect-overlay";
+            overlay.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99999; display:flex; align-items:center; justify-content:center;";
+            const box = document.createElement("div");
+            box.style.cssText = "background:#111; border:1px solid #333; border-radius:10px; padding:20px 24px; color:#ddd; max-width:520px; text-align:center; font-size:1rem;";
             const baseMsg = clipboardOk
-                ? "Pedido copiado con éxito. Abre ticket en el servidor de Discord, direccionando en"
-                : "Pedido generado. Abre ticket en el servidor de Discord, direccionando en";
-            let s = seconds;
-            toast.innerHTML = `<span class="toast-icon"><i class="fas fa-bell"></i></span><span>${baseMsg} ${s}</span>`;
-            container.appendChild(toast);
+                ? "¡Listo! Quédate en la web. Te vamos a redirigir al canal del ticket."
+                : "Pedido generado. Quédate en la web. Te vamos a redirigir al canal del ticket.";
+            box.innerHTML = `<div style="font-weight:bold; color:#00ff88; margin-bottom:8px;"><i class="fas fa-check-circle"></i> Pedido enviado</div><div>${baseMsg}</div><div id="redirect-count" style="margin-top:10px; color:#aaa;">Redireccionando en ${seconds}s…</div>`;
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+            let targetUrl = null;
             const iv = setInterval(() => {
-                s -= 1;
-                toast.innerHTML = `<span class="toast-icon"><i class="fas fa-bell"></i></span><span>${baseMsg} ${s}</span>`;
-                if (s <= 0) {
+                seconds -= 1;
+                const cnt = document.getElementById("redirect-count");
+                if (cnt) cnt.textContent = `Redireccionando en ${seconds}s…`;
+                if (seconds <= 0) {
                     clearInterval(iv);
-                    setTimeout(() => toast.remove(), 1000);
-                    window.open("https://discord.gg/wmS4Ztg8Af", "_blank");
-                    window.open("https://discord.gg/wmS4Ztg8Af", "_blank");
+                    const fallback = "https://discord.gg/wmS4Ztg8Af";
+                    try { window.location.replace(targetUrl || fallback); } catch (_) { window.location.href = targetUrl || fallback; }
+                    try { setTimeout(function(){ document.getElementById("ticket-redirect-overlay")?.remove(); }, 1500); } catch(_){}
+                }
+            }, 1000);
+            let tries = 0;
+            const poll = setInterval(async () => {
+                try {
+                    tries += 1;
+                    const controller = new AbortController();
+                    const t = setTimeout(function(){ try { controller.abort(); } catch(_){ } }, 3000);
+                    const resp = await fetch(window.WEBHOOK_BASE + "/webhook/pedido/status?orderId=" + encodeURIComponent(orderId), { method: "GET", signal: controller.signal });
+                    clearTimeout(t);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        if (data && data.ok && data.url) {
+                            targetUrl = data.url;
+                        }
+                    }
+                } catch (_) {}
+                if (tries > 60) { // ~60s
+                    clearInterval(poll);
                 }
             }, 1000);
         }
@@ -2877,6 +2950,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     container.innerHTML = '<p style="color: #ff4747; width: 100%; text-align: center;">Error al cargar datos.</p>';
                 });
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var items = document.querySelectorAll('li');
+            for (var i = 0; i < items.length; i++) {
+                var li = items[i];
+                var text = li.textContent || '';
+                var matchesPhrase = /(todo\s+lo\s+de|todo\s+lo\s+del\s+anterior)/i.test(text);
+                var alreadyHasNote = /menos\s+kit/i.test(text);
+                if (matchesPhrase && !alreadyHasNote) {
+                    li.appendChild(document.createTextNode(' (menos kit)'));
+                }
+            }
+        });
     </script>
 </body>
 </html>
