@@ -1711,7 +1711,7 @@ const response = await fetch("https://enderland-bot.onrender.com/chat-proxy", {
         "Content-Type": "application/json"
     },
     body: JSON.stringify({
-        model: "llama3-8b-8192", // O el modelo que prefieras
+        model: "llama-3.3-70b-versatile", // O el modelo que prefieras
         messages: chatHistory    // Tu array de mensajes
     })
 });
